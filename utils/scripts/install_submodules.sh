@@ -1,7 +1,7 @@
 #!/bin/bash
 
-USE_LIBJPEG=0
-USE_PNG=0
+USE_LIBJPEG=1
+USE_PNG=1
 
 if [ "$#" -eq 0 ]; then
 	echo "Usage: install_submodules.sh <TIRAMISU_ROOT_PATH>"
@@ -10,7 +10,7 @@ fi
 
 PROJECT_SRC_DIR=$1
 CMAKE=cmake
-CORES=1
+CORES=4
 
 # For Travis build we skip LLVM installation and use a custom binary.
 # Second argument specifies the custom path of the LLVM bin dir.

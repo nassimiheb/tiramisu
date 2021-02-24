@@ -1,11 +1,9 @@
-#ifndef WRAPPER_H
-#define WRAPPER_H
-
+#ifndef HALIDE__generated_function_blur_no_schedule_h
+#define HALIDE__generated_function_blur_no_schedule_h
 #include <tiramisu/utils.h>
 #include <sys/time.h>
 
 #define NB_THREAD_INIT 48
-
 struct args {
     int *buf;
     unsigned long long int part_start;
@@ -45,8 +43,11 @@ void parallel_init_buffer(int* buf, unsigned long long int size, int value){
 extern "C" {
 #endif
 
+#define TSTEPS 128 
+#define N 258
 
-int conv(halide_buffer_t *buf01, halide_buffer_t *buf00, halide_buffer_t *buf02, halide_buffer_t *buf03);
+// int gemm(halide_buffer_t *buf01, halide_buffer_t *buf00, halide_buffer_t *buf02, halide_buffer_t *buf03, halide_buffer_t *buf04);
+int jacobi_2d(halide_buffer_t *buf01, halide_buffer_t *buf02);
 
 #ifdef __cplusplus
 }  // extern "C"
@@ -77,9 +78,11 @@ double median(int n, double x[])
     double temp;
     int i, j;
 
+    // the following two loops sort the array x in ascending order
     for(i=0; i<n-1; i++) {
         for(j=i+1; j<n; j++) {
             if(x[j] < x[i]) {
+                // swap elements
                 temp = x[i];
                 x[i] = x[j];
                 x[j] = temp;
@@ -88,8 +91,10 @@ double median(int n, double x[])
     }
 
     if(n%2==0) {
+        // if there is an even number of elements, return mean of the two elements in the middle
         return((x[n/2] + x[n/2 - 1]) / 2.0);
     } else {
+        // else return the element in the middle
         return x[n/2];
     }
 }

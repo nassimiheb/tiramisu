@@ -14,7 +14,8 @@ enum optimization_type
     FUSION,
     TILING,
     INTERCHANGE,
-    UNROLLING
+    UNROLLING,
+    PARALLELIZE
 };
 
 /**
@@ -64,6 +65,7 @@ struct optimization_info
      * l0_fact and l1_fact will contain the tiling factors for each loop level.
      */
     int l0_fact, l1_fact, l2_fact;
+
 };
 
 /**
@@ -96,6 +98,10 @@ void apply_fusions(syntax_tree const& ast);
  */
 tiramisu::computation* apply_fusions(ast_node *node, tiramisu::computation *last_comp, int dimension);
 
+/**
+ * Prints the optimization information
+ */
+void print_optim(optimization_info optim);
 }
 
 #endif

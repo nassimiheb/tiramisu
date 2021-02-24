@@ -102,6 +102,11 @@ public:
     bool unrolled = false;
 
     /**
+     * True if the loop level has been parallelized
+     */
+    bool parallelized = false;
+
+    /**
      * List of the computations computed at this level.
      */
     std::vector<computation_info> computations;
@@ -205,6 +210,7 @@ public:
      * Print the subtree rooted at this node.
      */
     void print_node() const;
+
 };
 
 class syntax_tree
@@ -398,6 +404,15 @@ public:
      * Print the AST to stdout.
      */
     void print_ast() const;
+
+    /**
+     * Print information about the new applied optimizations
+     */
+    void print_new_optims() const;
+
+    void transform_ast_by_paralellize(const optimization_info &info);
+
+    void print_previous_optims() const;
 };
 
 }
