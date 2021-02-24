@@ -107,6 +107,11 @@ public:
     bool parallelized = false;
 
     /**
+    * True if the loop level has been skewed
+    */
+    bool skewed = false;
+
+    /**
      * List of the computations computed at this level.
      */
     std::vector<computation_info> computations;
@@ -331,6 +336,8 @@ public:
     void transform_ast_by_tiling(optimization_info const& opt);
     void transform_ast_by_interchange(optimization_info const& opt);
     void transform_ast_by_unrolling(optimization_info const& opt);
+    void transform_ast_by_paralellize(const optimization_info &info);
+    void transform_ast_by_skewing(const optimization_info &opt);
     
     /**
      * Copy this AST, and return the copy.
@@ -410,9 +417,8 @@ public:
      */
     void print_new_optims() const;
 
-    void transform_ast_by_paralellize(const optimization_info &info);
-
     void print_previous_optims() const;
+
 };
 
 }

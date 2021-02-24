@@ -229,6 +229,7 @@ std::vector<syntax_tree*> ml_model_schedules_generator::generate_schedules(synta
     
     std::vector<int> shared_levels_extents;
     std::vector<int> innermost_extents;
+    std::vector<ast_node*> innermost_nodes;
     int nb_shared_iterators;
     
     // Generate the specified optimization
@@ -237,41 +238,41 @@ std::vector<syntax_tree*> ml_model_schedules_generator::generate_schedules(synta
         case optimization_type::UNFUSE:
             shared_levels_extents = ast.get_shared_levels_extents();
             nb_shared_iterators = std::min((int)shared_levels_extents.size(), max_nb_iterators);
-            
+
             // Check if we can unfuse
             if (shared_levels_extents.size() <= 1)
                 return states;
-                
+
             // Go to the first node with more than one child
             for (int i = 0; i < shared_levels_extents.size() - 1; ++i)
                 node = node->children[0];
-                
+
             // Stop if all nodes have only one child (nothing to unfuse).
             if (node->children.size() <= 1)
                 return states;
-            
+
             // Unfuse iterators
             for (int i = 0; i < nb_shared_iterators - 1; ++i)
             {
                 // Copy the AST and add unfuse to the list of optimizations.
                 syntax_tree* new_ast = ast.copy_ast();
-                        
+
                 optimization_info optim_info;
                 optim_info.type = optimization_type::UNFUSE;
-                            
+
                 optim_info.nb_l = 1;
                 optim_info.l0 = i;
-                
+
                 new_ast->new_optims.push_back(optim_info);
                 states.push_back(new_ast);
             }
-            
+
             break;
-            
+
         case optimization_type::TILING:
             shared_levels_extents = ast.get_shared_levels_extents();
             nb_shared_iterators = std::min((int)shared_levels_extents.size(), max_nb_iterators);
-            
+
             for (int i = 0; i < nb_shared_iterators - 1; ++i)
             {
                 for (int tiling_size1 : tiling_factors_list)
@@ -279,65 +280,65 @@ std::vector<syntax_tree*> ml_model_schedules_generator::generate_schedules(synta
                     // Check if tiling_size1 splits perfectly this iterator
                     if (!can_split_iterator(shared_levels_extents[i], tiling_size1))
                         continue;
-                        
+
                     for (int tiling_size2 : tiling_factors_list)
                     {
                         if (!can_split_iterator(shared_levels_extents[i + 1], tiling_size2))
                             continue;
-                            
+
                         // Copy the AST and add tiling with 2 dimensions to the list of optimizations
                         syntax_tree* new_ast = new syntax_tree();
                         ast_node *new_node = ast.copy_and_return_node(*new_ast, node);
-                        
+
                         optimization_info optim_info;
                         optim_info.type = optimization_type::TILING;
                         optim_info.node = new_node;
-                            
+
                         optim_info.nb_l = 2;
                         optim_info.l0 = i;
                         optim_info.l1 = i + 1;
-                        
+
                         optim_info.l0_fact = tiling_size1;
                         optim_info.l1_fact = tiling_size2;
-                            
+
                         optim_info.comps = new_ast->computations_list;
                         new_ast->new_optims.push_back(optim_info);
                         states.push_back(new_ast);
-                            
+
                         // Cannot apply tiling with 3 dimensions,
                         // continue to apply tiling with 2 dimensions.
                         if (i + 2 >= nb_shared_iterators)
                             continue;
-                            
+
                         for (int tiling_size3 : tiling_factors_list)
                         {
                             if (!can_split_iterator(shared_levels_extents[i + 2], tiling_size3))
                                 continue;
-                                
+
                             // Copy the AST and add tiling with 3 dimensions to the list of optimizations
                             syntax_tree* new_ast = new syntax_tree();
                             ast_node *new_node = ast.copy_and_return_node(*new_ast, node);
-                            
+
                             optimization_info optim_info;
                             optim_info.type = optimization_type::TILING;
                             optim_info.node = new_node;
-                                
+
                             optim_info.nb_l = 3;
                             optim_info.l0 = i;
                             optim_info.l1 = i + 1;
                             optim_info.l2 = i + 2;
-                            
+
                             optim_info.l0_fact = tiling_size1;
                             optim_info.l1_fact = tiling_size2;
                             optim_info.l2_fact = tiling_size3;
-                                
+
                             optim_info.comps = new_ast->computations_list;
                             new_ast->new_optims.push_back(optim_info);
                             states.push_back(new_ast);
                         }
                     }
                 }
-                
+
                 // Go to next node
                 if (node->children.size() > 0)
                     node = node->children[0];
@@ -347,7 +348,7 @@ std::vector<syntax_tree*> ml_model_schedules_generator::generate_schedules(synta
         case optimization_type::INTERCHANGE:
             shared_levels_extents = ast.get_shared_levels_extents();
             nb_shared_iterators = std::min((int)shared_levels_extents.size(), max_nb_iterators);
-            
+
             // To apply interchange, we pick all combinations of two iterators 
             // in the shared loop levels.
             for (int i = 0; i < nb_shared_iterators; ++i)
@@ -357,15 +358,15 @@ std::vector<syntax_tree*> ml_model_schedules_generator::generate_schedules(synta
                     // Copy the AST and add interchange to the list of optimizations
                     syntax_tree* new_ast = new syntax_tree();
                     ast_node *new_node = ast.copy_and_return_node(*new_ast, node);
-                    
+
                     optimization_info optim_info;
                     optim_info.type = optimization_type::INTERCHANGE;
                     optim_info.node = new_node;
-                        
+
                     optim_info.nb_l = 2;
                     optim_info.l0 = i;
                     optim_info.l1 = j;
-                        
+
                     optim_info.comps = new_ast->computations_list;
                     new_ast->new_optims.push_back(optim_info);
                     states.push_back(new_ast);
@@ -373,10 +374,16 @@ std::vector<syntax_tree*> ml_model_schedules_generator::generate_schedules(synta
 
                 if (node->children.size() > 0)
                     node = node->children[0];
-            } 
+            }
             break;
 
         case optimization_type::UNROLLING:
+            node->get_innermost_nodes(innermost_nodes);
+            // If one of the innermost loops is skewed unrolling can't be applied
+            for (ast_node* inner_most_node: innermost_nodes)
+                if (inner_most_node->skewed)
+                    return states;
+
             innermost_extents = ast.get_innermost_extents();
                
             // Apply all possible unrolling factors to all innermost iterators
@@ -433,6 +440,36 @@ std::vector<syntax_tree*> ml_model_schedules_generator::generate_schedules(synta
 
                 if (node->children.size() > 0)
                     node = node->children[0];
+            }
+            break;
+
+        case optimization_type::SKEWING:
+            shared_levels_extents = ast.get_shared_levels_extents();
+            nb_shared_iterators = std::min((int)shared_levels_extents.size(), max_nb_iterators);
+
+            // Since the only loops that can be skewed are the two outermost loops, we always have one possible combination of loops, we can only vary parameters
+            if (nb_shared_iterators<2)
+                return states;
+
+            for (std::tuple<int,int> factors: skewing_factors_list) {
+
+                // Copy the AST and add interchange to the list of optimizations
+                syntax_tree* new_ast = new syntax_tree();
+                ast_node *new_node = ast.copy_and_return_node(*new_ast, node);
+
+                optimization_info optim_info;
+                optim_info.type = optimization_type::SKEWING;
+                optim_info.node = new_node;
+
+                optim_info.nb_l = 2;
+                optim_info.l0 = 0;
+                optim_info.l1 = 1;
+                optim_info.l0_fact = std::get<0>(factors);
+                optim_info.l1_fact = std::get<1>(factors);
+
+                optim_info.comps = new_ast->computations_list;
+                new_ast->new_optims.push_back(optim_info);
+                states.push_back(new_ast);
             }
             break;
 

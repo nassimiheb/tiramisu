@@ -64,7 +64,7 @@ int main(int argc, char **argv)
     
     // autoscheduling
     const int beam_size = 2;
-    const int max_depth = 5;
+    const int max_depth = 6;
 
     const int nb_samples = 5;
     const int topk = 1;
@@ -84,8 +84,8 @@ int main(int argc, char **argv)
     
     
 //      auto_scheduler::auto_scheduler as(BS_Acc, model_eval);
-     auto_scheduler::auto_scheduler as(Beam_Search, model_eval);
-    // auto_scheduler::auto_scheduler as(Beam_Search, exec_eval);
+    //  auto_scheduler::auto_scheduler as(Beam_Search, model_eval);
+    auto_scheduler::auto_scheduler as(Beam_Search, exec_eval);
     
 //     auto_scheduler::auto_scheduler as(Beam_Searchk, model_eval);
 //     auto_scheduler::auto_scheduler as(mcts, model_eval);
