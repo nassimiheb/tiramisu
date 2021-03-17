@@ -12,8 +12,9 @@
 namespace tiramisu::auto_scheduler
 {
 
-const std::vector<optimization_type> DEFAULT_OPTIMIZATIONS_ORDER = {UNFUSE, INTERCHANGE, SKEWING, TILING, UNROLLING, PARALLELIZE};
-//const std::vector<optimization_type> DEFAULT_OPTIMIZATIONS_ORDER = {SKEWING};
+const std::vector<optimization_type> DEFAULT_OPTIMIZATIONS_ORDER = {INTERCHANGE, SKEWING, TILING, UNROLLING};
+//const std::vector<optimization_type> DEFAULT_OPTIMIZATIONS_ORDER = {UNFUSE, INTERCHANGE, SKEWING, TILING, PARALLELIZE, UNROLLING};
+
 
 const int NB_OPTIMIZATIONS = DEFAULT_OPTIMIZATIONS_ORDER.size();
 const int DEFAULT_MAX_DEPTH = INT_MAX;
@@ -80,6 +81,12 @@ public:
       * and its evaluation in best_evaluation.
       */
     virtual void search(syntax_tree& ast) =0;
+
+    /**
+      * The method to call to start a search.
+      * The explored schedules annotation and their execution time are stored in schedules_annotations
+      */
+    virtual void search_save(syntax_tree &ast, std::vector<std::string> *schedules_annotations) =0;
 };
 
 /**
@@ -107,6 +114,12 @@ public:
     virtual ~beam_search() {}
 
     virtual void search(syntax_tree& ast);
+
+    /**
+     * Searches for the best schedule and saves the explored schedules and their execution time
+     *
+     */
+    virtual void search_save(syntax_tree &ast, std::vector<std::string> *schedules_annotations);
 };
 
 /**
@@ -142,6 +155,9 @@ public:
     virtual ~mcts() {}
     
     virtual void search(syntax_tree& ast);
+
+    virtual void search_save(syntax_tree &ast, std::vector<std::string> *schedules_annotations);
+
 };
 
 // ----------------------------------------------------------------------- //
@@ -191,6 +207,9 @@ public:
      * A subroutine used by search(syntax_tree& ast);
      */
     void beam_search_subroutine(syntax_tree& ast);
+
+    virtual void search_save(syntax_tree &ast, std::vector<std::string> *schedules_annotations);
+
 };
 
 /**

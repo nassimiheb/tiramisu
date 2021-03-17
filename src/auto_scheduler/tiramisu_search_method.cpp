@@ -79,6 +79,116 @@ void beam_search::search(syntax_tree& ast)
     }
 }
 
+void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedules_annotations)
+    {
+//        std::cout<< "Here 3 "<< std::endl;
+
+        if (ast.nb_explored_optims % NB_OPTIMIZATIONS == 0)
+            ast.clear_new_optimizations();
+
+        std::vector<syntax_tree*> children;
+
+        // Look for an optimization that can be applied
+        int nb_optims_tried = 0;
+        int nb_explored_optims = ast.nb_explored_optims;
+
+//        std::cout<< "Here 4 "<< std::endl;
+
+        while (children.size() == 0 && nb_optims_tried < NB_OPTIMIZATIONS && nb_explored_optims < max_depth)
+        {
+            optimization_type optim_type = DEFAULT_OPTIMIZATIONS_ORDER[nb_explored_optims % NB_OPTIMIZATIONS];
+            children = scheds_gen->generate_schedules(ast, optim_type);
+
+            nb_explored_optims++;
+            nb_optims_tried++;
+        }
+
+        // Stop if no more optimizations can be applied
+        if (children.size() == 0)
+            return ;
+
+//        std::cout<< "Here 5 "<< std::endl;
+
+        // Evaluate children and sort them from smallest to highest evaluation
+        for (syntax_tree *child : children)
+        {
+            child->nb_explored_optims = nb_explored_optims;
+            child->transform_ast();
+//            std::cout<< "Here 6 "<< std::endl;
+
+//            child->print_previous_optims();
+//            std::cout << "-----------" << std::endl;
+//            child->print_new_optims();
+//            child->print_ast();
+
+//            child->evaluation = exec_eval->evaluate(*child);
+            child->evaluation =  eval_func->evaluate(*child);
+//            std::cout<< "Here 7 "<< std::endl;
+
+
+
+            std::string schedule_annot = evaluate_by_learning_model::get_schedule_json(*child);
+//            std::cout<< "Here 8 "<< std::endl;
+
+            //remove the last two characters }\n
+            schedule_annot.pop_back();
+            schedule_annot.pop_back();
+//            std::cout<< "Here 9 "<< std::endl;
+
+
+            if (std::isfinite(child->evaluation)) // the evaluation is not finite mean that the schedule didn't run
+                schedule_annot += ", \n\"execution_time\" : " + std::to_string(child->evaluation) + "\n}\n";
+            else
+                schedule_annot += ", \n\"execution_time\" : null\n}\n";
+
+            schedules_annotations->push_back(schedule_annot);
+//            std::cout << schedules_annotations->size() << std::endl;
+
+//            child->print_previous_optims();
+//            std::cout << "-----------" << std::endl;
+//            child->print_new_optims();
+//            child->print_ast();
+//            std::cout << "Evaluation : " << child->evaluation << std::endl << std::endl;
+//            if (std::isinf(child->evaluation))
+//                std::exit(19);
+
+            if (child->evaluation < best_evaluation)
+            {
+                best_evaluation = child->evaluation;
+                best_ast = child;
+            }
+
+            nb_explored_schedules++;
+        }
+
+        // Stop if we reached the maximum depth
+        if (nb_explored_optims >= max_depth)
+            return ;
+
+        // Add the current AST to the list of children
+        syntax_tree *ast_copy = ast.copy_ast();
+        ast_copy->nb_explored_optims = nb_explored_optims;
+        children.push_back(ast_copy);
+
+        // Sort children from smallest evaluation to largest
+        std::sort(children.begin(), children.end(), [](syntax_tree *a, syntax_tree *b) {
+            return a->evaluation < b->evaluation;
+        });
+
+        // keep the top 'beam_size' children and delete the rest
+        for (int i = beam_size; i < children.size(); ++i)
+            delete children[i];
+
+        children.resize(std::min(beam_size, (int)children.size()));
+
+        // Search recursively on the best children
+        for (syntax_tree *child : children)
+        {
+            child->search_depth = ast.search_depth + 1;
+            search_save(*child, schedules_annotations);
+        }
+    }
+
 void mcts::search(syntax_tree& ast)
 {
     std::default_random_engine rand_generator;
@@ -142,7 +252,8 @@ void mcts::search(syntax_tree& ast)
         }
     }
 }
-
+void mcts::search_save(syntax_tree& ast, std::vector<std::string> *schedules_annotations)
+    {}
 // -------------------------------------------------------------------------- //
 
 void beam_search_topk::search(syntax_tree& ast)
@@ -166,6 +277,9 @@ void beam_search_topk::search(syntax_tree& ast)
         }
     }
 }
+
+void beam_search_topk::search_save(syntax_tree& ast, std::vector<std::string> *schedules_annotations)
+    {}
     
 void beam_search_topk::beam_search_subroutine(syntax_tree& ast)
 {

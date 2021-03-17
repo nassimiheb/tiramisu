@@ -44,10 +44,10 @@ extern "C" {
 #endif
 
 #define TSTEPS 128 
-#define N 258
+#define N 66
 
 // int gemm(halide_buffer_t *buf01, halide_buffer_t *buf00, halide_buffer_t *buf02, halide_buffer_t *buf03, halide_buffer_t *buf04);
-int jacobi_2d(halide_buffer_t *buf01, halide_buffer_t *buf02);
+int heat_3d(halide_buffer_t *buf01, halide_buffer_t *buf02);
 
 #ifdef __cplusplus
 }  // extern "C"

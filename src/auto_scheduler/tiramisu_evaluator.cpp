@@ -37,36 +37,47 @@ evaluate_by_execution::evaluate_by_execution(std::vector<tiramisu::buffer*> cons
 
 float evaluate_by_execution::evaluate(syntax_tree& ast)
 {
+//    std::cout<< "Here 9.5 "<< std::endl;
+
     // Apply all the optimizations
     apply_optimizations(ast);
 //    parallelize_outermost_levels(ast.computations_list);
-    
+//    std::cout<< "Here 10 "<< std::endl;
+
     // Compile the program to an object file
     fct->lift_dist_comps();
     fct->gen_time_space_domain();
     fct->gen_isl_ast();
     fct->gen_halide_stmt();
-    
+//    std::cout<< "Here 11 "<< std::endl;
+
     Halide::Module m = lower_halide_pipeline(fct->get_name(), halide_target, halide_arguments,
                                              Halide::Internal::LoweredFunc::External,
                                              fct->get_halide_stmt());
                                              
     m.compile(Halide::Outputs().object(obj_filename));
-    
+
+//    std::cout<< "Here 12 "<< std::endl;
+
     // Turn the object file to a shared library
     std::string gcc_cmd = "g++ -shared -o " + obj_filename + ".so " + obj_filename;
     int status = system(gcc_cmd.c_str());
     
     // Execute the wrapper and get execution time
-    double exec_time = 0.f;
+//    double exec_time = -1.f; put +inf herestd::numeric_limits<double>::infinity()
+    double exec_time = std::numeric_limits<double>::infinity();
+
     FILE *pipe = popen(wrapper_cmd.c_str(), "r");
-    
+//    std::cout<< "Here 13 "<< std::endl;
+
     fscanf(pipe, "%lf", &exec_time);
     pclose(pipe);
-    
+//    std::cout<< "Here 14 "<< std::endl;
+
     // Remove all the optimizations
     fct->reset_schedules();
-    
+//    std::cout<< "Here 15 "<< std::endl;
+
     return exec_time;
 }
 

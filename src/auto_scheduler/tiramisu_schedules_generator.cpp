@@ -240,16 +240,20 @@ std::vector<syntax_tree*> ml_model_schedules_generator::generate_schedules(synta
             nb_shared_iterators = std::min((int)shared_levels_extents.size(), max_nb_iterators);
 
             // Check if we can unfuse
-            if (shared_levels_extents.size() <= 1)
+            if (shared_levels_extents.size() <= 1) {
+//                std::cout << "quit----------------------0" << std::endl;
                 return states;
+            }
 
             // Go to the first node with more than one child
             for (int i = 0; i < shared_levels_extents.size() - 1; ++i)
                 node = node->children[0];
 
             // Stop if all nodes have only one child (nothing to unfuse).
-            if (node->children.size() <= 1)
+            if (node->children.size() <= 1){
+//                std::cout << "quit----------------------1" << node->name << std::endl;
                 return states;
+            }
 
             // Unfuse iterators
             for (int i = 0; i < nb_shared_iterators - 1; ++i)
@@ -266,6 +270,7 @@ std::vector<syntax_tree*> ml_model_schedules_generator::generate_schedules(synta
                 new_ast->new_optims.push_back(optim_info);
                 states.push_back(new_ast);
             }
+//            std::cout << "quit----------------------2" << std::endl;
 
             break;
 
@@ -453,7 +458,7 @@ std::vector<syntax_tree*> ml_model_schedules_generator::generate_schedules(synta
 
             for (std::tuple<int,int> factors: skewing_factors_list) {
 
-                // Copy the AST and add interchange to the list of optimizations
+                // Copy the AST and add skewing to the list of optimizations
                 syntax_tree* new_ast = new syntax_tree();
                 ast_node *new_node = ast.copy_and_return_node(*new_ast, node);
 
