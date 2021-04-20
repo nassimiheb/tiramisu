@@ -22,6 +22,12 @@ void auto_scheduler::sample_search_space(std::string filename)
     ast.evaluation = initial_exec_time;
     std::string program_json = evaluate_by_learning_model::get_program_json(ast);
     std::vector<std::string> schedules_annotations;
+    // add the no_schedule version to the schedule list
+    std::string empty_schedule_json = evaluate_by_learning_model::get_schedule_json(ast);
+    empty_schedule_json.pop_back(); // remove the last two characters }\n
+    empty_schedule_json.pop_back();
+    empty_schedule_json += ", \n\"execution_time\" : " + std::to_string(ast.evaluation) + "\n}\n";
+    schedules_annotations.push_back(empty_schedule_json);
 
     searcher->search_save(ast, &schedules_annotations);
 
