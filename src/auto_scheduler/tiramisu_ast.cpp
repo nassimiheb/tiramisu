@@ -112,7 +112,7 @@ syntax_tree::syntax_tree(tiramisu::function *fct)
         node->parent = nullptr;
         
         roots.push_back(node);
-        computations_list.push_back(comp);
+        computations_list.push_back(comp); // at this level computations are stored in their declaration order, this list will be sorted by computing order after calling order_computations()
         computations_mapping[comp] = node->get_leftmost_node();
     }
 
@@ -185,15 +185,19 @@ void syntax_tree::order_computations()
             nrs_comps.push_back(comp);
 
     std::vector<std::pair<tiramisu::computation*, std::unordered_map<tiramisu::computation*, int>>> sorted_sched_graph;
+    std::vector<tiramisu::computation *> ordered_computations_list; // a list that will contain computations on their computing order
 
     for (tiramisu::computation* comp: nrs_comps){
         tiramisu::computation* current_comp= comp;
+        ordered_computations_list.push_back(current_comp);
         while (fct->sched_graph.find(current_comp) != fct->sched_graph.end()) {
             auto sched_graph_l = fct->sched_graph[current_comp];
             sorted_sched_graph.push_back(std::make_pair(current_comp, sched_graph_l));
             current_comp = sched_graph_l.begin()->first;
+            ordered_computations_list.push_back(current_comp);
         }
     }
+    this->computations_list = ordered_computations_list; // replace the computation list with the ordered one
 
     // We use the sorted scheduling graph to construct the computations AST
     for (auto& sched_graph_node : sorted_sched_graph)
@@ -254,6 +258,40 @@ void syntax_tree::order_computations()
             roots.erase(it);
         }
     }
+}
+
+ast_node* syntax_tree::get_latest_shared_parent(ast_node* node1, ast_node* node2) const
+{
+    std::vector<ast_node*> parent_list_1;
+    std::vector<ast_node*> parent_list_2;
+
+    // construct the list of ancestors of both nodes
+    ast_node* parent_node = node1;
+    while (parent_node != nullptr)
+    {
+        if (parent_node->name != "dummy_iter") // ignore dummy iterators
+            parent_list_1.push_back(parent_node);
+        parent_node = parent_node->parent;
+    }
+    std::reverse(parent_list_1.begin(), parent_list_1.end());
+
+    parent_node = node2;
+    while (parent_node != nullptr)
+    {
+        if (parent_node->name != "dummy_iter") // ignore dummy iterators
+            parent_list_2.push_back(parent_node);
+        parent_node = parent_node->parent;
+    }
+    std::reverse(parent_list_2.begin(), parent_list_2.end());
+
+    ast_node* latest_shared_parent = nullptr;
+    for (int i = 0; i< std::min(parent_list_1.size(), parent_list_2.size()); i++)
+        if (parent_list_1[i]==parent_list_2[i])
+            latest_shared_parent = parent_list_2[i];
+        else
+            break;
+
+    return latest_shared_parent;
 }
 
 void syntax_tree::transform_ast()

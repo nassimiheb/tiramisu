@@ -442,6 +442,11 @@ public:
     void print_new_optims() const;
 
     void print_previous_optims() const;
+
+    /**
+     * Returns the latest (deepest in the AST) parent node shared by node1 and node2. Returns nullptr if no shared loops were found
+     */
+    ast_node *get_latest_shared_parent(ast_node *node1, ast_node *node2) const;
 };
 
 }
