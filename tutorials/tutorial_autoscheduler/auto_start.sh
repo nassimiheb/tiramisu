@@ -1,5 +1,5 @@
-export TIRAMISU_ROOT=/home/nassim/Desktop/tiramisu_raw/
-export LD_LIBRARY_PATH=/home/nassim/Desktop/tiramisu_raw/3rdParty/Halide/lib
+export TIRAMISU_ROOT=/data/scratch/tiramisu_git/tiramisu_lanka/tiramisu
+export LD_LIBRARY_PATH=/data/scratch/tiramisu_git/tiramisu_lanka/tiramisu/3rdParty/Halide/lib
 
 rm -dr ${TIRAMISU_ROOT}/tutorials/tutorial_autoscheduler/retry$1/build/*
 rm ${TIRAMISU_ROOT}/tutorials/tutorial_autoscheduler/retry$1/CmakeLists.txt
