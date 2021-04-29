@@ -244,11 +244,16 @@ void tiramisu::function::calculate_dep_flow()
         identity = "{"+comput->get_name() +ready_time_str + "}";
 
         isl_identity = isl_map_read_from_str(this->get_isl_ctx(),identity.c_str());
+        //isl_identity = isl_map_identity(isl_map_get_space(comput->get_schedule()));
+
+        comput->set_schedule(isl_map_set_tuple_name(comput->get_schedule(),isl_dim_out,comput->get_name().c_str()));
+        
+        DEBUG(10, tiramisu::str_dump(" - > computation's schedule  : "+std::string(isl_map_to_str(comput->get_schedule()))));
 
         // TODO : use default schedule instead when save/restore states is implemented 
         isl_map * corrected = isl_map_apply_range(isl_map_copy(comput->get_schedule()),isl_identity);
 
-        DEBUG(10, tiramisu::str_dump(" - > compuatation's schedule to time stamp op result is : "+std::string(isl_map_to_str(corrected))));
+        DEBUG(10, tiramisu::str_dump(" - > computation's schedule to time stamp op result is : "+std::string(isl_map_to_str(corrected))));
 
         isl_schedule = isl_union_map_union(isl_schedule , isl_union_map_from_map(corrected));
 

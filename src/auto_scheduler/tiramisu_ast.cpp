@@ -217,6 +217,7 @@ ast_node::ast_node(tiramisu::computation *comp, syntax_tree *ast)
 
 void syntax_tree::order_computations()
 {
+    std::cout<<"ordering start"<<"\n";
     if (roots.size() < 2)
         return ;
 

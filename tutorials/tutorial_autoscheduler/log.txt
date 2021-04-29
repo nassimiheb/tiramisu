@@ -1,0 +1,8 @@
+======================step2==================================
+
+
+batch size: 8
+input size:1024×1024×3
+kernel size:3×3
+
+output features: 2

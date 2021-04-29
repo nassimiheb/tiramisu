@@ -16,28 +16,40 @@ const std::string py_interface_path = "/home/nassim/Desktop/tiramisu_raw/tutoria
 int main(int argc, char **argv)
 {
     tiramisu::init("conv");
+
+    // -------------------------------------------------------
+    // Layer I
+    // ------------------------------------------------------- 
+    //constant width("width", 1024), height("height", 1024), channels("channels", 3);
+    var x("x", 0, 1024), y("y", 0, 1024), c("c", 0, 3);
+
+    //inputs
+    input input_img("input_img", {c, y, x}, p_int32);
+
+    //Computations
+
+    //RGB2Gray[y,x] <- (input_img[2,y,x]*1868 + input_img[1,y,x]*9617 + input_img[0,y,x]*4899 + 8192) / 16384
+    computation RGB2Gray("RGB2Gray", {y, x}, cast(p_int32, (input_img(2, y, x) * 1868 +  input_img(1, y, x) * 9617 + input_img(0, y, x) * 4899 + 8192) / 16384) );
     
-    var t("t", 0, 200), y("y", 0, 1024), x("x", 0, 1024);
+    // -------------------------------------------------------
+    // Layer II
+    // -------------------------------------------------------
 
-    var  yy("yy", 1, 1023), xx("xx", 1, 1023);
 
-    var t2("t2"),t1("t1"),y1("y1"),x1("x1"),y2("y2"),x2("x2") ,x0("x0");
+    // -------------------------------------------------------
+    // Layer III
+    // -------------------------------------------------------
+    //Buffers
+    buffer input_buf("input_buf", {3, 1024, 1024}, p_int32, a_input);
+    buffer RGB2Gray_buf("RGB2Gray_buf", {1024, 1024}, p_int32, a_output);
+
+    //Store inputs
+    input_img.store_in(&input_buf);
+
+    //Store computations
+    RGB2Gray.store_in(&RGB2Gray_buf);
+ 
     
-    // Declare computations
-
-    input src("src", {x, y}, p_int32);
-
-
-    computation conv("conv", {t,xx,yy}, p_int32);
-    conv.set_expression(  2*src(xx,yy));
-    //conv.set_expression( src(xx-1,yy-1) + src(xx-1,yy)+src(xx-1,yy+1)+src(xx,yy-1)        + src(xx,yy+1)+src(xx+1,yy-1)+src(xx+1,yy)+src(xx+1,yy+1) );
-    // Declare buffers
-    
-    buffer buf_output("buf_output", {1024, 1024}, p_int32, a_output);
-
-    src.store_in(&buf_output);
-    
-    conv.store_in(&buf_output, {xx, yy});
 
     prepare_schedules_for_legality_checks();
     performe_full_dependency_analysis();
@@ -54,7 +66,7 @@ int main(int argc, char **argv)
         //conv.parallelize(x1);
 
         tiramisu::codegen({
-            &buf_output
+           &input_buf, &RGB2Gray_buf
         }, "function.o");
        
         return 0;
@@ -71,7 +83,7 @@ int main(int argc, char **argv)
     auto_scheduler::schedules_generator *scheds_gen = new auto_scheduler::ml_model_schedules_generator();
     
     // An evaluation function that measures execution time by compiling and executing the program
-    auto_scheduler::evaluate_by_execution *exec_eval = new auto_scheduler::evaluate_by_execution({&buf_output}, 
+    auto_scheduler::evaluate_by_execution *exec_eval = new auto_scheduler::evaluate_by_execution({ &input_buf, &RGB2Gray_buf}, 
                                       "function.o", "./wrapper");
     
     // An evaluation function that uses an ML model to estimate speedup

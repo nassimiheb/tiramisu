@@ -1,0 +1,34 @@
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf_weights.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_weights"))
+assert((reinterpret(uint64, buf_src.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_src"))
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+assert((reinterpret(uint64, buf_bias.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_bias"))
+let buf_bias = _halide_buffer_get_host(buf_bias.buffer)
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+let buf_src = _halide_buffer_get_host(buf_src.buffer)
+let buf_weights = _halide_buffer_get_host(buf_weights.buffer)
+produce  {
+  allocate _weights_b2[int32 * 1024 * 1024 * 2 * 8]
+  allocate _src_b1[int32 * 1024 * 1024 * 3 * 8]
+  allocate _conv_init_b3[int32 * 1024 * 1024 * 2 * 8]
+  allocate _conv_b4[int32 * 3 * 3 * 3 * 1024 * 1024 * 2 * 8]
+  allocate _bias_b0[int32 * 2]
+  for (c1, 0, 8) {
+    for (c3, 0, 2) {
+      for (c5, 0, 1024) {
+        for (c7, 0, 1024) {
+          buf_output[(((c7 + int32((int64(c5)*(int64)1024))) + int32((int64(c3)*(int64)1048576))) + int32((int64(c1)*(int64)2097152)))] = buf_bias[c3]
+          for (c9, 0, 3) {
+            for (c11, 0, 3) {
+              for (c13, 0, 3) {
+                buf_output[(((c7 + int32((int64(c5)*(int64)1024))) + int32((int64(c3)*(int64)1048576))) + int32((int64(c1)*(int64)2097152)))] = (buf_output[(((c7 + int32((int64(c5)*(int64)1024))) + int32((int64(c3)*(int64)1048576))) + int32((int64(c1)*(int64)2097152)))] + (buf_src[((((c7 + c13) + int32((int64((c5 + c11))*(int64)1024))) + int32((int64(c9)*(int64)1048576))) + int32((int64(c1)*(int64)3145728)))]*buf_weights[(((c13 + int32((int64(c11)*(int64)3))) + int32((int64(c9)*(int64)9))) + int32((int64(c3)*(int64)27)))]))
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+======================step2==================================
