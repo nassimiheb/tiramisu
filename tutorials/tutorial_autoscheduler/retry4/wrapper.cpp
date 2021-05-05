@@ -8,14 +8,14 @@ using namespace std;
 
 int main(int, char **argv)
 {
-    Halide::Buffer<int32_t> buf01(8, 2, 1024, 1024,"buffer01");
+    Halide::Buffer<int32_t> buf01(8, 2, 1032, 1032,"buffer01");
     init_buffer(buf01, (int32_t)2);
 
-    Halide::Buffer<int32_t> buf02(2,"buffer02");
+    Halide::Buffer<int32_t> buf02(4,"buffer02");
 
     init_buffer(buf02, (int32_t)1);
 
-    Halide::Buffer<int32_t> buf03(8, 3, 1026, 1026,"buffer03");
+    Halide::Buffer<int32_t> buf03(8, 3, 1032, 1032,"buffer03");
 
     init_buffer(buf03, (int32_t)0);
 

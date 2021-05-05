@@ -1,0 +1,50 @@
+for 0 <= i00 < 128 | 0
+	for 0 <= i01 < 1024 | 0
+		for 0 <= i02 < 1024 | 0
+			comp02
+for 0 <= i00 < 128 | 0
+	for 0 <= i02 < 1024 | 0
+		for 0 <= i01 < 1024 | 0
+			comp02
+for 0 <= i00 < 128 | 0
+	for 0 <= i02_outer < 32 | 0
+		for 0 <= i01_outer < 8 | 0
+			for 0 <= i02_inner < 32 | 0
+				for 0 <= i01_inner < 128 | 0
+					comp02
+for 0 <= i00 < 128 | 0
+	for 0 <= i02_outer < 32 | 0
+		for 0 <= i01_outer < 16 | 0
+			for 0 <= i02_inner < 32 | 0
+				for 0 <= i01_inner < 64 | 0
+					comp02
+for 0 <= i01 < 1024 | 0
+	for 0 <= i00 < 128 | 0
+		for 0 <= i02 < 1024 | 0
+			comp02
+for 0 <= i01_outer < 32 | 0
+	for 0 <= i00_outer < 4 | 0
+		for 0 <= i02_outer < 32 | 0
+			for 0 <= i01_inner < 32 | 0
+				for 0 <= i00_inner < 32 | 0
+					for 0 <= i02_inner < 32 | 0
+						comp02
+for 0 <= i01_outer < 32 | 0
+	for 0 <= i00_outer < 2 | 0
+		for 0 <= i02_outer < 32 | 0
+			for 0 <= i01_inner < 32 | 0
+				for 0 <= i00_inner < 64 | 0
+					for 0 <= i02_inner < 32 | 0
+						comp02
+NB explored schedules : 78
+Best evaluation : 1.63853
+Initial exec time : 63.2895
+Search time : 309956 ms 
+for 0 <= i00 < 128 | 0
+	for 0 <= i02_outer < 32 | 0
+		for 0 <= i01_outer < 8 | 0
+			for 0 <= i02_inner < 32 | 0
+				for 0 <= i01_inner < 128 | 0
+					comp02
+Best schedule exec time : 1.65153
+Speedup : 38.3217

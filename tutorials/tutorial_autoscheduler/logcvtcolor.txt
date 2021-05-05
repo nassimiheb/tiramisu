@@ -1,0 +1,352 @@
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf02.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf02"))
+assert((reinterpret(uint64, buf01.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf01"))
+assert((reinterpret(uint64, buf00.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf00"))
+let buf00 = _halide_buffer_get_host(buf00.buffer)
+let buf01 = _halide_buffer_get_host(buf01.buffer)
+let buf02 = _halide_buffer_get_host(buf02.buffer)
+produce  {
+  allocate _input01_b1[int32 * 3]
+  allocate _input00_b0[int32 * 3 * 1024 * 1024]
+  allocate _comp02_b2[int32 * 1024 * 1024 * 3]
+  for (c1, 0, 3) {
+    for (c3, 0, 1024) {
+      for (c5, 0, 1024) {
+        buf02[(c5 + int32((int64(c3)*(int64)1024)))] = (buf02[(c1 + int32((int64(c5)*(int64)1024)))] + (buf00[((c1 + int32((int64(c5)*(int64)3))) + int32((int64(c3)*(int64)3072)))]*buf01[c1]))
+      }
+    }
+  }
+}
+======================step2==================================
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf02.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf02"))
+assert((reinterpret(uint64, buf01.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf01"))
+assert((reinterpret(uint64, buf00.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf00"))
+let buf00 = _halide_buffer_get_host(buf00.buffer)
+let buf01 = _halide_buffer_get_host(buf01.buffer)
+let buf02 = _halide_buffer_get_host(buf02.buffer)
+produce  {
+  allocate _input01_b1[int32 * 3]
+  allocate _input00_b0[int32 * 3 * 1024 * 1024]
+  allocate _comp02_b2[int32 * 1024 * 1024 * 3]
+  for (c1, 0, 3) {
+    for (c3, 0, 1024) {
+      for (c5, 0, 1024) {
+        buf02[(c5 + int32((int64(c3)*(int64)1024)))] = (buf02[(c1 + int32((int64(c5)*(int64)1024)))] + (buf00[((c1 + int32((int64(c5)*(int64)3))) + int32((int64(c3)*(int64)3072)))]*buf01[c1]))
+      }
+    }
+  }
+}
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf02.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf02"))
+assert((reinterpret(uint64, buf01.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf01"))
+assert((reinterpret(uint64, buf00.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf00"))
+let buf00 = _halide_buffer_get_host(buf00.buffer)
+let buf01 = _halide_buffer_get_host(buf01.buffer)
+let buf02 = _halide_buffer_get_host(buf02.buffer)
+produce  {
+  allocate _input01_b1[int32 * 3]
+  allocate _input00_b0[int32 * 3 * 1024 * 1024]
+  allocate _comp02_b2[int32 * 1024 * 1024 * 3]
+  for (c1, 0, 3) {
+    for (c3, 0, 1024) {
+      for (c5, 0, 1024) {
+        buf02[(c5 + int32((int64(c3)*(int64)1024)))] = (buf02[(c1 + int32((int64(c5)*(int64)1024)))] + (buf00[((c1 + int32((int64(c5)*(int64)3))) + int32((int64(c3)*(int64)3072)))]*buf01[c1]))
+      }
+    }
+  }
+}
+ vars i02 i00 i01  interchange : i02 & i00
+-----------
+Interchange L0  L1
+0- for 0 <= i00 < 1024 | 0
+	1- for 0 <= i02 < 3 | 0
+		2- for 0 <= i01 < 1024 | 0
+			comp02
+{ comp02[t7, t8, t9] -> comp02[0, t16 = 0, i00 = t8, t17 = 0, i02 = t7, t18 = 0, i01 = t9, t19 = 0] : 0 <= t7 <= 2 and 0 <= t8 <= 1023 and 0 <= t9 <= 1023 }
+<illegal>
+ vars i02 i00 i01  interchange : i02 & i01
+-----------
+Interchange L0  L2
+0- for 0 <= i01 < 1024 | 0
+	1- for 0 <= i00 < 1024 | 0
+		2- for 0 <= i02 < 3 | 0
+			comp02
+{ comp02[t7, t8, t9] -> comp02[0, t22 = 0, i01 = t9, t23 = 0, i00 = t8, t24 = 0, i02 = t7, t25 = 0] : 0 <= t7 <= 2 and 0 <= t8 <= 1023 and 0 <= t9 <= 1023 }
+<illegal>
+ vars i02 i00 i01  interchange : i00 & i01
+-----------
+Interchange L1  L2
+0- for 0 <= i02 < 3 | 0
+	1- for 0 <= i01 < 1024 | 0
+		2- for 0 <= i00 < 1024 | 0
+			comp02
+{ comp02[t7, t8, t9] -> comp02[0, t26 = 0, i02 = t7, t27 = 0, i01 = t9, t28 = 0, i00 = t8, t29 = 0] : 0 <= t7 <= 2 and 0 <= t8 <= 1023 and 0 <= t9 <= 1023 }
+<illegal>
+
+original list
+11.189600+
+remaining list
+11.189600+ Tiling 2 loop names: i02 i00 i01  deapth of outer is:1 test : i00 & i01
+-----------
+Tiling L1 32 L2 32
+0- for 0 <= i02 < 3 | 0
+	1- for 0 <= i00_outer < 32 | 0
+		2- for 0 <= i01_outer < 32 | 0
+			3- for 0 <= i00_inner < 32 | 0
+				4- for 0 <= i01_inner < 32 | 0
+					comp02
+{ comp02[t7, t8, t9] -> comp02[0, t45 = 0, i02 = t7, t47 = 0, i00_outer, t49 = 0, i01_outer, t51 = 0, i00_inner, t42 = 0, i01_inner, t53 = 0] : (t8 - i00_inner) mod 32 = 0 and (-t9 + i01_inner) mod 32 = 0 and 0 <= t7 <= 2 and 0 <= t8 <= 1023 and 0 <= t9 <= 1023 and -31 + t8 <= 32i00_outer <= t8 and -31 + t9 <= 32i01_outer <= t9 and 0 <= i00_inner <= 31 and 0 <= i01_inner <= 31 }
+<illegal>
+ Tiling 2 loop names: i02 i00 i01  deapth of outer is:1 test : i00 & i01
+-----------
+Tiling L1 32 L2 64
+0- for 0 <= i02 < 3 | 0
+	1- for 0 <= i00_outer < 32 | 0
+		2- for 0 <= i01_outer < 16 | 0
+			3- for 0 <= i00_inner < 32 | 0
+				4- for 0 <= i01_inner < 64 | 0
+					comp02
+{ comp02[t7, t8, t9] -> comp02[0, t73 = 0, i02 = t7, t75 = 0, i00_outer, t77 = 0, i01_outer, t79 = 0, i00_inner, t70 = 0, i01_inner, t81 = 0] : (t8 - i00_inner) mod 32 = 0 and (-t9 + i01_inner) mod 64 = 0 and 0 <= t7 <= 2 and 0 <= t8 <= 1023 and 0 <= t9 <= 1023 and -31 + t8 <= 32i00_outer <= t8 and -63 + t9 <= 64i01_outer <= t9 and 0 <= i00_inner <= 31 and 0 <= i01_inner <= 63 }
+<illegal>
+ Tiling 2 loop names: i02 i00 i01  deapth of outer is:1 test : i00 & i01
+-----------
+Tiling L1 32 L2 128
+0- for 0 <= i02 < 3 | 0
+	1- for 0 <= i00_outer < 32 | 0
+		2- for 0 <= i01_outer < 8 | 0
+			3- for 0 <= i00_inner < 32 | 0
+				4- for 0 <= i01_inner < 128 | 0
+					comp02
+{ comp02[t7, t8, t9] -> comp02[0, t97 = 0, i02 = t7, t99 = 0, i00_outer, t101 = 0, i01_outer, t103 = 0, i00_inner, t94 = 0, i01_inner, t105 = 0] : (t8 - i00_inner) mod 32 = 0 and (-t9 + i01_inner) mod 128 = 0 and 0 <= t7 <= 2 and 0 <= t8 <= 1023 and 0 <= t9 <= 1023 and -31 + t8 <= 32i00_outer <= t8 and -127 + t9 <= 128i01_outer <= t9 and 0 <= i00_inner <= 31 and 0 <= i01_inner <= 127 }
+<illegal>
+ Tiling 2 loop names: i02 i00 i01  deapth of outer is:1 test : i00 & i01
+-----------
+Tiling L1 64 L2 32
+0- for 0 <= i02 < 3 | 0
+	1- for 0 <= i00_outer < 16 | 0
+		2- for 0 <= i01_outer < 32 | 0
+			3- for 0 <= i00_inner < 64 | 0
+				4- for 0 <= i01_inner < 32 | 0
+					comp02
+{ comp02[t7, t8, t9] -> comp02[0, t121 = 0, i02 = t7, t123 = 0, i00_outer, t125 = 0, i01_outer, t127 = 0, i00_inner, t118 = 0, i01_inner, t129 = 0] : (t8 - i00_inner) mod 64 = 0 and (-t9 + i01_inner) mod 32 = 0 and 0 <= t7 <= 2 and 0 <= t8 <= 1023 and 0 <= t9 <= 1023 and -63 + t8 <= 64i00_outer <= t8 and -31 + t9 <= 32i01_outer <= t9 and 0 <= i00_inner <= 63 and 0 <= i01_inner <= 31 }
+<illegal>
+ Tiling 2 loop names: i02 i00 i01  deapth of outer is:1 test : i00 & i01
+-----------
+Tiling L1 64 L2 64
+0- for 0 <= i02 < 3 | 0
+	1- for 0 <= i00_outer < 16 | 0
+		2- for 0 <= i01_outer < 16 | 0
+			3- for 0 <= i00_inner < 64 | 0
+				4- for 0 <= i01_inner < 64 | 0
+					comp02
+{ comp02[t7, t8, t9] -> comp02[0, t145 = 0, i02 = t7, t147 = 0, i00_outer, t149 = 0, i01_outer, t151 = 0, i00_inner, t142 = 0, i01_inner, t153 = 0] : (t8 - i00_inner) mod 64 = 0 and (-t9 + i01_inner) mod 64 = 0 and 0 <= t7 <= 2 and 0 <= t8 <= 1023 and 0 <= t9 <= 1023 and -63 + t8 <= 64i00_outer <= t8 and -63 + t9 <= 64i01_outer <= t9 and 0 <= i00_inner <= 63 and 0 <= i01_inner <= 63 }
+<illegal>
+ Tiling 2 loop names: i02 i00 i01  deapth of outer is:1 test : i00 & i01
+-----------
+Tiling L1 64 L2 128
+0- for 0 <= i02 < 3 | 0
+	1- for 0 <= i00_outer < 16 | 0
+		2- for 0 <= i01_outer < 8 | 0
+			3- for 0 <= i00_inner < 64 | 0
+				4- for 0 <= i01_inner < 128 | 0
+					comp02
+{ comp02[t7, t8, t9] -> comp02[0, t169 = 0, i02 = t7, t171 = 0, i00_outer, t173 = 0, i01_outer, t175 = 0, i00_inner, t166 = 0, i01_inner, t177 = 0] : (t8 - i00_inner) mod 64 = 0 and (-t9 + i01_inner) mod 128 = 0 and 0 <= t7 <= 2 and 0 <= t8 <= 1023 and 0 <= t9 <= 1023 and -63 + t8 <= 64i00_outer <= t8 and -127 + t9 <= 128i01_outer <= t9 and 0 <= i00_inner <= 63 and 0 <= i01_inner <= 127 }
+<illegal>
+ Tiling 2 loop names: i02 i00 i01  deapth of outer is:1 test : i00 & i01
+-----------
+Tiling L1 128 L2 32
+0- for 0 <= i02 < 3 | 0
+	1- for 0 <= i00_outer < 8 | 0
+		2- for 0 <= i01_outer < 32 | 0
+			3- for 0 <= i00_inner < 128 | 0
+				4- for 0 <= i01_inner < 32 | 0
+					comp02
+{ comp02[t7, t8, t9] -> comp02[0, t193 = 0, i02 = t7, t195 = 0, i00_outer, t197 = 0, i01_outer, t199 = 0, i00_inner, t190 = 0, i01_inner, t201 = 0] : (t8 - i00_inner) mod 128 = 0 and (-t9 + i01_inner) mod 32 = 0 and 0 <= t7 <= 2 and 0 <= t8 <= 1023 and 0 <= t9 <= 1023 and -127 + t8 <= 128i00_outer <= t8 and -31 + t9 <= 32i01_outer <= t9 and 0 <= i00_inner <= 127 and 0 <= i01_inner <= 31 }
+<illegal>
+ Tiling 2 loop names: i02 i00 i01  deapth of outer is:1 test : i00 & i01
+-----------
+Tiling L1 128 L2 64
+0- for 0 <= i02 < 3 | 0
+	1- for 0 <= i00_outer < 8 | 0
+		2- for 0 <= i01_outer < 16 | 0
+			3- for 0 <= i00_inner < 128 | 0
+				4- for 0 <= i01_inner < 64 | 0
+					comp02
+{ comp02[t7, t8, t9] -> comp02[0, t217 = 0, i02 = t7, t219 = 0, i00_outer, t221 = 0, i01_outer, t223 = 0, i00_inner, t214 = 0, i01_inner, t225 = 0] : (t8 - i00_inner) mod 128 = 0 and (-t9 + i01_inner) mod 64 = 0 and 0 <= t7 <= 2 and 0 <= t8 <= 1023 and 0 <= t9 <= 1023 and -127 + t8 <= 128i00_outer <= t8 and -63 + t9 <= 64i01_outer <= t9 and 0 <= i00_inner <= 127 and 0 <= i01_inner <= 63 }
+<illegal>
+ Tiling 2 loop names: i02 i00 i01  deapth of outer is:1 test : i00 & i01
+-----------
+Tiling L1 128 L2 128
+0- for 0 <= i02 < 3 | 0
+	1- for 0 <= i00_outer < 8 | 0
+		2- for 0 <= i01_outer < 8 | 0
+			3- for 0 <= i00_inner < 128 | 0
+				4- for 0 <= i01_inner < 128 | 0
+					comp02
+{ comp02[t7, t8, t9] -> comp02[0, t241 = 0, i02 = t7, t243 = 0, i00_outer, t245 = 0, i01_outer, t247 = 0, i00_inner, t238 = 0, i01_inner, t249 = 0] : (t8 - i00_inner) mod 128 = 0 and (-t9 + i01_inner) mod 128 = 0 and 0 <= t7 <= 2 and 0 <= t8 <= 1023 and 0 <= t9 <= 1023 and -127 + t8 <= 128i00_outer <= t8 and -127 + t9 <= 128i01_outer <= t9 and 0 <= i00_inner <= 127 and 0 <= i01_inner <= 127 }
+<illegal>
+
+original list
+11.189600+
+remaining list
+11.189600+
+Generated Halide IR:
+assert((reinterpret(uint64, buf02.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf02"))
+assert((reinterpret(uint64, buf01.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf01"))
+assert((reinterpret(uint64, buf00.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf00"))
+let buf00 = _halide_buffer_get_host(buf00.buffer)
+let buf01 = _halide_buffer_get_host(buf01.buffer)
+let buf02 = _halide_buffer_get_host(buf02.buffer)
+produce  {
+  allocate _input01_b1[int32 * 3]
+  allocate _input00_b0[int32 * 3 * 1024 * 1024]
+  allocate _comp02_b2[int32 * 1024 * 1024 * 3]
+  for (c1, 0, 3) {
+    for (c3, 0, 1024) {
+      for (c5, 0, 256) {
+        unrolled (c7, 0, 4) {
+          buf02[(((c5*4) + c7) + int32((int64(c3)*(int64)1024)))] = (buf02[(c1 + int32((int64(((c5*4) + c7))*(int64)1024)))] + (buf00[((c1 + int32((int64(((c5*4) + c7))*(int64)3))) + int32((int64(c3)*(int64)3072)))]*buf01[c1]))
+        }
+      }
+    }
+  }
+}
+
+-----------
+Unrolling L2 4
+0- for 0 <= i02 < 3 | 0
+	1- for 0 <= i00 < 1024 | 0
+		2- for 0 <= i01_outer < 256 | 0
+			3- for 0 <= i01_inner < 4 | 1
+				comp02
+Evaluation : 16.811001
+
+{ comp02[t7, t8, t9] -> comp02[0, 0, i02 = t7, 0, i00 = t8, 0, i01 = t9, 0] : 0 <= t7 <= 2 and 0 <= t8 <= 1023 and 0 <= t9 <= 1023 }
+
+
+
+comp02:0 1 0 0 ,0 0 1 0 ,1 0 0 0 ,
+input00:0 1 0 0 ,0 0 1 0 ,1 0 0 0 ,
+input01:1 0 0 0 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf02.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf02"))
+assert((reinterpret(uint64, buf01.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf01"))
+assert((reinterpret(uint64, buf00.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf00"))
+let buf00 = _halide_buffer_get_host(buf00.buffer)
+let buf01 = _halide_buffer_get_host(buf01.buffer)
+let buf02 = _halide_buffer_get_host(buf02.buffer)
+produce  {
+  allocate _input01_b1[int32 * 3]
+  allocate _input00_b0[int32 * 3 * 1024 * 1024]
+  allocate _comp02_b2[int32 * 1024 * 1024 * 3]
+  for (c1, 0, 3) {
+    for (c3, 0, 1024) {
+      for (c5, 0, 128) {
+        unrolled (c7, 0, 8) {
+          buf02[(((c5*8) + c7) + int32((int64(c3)*(int64)1024)))] = (buf02[(c1 + int32((int64(((c5*8) + c7))*(int64)1024)))] + (buf00[((c1 + int32((int64(((c5*8) + c7))*(int64)3))) + int32((int64(c3)*(int64)3072)))]*buf01[c1]))
+        }
+      }
+    }
+  }
+}
+
+-----------
+Unrolling L2 8
+0- for 0 <= i02 < 3 | 0
+	1- for 0 <= i00 < 1024 | 0
+		2- for 0 <= i01_outer < 128 | 0
+			3- for 0 <= i01_inner < 8 | 1
+				comp02
+Evaluation : 11.882900
+
+{ comp02[t7, t8, t9] -> comp02[0, 0, i02 = t7, 0, i00 = t8, 0, i01 = t9, 0] : 0 <= t7 <= 2 and 0 <= t8 <= 1023 and 0 <= t9 <= 1023 }
+
+
+
+comp02:0 1 0 0 ,0 0 1 0 ,1 0 0 0 ,
+input00:0 1 0 0 ,0 0 1 0 ,1 0 0 0 ,
+input01:1 0 0 0 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf02.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf02"))
+assert((reinterpret(uint64, buf01.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf01"))
+assert((reinterpret(uint64, buf00.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf00"))
+let buf00 = _halide_buffer_get_host(buf00.buffer)
+let buf01 = _halide_buffer_get_host(buf01.buffer)
+let buf02 = _halide_buffer_get_host(buf02.buffer)
+produce  {
+  allocate _input01_b1[int32 * 3]
+  allocate _input00_b0[int32 * 3 * 1024 * 1024]
+  allocate _comp02_b2[int32 * 1024 * 1024 * 3]
+  for (c1, 0, 3) {
+    for (c3, 0, 1024) {
+      for (c5, 0, 64) {
+        unrolled (c7, 0, 16) {
+          buf02[(((c5*16) + c7) + int32((int64(c3)*(int64)1024)))] = (buf02[(c1 + int32((int64(((c5*16) + c7))*(int64)1024)))] + (buf00[((c1 + int32((int64(((c5*16) + c7))*(int64)3))) + int32((int64(c3)*(int64)3072)))]*buf01[c1]))
+        }
+      }
+    }
+  }
+}
+
+-----------
+Unrolling L2 16
+0- for 0 <= i02 < 3 | 0
+	1- for 0 <= i00 < 1024 | 0
+		2- for 0 <= i01_outer < 64 | 0
+			3- for 0 <= i01_inner < 16 | 1
+				comp02
+Evaluation : 13.458100
+
+{ comp02[t7, t8, t9] -> comp02[0, 0, i02 = t7, 0, i00 = t8, 0, i01 = t9, 0] : 0 <= t7 <= 2 and 0 <= t8 <= 1023 and 0 <= t9 <= 1023 }
+
+
+
+comp02:0 1 0 0 ,0 0 1 0 ,1 0 0 0 ,
+input00:0 1 0 0 ,0 0 1 0 ,1 0 0 0 ,
+input01:1 0 0 0 ,
+
+<legal>
+NB explored schedules : 15
+Best evaluation : 11.882900
+Initial exec time : 10.835100
+Initial evaluation : 11.189600
+Search time : 5143 ms 
+0- for 0 <= i02 < 3 | 0
+	1- for 0 <= i00 < 1024 | 0
+		2- for 0 <= i01_outer < 128 | 0
+			3- for 0 <= i01_inner < 8 | 1
+				comp02
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf02.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf02"))
+assert((reinterpret(uint64, buf01.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf01"))
+assert((reinterpret(uint64, buf00.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf00"))
+let buf00 = _halide_buffer_get_host(buf00.buffer)
+let buf01 = _halide_buffer_get_host(buf01.buffer)
+let buf02 = _halide_buffer_get_host(buf02.buffer)
+produce  {
+  allocate _input01_b1[int32 * 3]
+  allocate _input00_b0[int32 * 3 * 1024 * 1024]
+  allocate _comp02_b2[int32 * 1024 * 1024 * 3]
+  for (c1, 0, 3) {
+    for (c3, 0, 1024) {
+      for (c5, 0, 128) {
+        unrolled (c7, 0, 8) {
+          buf02[(((c5*8) + c7) + int32((int64(c3)*(int64)1024)))] = (buf02[(c1 + int32((int64(((c5*8) + c7))*(int64)1024)))] + (buf00[((c1 + int32((int64(((c5*8) + c7))*(int64)3))) + int32((int64(c3)*(int64)3072)))]*buf01[c1]))
+        }
+      }
+    }
+  }
+}
+Best schedule exec time : 13.364000
+Speedup : 0.810768
