@@ -7,7 +7,7 @@ using namespace tiramisu;
 const std::string py_cmd_path = "/usr/bin/python3";
 
 // Path to a script that executes the ML model (please give absolute path)
-const std::string py_interface_path = "/home/nassim/Desktop/tiramisu_raw/tutorials/tutorial_autoscheduler/model/main.py";
+const std::string py_interface_path = "/data/scratch/tiramisu_git/tiramisu_lanka/tiramisu/tutorials/tutorial_autoscheduler/model/main.py";
 
 int main(int argc, char **argv)
 {
