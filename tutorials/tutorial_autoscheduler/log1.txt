@@ -2050,3 +2050,45 @@ produce  {
     }
   }
 }
+
+-----------
+Skewing L1 3 L2 2
+Parallelize L2 1
+0- for 0 <= t < 200 | 0
+	1- for 3 <= xx_skew_3_2 < 5109 | 0
+		2- for 0 <= yy_skew_outer < 206 | 0 | P
+			3- for 0 <= yy_skew_inner < 1 | 0
+				conv
+Evaluation : 42044.601562
+
+{ conv[t4, t5, t6] -> conv[t188 = 0, t189 = 0, t = t4, t191 = 0, xx_skew_3_2 = 3t5 + 2t6, t193 = 0, yy_skew = t5 + t6, t195 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -5 ,0 0 1 -2 ,
+src:0 1 0 -3 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -2 ,0 0 1 -1 ,
+src:0 1 0 2 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 3 ,0 0 1 1 ,
+src:0 1 0 5 ,0 0 1 2 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 0, 200) {
+    for (c3, 5, 5106) {
+      parallel (c5, max((int32(floor_f32(float32(((c3 + 3)/16)))) + -64), int32(floor_f32(float32(((c3 + 3)/24))))), ((min(int32(floor_f32(float32(((c3 + -1)/16)))), (int32(floor_f32(float32(((c3 + 14)/24)))) + 42)) - max((int32(floor_f32(float32(((c3 + 3)/16)))) + -64), int32(floor_f32(float32(((c3 + 3)/24)))))) + 1)) {
+        for (c7, max(max(((int32(floor_f32(float32(((c3 + 1)/2)))) - (c5*8)) + -511), ((int32(floor_f32(float32((c3/3)))) - (c5*8)) + 1)), 0), ((min(min(((int32(floor_f32(float32(((c3 + 1)/2)))) - (c5*8)) + -1), ((int32(floor_f32(float32(((c3 + -1)/3)))) - (c5*8)) + 341)), 7) - max(max(((int32(floor_f32(float32(((c3 + 1)/2)))) - (c5*8)) + -511), ((int32(floor_f32(float32((c3/3)))) - (c5*8)) + 1)), 0)) + 1)) {
+          buf_output[((((c5*24) - c3) + (c7*3)) + int32((int64(((c3 - (c5*16)) - (c7*2)))*(int64)1024)))] = (((((((buf_output[(int32((int64((((c5*24) - c3) + (c7*3))) + (int64)-1)) + int32(((int64(((c3 - (c5*16)) - (c7*2)))*(int64)1024) + (int64)-1024)))] + buf_output[((((c5*24) - c3) + (c7*3)) + int32(((int64(((c3 - (c5*16)) - (c7*2)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*24) - c3) + (c7*3))) + (int64)1)) + int32(((int64(((c3 - (c5*16)) - (c7*2)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*24) - c3) + (c7*3))) + (int64)-1)) + int32((int64(((c3 - (c5*16)) - (c7*2)))*(int64)1024)))]) + buf_output[(int32((int64((((c5*24) - c3) + (c7*3))) + (int64)1)) + int32((int64(((c3 - (c5*16)) - (c7*2)))*(int64)1024)))]) + buf_output[(int32((int64((((c5*24) - c3) + (c7*3))) + (int64)-1)) + int32(((int64(((c3 - (c5*16)) - (c7*2)))*(int64)1024) + (int64)1024)))]) + buf_output[((((c5*24) - c3) + (c7*3)) + int32(((int64(((c3 - (c5*16)) - (c7*2)))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64((((c5*24) - c3) + (c7*3))) + (int64)1)) + int32(((int64(((c3 - (c5*16)) - (c7*2)))*(int64)1024) + (int64)1024)))])
+        }
+      }
+    }
+  }
+}
