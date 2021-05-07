@@ -15,10 +15,10 @@ int main(int, char **argv)
     std::vector<double> duration_vector;
     double start, end;
     
-    for (int i = 0; i < 0; ++i) 
+    for (int i = 0; i < 1; ++i) 
         conv(buf01.raw_buffer());
     
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 9; i++)
     {
         start = rtclock();
         conv(buf01.raw_buffer());

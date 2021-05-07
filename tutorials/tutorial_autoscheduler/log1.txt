@@ -14,6 +14,7 @@ produce  {
   }
 }
 ======================step2==================================
+ordering start
 
 Generated Halide IR:
 assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
@@ -40,6 +41,2011 @@ produce  {
     for (c3, 1, 1022) {
       for (c5, 1, 1022) {
         buf_output[(c5 + int32((int64(c3)*(int64)1024)))] = (((((((buf_output[(int32((int64(c5) + (int64)-1)) + int32(((int64(c3)*(int64)1024) + (int64)-1024)))] + buf_output[(c5 + int32(((int64(c3)*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c5) + (int64)1)) + int32(((int64(c3)*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c5) + (int64)-1)) + int32((int64(c3)*(int64)1024)))]) + buf_output[(int32((int64(c5) + (int64)1)) + int32((int64(c3)*(int64)1024)))]) + buf_output[(int32((int64(c5) + (int64)-1)) + int32(((int64(c3)*(int64)1024) + (int64)1024)))]) + buf_output[(c5 + int32(((int64(c3)*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(c5) + (int64)1)) + int32(((int64(c3)*(int64)1024) + (int64)1024)))])
+      }
+    }
+  }
+}
+ vars t xx yy  Skewing : t & xx
+ transformation map:{[i,j]->[2*i1*j ,1*i1*j]}
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 1, 1420) {
+    for (c3, max((c1 + -199), (int32(floor_f32(float32((c1/2)))) + 1)), ((min(c1, (int32(floor_f32(float32((c1/2)))) + 511)) - max((c1 + -199), (int32(floor_f32(float32((c1/2)))) + 1))) + 1)) {
+      for (c5, 1, 1022) {
+        buf_output[(c5 + int32((int64(((c3*2) - c1))*(int64)1024)))] = (((((((buf_output[(int32((int64(c5) + (int64)-1)) + int32(((int64(((c3*2) - c1))*(int64)1024) + (int64)-1024)))] + buf_output[(c5 + int32(((int64(((c3*2) - c1))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c5) + (int64)1)) + int32(((int64(((c3*2) - c1))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c5) + (int64)-1)) + int32((int64(((c3*2) - c1))*(int64)1024)))]) + buf_output[(int32((int64(c5) + (int64)1)) + int32((int64(((c3*2) - c1))*(int64)1024)))]) + buf_output[(int32((int64(c5) + (int64)-1)) + int32(((int64(((c3*2) - c1))*(int64)1024) + (int64)1024)))]) + buf_output[(c5 + int32(((int64(((c3*2) - c1))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(c5) + (int64)1)) + int32(((int64(((c3*2) - c1))*(int64)1024) + (int64)1024)))])
+      }
+    }
+  }
+}
+
+-----------
+Skewing L0 2 L1 1
+0- for 0 <= t_skew_2_1 < 1420 | 0
+	1- for 0 <= xx_skew < 145 | 0
+		2- for 1 <= yy < 1023 | 0
+			conv
+Evaluation : 581.617981
+
+{ conv[t4, t5, t6] -> conv[t12 = 0, t13 = 0, t_skew_2_1 = 2t4 + t5, t15 = 0, xx_skew = t4 + t5, t17 = 0, yy = t6, t19 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 1 ,
+src:0 1 0 0 ,0 0 1 -1 ,
+src:0 1 0 0 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 1 ,0 0 1 1 ,
+
+<legal>
+ vars t xx yy  Skewing : t & xx
+ transformation map:{[i,j]->[3*i1*j ,2*i1*j]}
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 1, 1619) {
+    for (c3, max((c1 + -199), ((c1 - int32(floor_f32(float32(((c1 + 2)/3))))) + 1)), ((min(c1, ((c1 - int32(floor_f32(float32(((c1/3) + 1))))) + 341)) - max((c1 + -199), ((c1 - int32(floor_f32(float32(((c1 + 2)/3))))) + 1))) + 1)) {
+      for (c5, 1, 1022) {
+        buf_output[(c5 + int32((int64(((c3*3) - (c1*2)))*(int64)1024)))] = (((((((buf_output[(int32((int64(c5) + (int64)-1)) + int32(((int64(((c3*3) - (c1*2)))*(int64)1024) + (int64)-1024)))] + buf_output[(c5 + int32(((int64(((c3*3) - (c1*2)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c5) + (int64)1)) + int32(((int64(((c3*3) - (c1*2)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c5) + (int64)-1)) + int32((int64(((c3*3) - (c1*2)))*(int64)1024)))]) + buf_output[(int32((int64(c5) + (int64)1)) + int32((int64(((c3*3) - (c1*2)))*(int64)1024)))]) + buf_output[(int32((int64(c5) + (int64)-1)) + int32(((int64(((c3*3) - (c1*2)))*(int64)1024) + (int64)1024)))]) + buf_output[(c5 + int32(((int64(((c3*3) - (c1*2)))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(c5) + (int64)1)) + int32(((int64(((c3*3) - (c1*2)))*(int64)1024) + (int64)1024)))])
+      }
+    }
+  }
+}
+
+-----------
+Skewing L0 3 L1 1
+0- for 0 <= t_skew_3_1 < 1619 | 0
+	1- for 0 <= xx_skew < 127 | 0
+		2- for 1 <= yy < 1023 | 0
+			conv
+Evaluation : 581.041992
+
+{ conv[t4, t5, t6] -> conv[t34 = 0, t35 = 0, t_skew_3_1 = 3t4 + t5, t37 = 0, xx_skew = 2t4 + t5, t39 = 0, yy = t6, t41 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 1 ,
+src:0 1 0 0 ,0 0 1 -1 ,
+src:0 1 0 0 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 1 ,0 0 1 1 ,
+
+<legal>
+ vars t xx yy  Skewing : t & xx
+ transformation map:{[i,j]->[3*i2*j ,1*i1*j]}
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 2, 2640) {
+    for (c3, max((int32(floor_f32(float32((c1/2)))) + -99), (int32(floor_f32(float32((c1/3)))) + 1)), ((min(int32(floor_f32(float32((c1/2)))), (int32(floor_f32(float32(((c1 + -1)/3)))) + 341)) - max((int32(floor_f32(float32((c1/2)))) + -99), (int32(floor_f32(float32((c1/3)))) + 1))) + 1)) {
+      for (c5, 1, 1022) {
+        buf_output[(c5 + int32((int64(((c3*3) - c1))*(int64)1024)))] = (((((((buf_output[(int32((int64(c5) + (int64)-1)) + int32(((int64(((c3*3) - c1))*(int64)1024) + (int64)-1024)))] + buf_output[(c5 + int32(((int64(((c3*3) - c1))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c5) + (int64)1)) + int32(((int64(((c3*3) - c1))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c5) + (int64)-1)) + int32((int64(((c3*3) - c1))*(int64)1024)))]) + buf_output[(int32((int64(c5) + (int64)1)) + int32((int64(((c3*3) - c1))*(int64)1024)))]) + buf_output[(int32((int64(c5) + (int64)-1)) + int32(((int64(((c3*3) - c1))*(int64)1024) + (int64)1024)))]) + buf_output[(c5 + int32(((int64(((c3*3) - c1))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(c5) + (int64)1)) + int32(((int64(((c3*3) - c1))*(int64)1024) + (int64)1024)))])
+      }
+    }
+  }
+}
+
+-----------
+Skewing L0 3 L1 2
+0- for 0 <= t_skew_3_2 < 2640 | 0
+	1- for 0 <= xx_skew < 78 | 0
+		2- for 1 <= yy < 1023 | 0
+			conv
+Evaluation : 581.059021
+
+{ conv[t4, t5, t6] -> conv[t56 = 0, t57 = 0, t_skew_3_2 = 3t4 + 2t5, t59 = 0, xx_skew = t4 + t5, t61 = 0, yy = t6, t63 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 1 ,
+src:0 1 0 0 ,0 0 1 -1 ,
+src:0 1 0 0 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 1 ,0 0 1 1 ,
+
+<legal>
+ vars t xx yy  Skewing : t & xx
+ transformation map:{[i,j]->[4*i1*j ,3*i1*j]}
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 1, 1818) {
+    for (c3, max((c1 + -199), ((c1 - int32(floor_f32(float32(((c1 + 3)/4))))) + 1)), ((min(c1, ((c1 - int32(floor_f32(float32(((c1 + 1)/4))))) + 255)) - max((c1 + -199), ((c1 - int32(floor_f32(float32(((c1 + 3)/4))))) + 1))) + 1)) {
+      for (c5, 1, 1022) {
+        buf_output[(c5 + int32((int64(((c3*4) - (c1*3)))*(int64)1024)))] = (((((((buf_output[(int32((int64(c5) + (int64)-1)) + int32(((int64(((c3*4) - (c1*3)))*(int64)1024) + (int64)-1024)))] + buf_output[(c5 + int32(((int64(((c3*4) - (c1*3)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c5) + (int64)1)) + int32(((int64(((c3*4) - (c1*3)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c5) + (int64)-1)) + int32((int64(((c3*4) - (c1*3)))*(int64)1024)))]) + buf_output[(int32((int64(c5) + (int64)1)) + int32((int64(((c3*4) - (c1*3)))*(int64)1024)))]) + buf_output[(int32((int64(c5) + (int64)-1)) + int32(((int64(((c3*4) - (c1*3)))*(int64)1024) + (int64)1024)))]) + buf_output[(c5 + int32(((int64(((c3*4) - (c1*3)))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(c5) + (int64)1)) + int32(((int64(((c3*4) - (c1*3)))*(int64)1024) + (int64)1024)))])
+      }
+    }
+  }
+}
+
+-----------
+Skewing L0 4 L1 1
+0- for 0 <= t_skew_4_1 < 1818 | 0
+	1- for 0 <= xx_skew < 113 | 0
+		2- for 1 <= yy < 1023 | 0
+			conv
+Evaluation : 581.171021
+
+{ conv[t4, t5, t6] -> conv[t78 = 0, t79 = 0, t_skew_4_1 = 4t4 + t5, t81 = 0, xx_skew = 3t4 + t5, t83 = 0, yy = t6, t85 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 1 ,
+src:0 1 0 0 ,0 0 1 -1 ,
+src:0 1 0 0 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 1 ,0 0 1 1 ,
+
+<legal>
+ vars t xx yy  Skewing : t & xx
+ transformation map:{[i,j]->[4*i3*j ,1*i1*j]}
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 3, 3860) {
+    for (c3, max((int32(floor_f32(float32(((c1 + 1)/3)))) + -66), (int32(floor_f32(float32((c1/4)))) + 1)), ((min(int32(floor_f32(float32((c1/3)))), (int32(floor_f32(float32(((c1 + 2)/4)))) + 255)) - max((int32(floor_f32(float32(((c1 + 1)/3)))) + -66), (int32(floor_f32(float32((c1/4)))) + 1))) + 1)) {
+      for (c5, 1, 1022) {
+        buf_output[(c5 + int32((int64(((c3*4) - c1))*(int64)1024)))] = (((((((buf_output[(int32((int64(c5) + (int64)-1)) + int32(((int64(((c3*4) - c1))*(int64)1024) + (int64)-1024)))] + buf_output[(c5 + int32(((int64(((c3*4) - c1))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c5) + (int64)1)) + int32(((int64(((c3*4) - c1))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c5) + (int64)-1)) + int32((int64(((c3*4) - c1))*(int64)1024)))]) + buf_output[(int32((int64(c5) + (int64)1)) + int32((int64(((c3*4) - c1))*(int64)1024)))]) + buf_output[(int32((int64(c5) + (int64)-1)) + int32(((int64(((c3*4) - c1))*(int64)1024) + (int64)1024)))]) + buf_output[(c5 + int32(((int64(((c3*4) - c1))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(c5) + (int64)1)) + int32(((int64(((c3*4) - c1))*(int64)1024) + (int64)1024)))])
+      }
+    }
+  }
+}
+
+-----------
+Skewing L0 4 L1 3
+0- for 0 <= t_skew_4_3 < 3860 | 0
+	1- for 0 <= xx_skew < 54 | 0
+		2- for 1 <= yy < 1023 | 0
+			conv
+Evaluation : 579.164001
+
+{ conv[t4, t5, t6] -> conv[t100 = 0, t101 = 0, t_skew_4_3 = 4t4 + 3t5, t103 = 0, xx_skew = t4 + t5, t105 = 0, yy = t6, t107 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 1 ,
+src:0 1 0 0 ,0 0 1 -1 ,
+src:0 1 0 0 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 1 ,0 0 1 1 ,
+
+<legal>
+ vars t xx yy  Skewing : t & xx
+ transformation map:{[i,j]->[5*i1*j ,4*i1*j]}
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 1, 2017) {
+    for (c3, max((c1 + -199), ((c1 - int32(floor_f32(float32(((c1 + 4)/5))))) + 1)), ((min(c1, ((c1 - int32(floor_f32(float32(((c1 + 2)/5))))) + 204)) - max((c1 + -199), ((c1 - int32(floor_f32(float32(((c1 + 4)/5))))) + 1))) + 1)) {
+      for (c5, 1, 1022) {
+        buf_output[(c5 + int32((int64(((c3*5) - (c1*4)))*(int64)1024)))] = (((((((buf_output[(int32((int64(c5) + (int64)-1)) + int32(((int64(((c3*5) - (c1*4)))*(int64)1024) + (int64)-1024)))] + buf_output[(c5 + int32(((int64(((c3*5) - (c1*4)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c5) + (int64)1)) + int32(((int64(((c3*5) - (c1*4)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c5) + (int64)-1)) + int32((int64(((c3*5) - (c1*4)))*(int64)1024)))]) + buf_output[(int32((int64(c5) + (int64)1)) + int32((int64(((c3*5) - (c1*4)))*(int64)1024)))]) + buf_output[(int32((int64(c5) + (int64)-1)) + int32(((int64(((c3*5) - (c1*4)))*(int64)1024) + (int64)1024)))]) + buf_output[(c5 + int32(((int64(((c3*5) - (c1*4)))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(c5) + (int64)1)) + int32(((int64(((c3*5) - (c1*4)))*(int64)1024) + (int64)1024)))])
+      }
+    }
+  }
+}
+
+-----------
+Skewing L0 5 L1 1
+0- for 0 <= t_skew_5_1 < 2017 | 0
+	1- for 0 <= xx_skew < 102 | 0
+		2- for 1 <= yy < 1023 | 0
+			conv
+Evaluation : 578.320007
+
+{ conv[t4, t5, t6] -> conv[t122 = 0, t123 = 0, t_skew_5_1 = 5t4 + t5, t125 = 0, xx_skew = 4t4 + t5, t127 = 0, yy = t6, t129 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 1 ,
+src:0 1 0 0 ,0 0 1 -1 ,
+src:0 1 0 0 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 1 ,0 0 1 1 ,
+
+<legal>
+ vars t xx yy  Skewing : xx & yy
+ transformation map:{[i,j]->[2*i1*j ,1*i1*j]}
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 0, 200) {
+    for (c3, 3, 3064) {
+      for (c5, max((c3 + -1022), (int32(floor_f32(float32((c3/2)))) + 1)), (min(c3, (int32(floor_f32(float32((c3/2)))) + 512)) - max((c3 + -1022), (int32(floor_f32(float32((c3/2)))) + 1)))) {
+        buf_output[(((c5*2) - c3) + int32((int64((c3 - c5))*(int64)1024)))] = (((((((buf_output[(int32((int64(((c5*2) - c3)) + (int64)-1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)-1024)))] + buf_output[(((c5*2) - c3) + int32(((int64((c3 - c5))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(((c5*2) - c3)) + (int64)1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(((c5*2) - c3)) + (int64)-1)) + int32((int64((c3 - c5))*(int64)1024)))]) + buf_output[(int32((int64(((c5*2) - c3)) + (int64)1)) + int32((int64((c3 - c5))*(int64)1024)))]) + buf_output[(int32((int64(((c5*2) - c3)) + (int64)-1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)1024)))]) + buf_output[(((c5*2) - c3) + int32(((int64((c3 - c5))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(((c5*2) - c3)) + (int64)1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)1024)))])
+      }
+    }
+  }
+}
+
+-----------
+Skewing L1 2 L2 1
+0- for 0 <= t < 200 | 0
+	1- for 2 <= xx_skew_2_1 < 3066 | 0
+		2- for 0 <= yy_skew < 342 | 0
+			conv
+Evaluation : 1012.469971
+
+{ conv[t4, t5, t6] -> conv[t144 = 0, t145 = 0, t = t4, t147 = 0, xx_skew_2_1 = 2t5 + t6, t149 = 0, yy_skew = t5 + t6, t151 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+src:0 1 0 -3 ,0 0 1 -2 ,
+src:0 1 0 -2 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 2 ,0 0 1 1 ,
+src:0 1 0 3 ,0 0 1 2 ,
+
+<legal>
+ vars t xx yy  Skewing : xx & yy
+ transformation map:{[i,j]->[3*i1*j ,2*i1*j]}
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 0, 200) {
+    for (c3, 4, 4085) {
+      for (c5, max((c3 + -1022), ((c3 - int32(floor_f32(float32(((c3 + 2)/3))))) + 1)), (min(c3, ((c3 - int32(floor_f32(float32(((c3/3) + 1))))) + 342)) - max((c3 + -1022), ((c3 - int32(floor_f32(float32(((c3 + 2)/3))))) + 1)))) {
+        buf_output[(((c5*3) - (c3*2)) + int32((int64((c3 - c5))*(int64)1024)))] = (((((((buf_output[(int32((int64(((c5*3) - (c3*2))) + (int64)-1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)-1024)))] + buf_output[(((c5*3) - (c3*2)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(((c5*3) - (c3*2))) + (int64)1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(((c5*3) - (c3*2))) + (int64)-1)) + int32((int64((c3 - c5))*(int64)1024)))]) + buf_output[(int32((int64(((c5*3) - (c3*2))) + (int64)1)) + int32((int64((c3 - c5))*(int64)1024)))]) + buf_output[(int32((int64(((c5*3) - (c3*2))) + (int64)-1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)1024)))]) + buf_output[(((c5*3) - (c3*2)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(((c5*3) - (c3*2))) + (int64)1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)1024)))])
+      }
+    }
+  }
+}
+
+-----------
+Skewing L1 3 L2 1
+0- for 0 <= t < 200 | 0
+	1- for 3 <= xx_skew_3_1 < 4088 | 0
+		2- for 0 <= yy_skew < 257 | 0
+			conv
+Evaluation : 1017.780029
+
+{ conv[t4, t5, t6] -> conv[t166 = 0, t167 = 0, t = t4, t169 = 0, xx_skew_3_1 = 3t5 + t6, t171 = 0, yy_skew = 2t5 + t6, t173 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+src:0 1 0 -4 ,0 0 1 -3 ,
+src:0 1 0 -3 ,0 0 1 -2 ,
+src:0 1 0 -2 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 1 ,
+src:0 1 0 2 ,0 0 1 1 ,
+src:0 1 0 3 ,0 0 1 2 ,
+src:0 1 0 4 ,0 0 1 3 ,
+
+<legal>
+ vars t xx yy  Skewing : xx & yy
+ transformation map:{[i,j]->[3*i2*j ,1*i1*j]}
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 0, 200) {
+    for (c3, 5, 5106) {
+      for (c5, max((int32(floor_f32(float32(((c3 + 1)/2)))) + -511), (int32(floor_f32(float32((c3/3)))) + 1)), (min(int32(floor_f32(float32(((c3 + 1)/2)))), (int32(floor_f32(float32(((c3 + -1)/3)))) + 342)) - max((int32(floor_f32(float32(((c3 + 1)/2)))) + -511), (int32(floor_f32(float32((c3/3)))) + 1)))) {
+        buf_output[(((c5*3) - c3) + int32((int64((c3 - (c5*2)))*(int64)1024)))] = (((((((buf_output[(int32((int64(((c5*3) - c3)) + (int64)-1)) + int32(((int64((c3 - (c5*2)))*(int64)1024) + (int64)-1024)))] + buf_output[(((c5*3) - c3) + int32(((int64((c3 - (c5*2)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(((c5*3) - c3)) + (int64)1)) + int32(((int64((c3 - (c5*2)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(((c5*3) - c3)) + (int64)-1)) + int32((int64((c3 - (c5*2)))*(int64)1024)))]) + buf_output[(int32((int64(((c5*3) - c3)) + (int64)1)) + int32((int64((c3 - (c5*2)))*(int64)1024)))]) + buf_output[(int32((int64(((c5*3) - c3)) + (int64)-1)) + int32(((int64((c3 - (c5*2)))*(int64)1024) + (int64)1024)))]) + buf_output[(((c5*3) - c3) + int32(((int64((c3 - (c5*2)))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(((c5*3) - c3)) + (int64)1)) + int32(((int64((c3 - (c5*2)))*(int64)1024) + (int64)1024)))])
+      }
+    }
+  }
+}
+
+-----------
+Skewing L1 3 L2 2
+0- for 0 <= t < 200 | 0
+	1- for 3 <= xx_skew_3_2 < 5109 | 0
+		2- for 0 <= yy_skew < 206 | 0
+			conv
+Evaluation : 1188.550049
+
+{ conv[t4, t5, t6] -> conv[t188 = 0, t189 = 0, t = t4, t191 = 0, xx_skew_3_2 = 3t5 + 2t6, t193 = 0, yy_skew = t5 + t6, t195 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+src:0 1 0 -5 ,0 0 1 -2 ,
+src:0 1 0 -3 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -2 ,0 0 1 -1 ,
+src:0 1 0 2 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 3 ,0 0 1 1 ,
+src:0 1 0 5 ,0 0 1 2 ,
+
+<legal>
+ vars t xx yy  Skewing : xx & yy
+ transformation map:{[i,j]->[4*i1*j ,3*i1*j]}
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 0, 200) {
+    for (c3, 5, 5106) {
+      for (c5, max((c3 + -1022), ((c3 - int32(floor_f32(float32(((c3 + 3)/4))))) + 1)), (min(c3, ((c3 - int32(floor_f32(float32(((c3 + 1)/4))))) + 256)) - max((c3 + -1022), ((c3 - int32(floor_f32(float32(((c3 + 3)/4))))) + 1)))) {
+        buf_output[(((c5*4) - (c3*3)) + int32((int64((c3 - c5))*(int64)1024)))] = (((((((buf_output[(int32((int64(((c5*4) - (c3*3))) + (int64)-1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)-1024)))] + buf_output[(((c5*4) - (c3*3)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(((c5*4) - (c3*3))) + (int64)1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(((c5*4) - (c3*3))) + (int64)-1)) + int32((int64((c3 - c5))*(int64)1024)))]) + buf_output[(int32((int64(((c5*4) - (c3*3))) + (int64)1)) + int32((int64((c3 - c5))*(int64)1024)))]) + buf_output[(int32((int64(((c5*4) - (c3*3))) + (int64)-1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)1024)))]) + buf_output[(((c5*4) - (c3*3)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(((c5*4) - (c3*3))) + (int64)1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)1024)))])
+      }
+    }
+  }
+}
+
+-----------
+Skewing L1 4 L2 1
+0- for 0 <= t < 200 | 0
+	1- for 4 <= xx_skew_4_1 < 5110 | 0
+		2- for 0 <= yy_skew < 206 | 0
+			conv
+Evaluation : 1102.380005
+
+{ conv[t4, t5, t6] -> conv[t210 = 0, t211 = 0, t = t4, t213 = 0, xx_skew_4_1 = 4t5 + t6, t215 = 0, yy_skew = 3t5 + t6, t217 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+src:0 1 0 -5 ,0 0 1 -4 ,
+src:0 1 0 -4 ,0 0 1 -3 ,
+src:0 1 0 -3 ,0 0 1 -2 ,
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 1 ,
+src:0 1 0 3 ,0 0 1 2 ,
+src:0 1 0 4 ,0 0 1 3 ,
+src:0 1 0 5 ,0 0 1 4 ,
+
+<legal>
+ vars t xx yy  Skewing : xx & yy
+ transformation map:{[i,j]->[4*i3*j ,1*i1*j]}
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 0, 200) {
+    for (c3, 7, 7148) {
+      for (c5, max((int32(floor_f32(float32((c3/3)))) + -340), (int32(floor_f32(float32((c3/4)))) + 1)), ((min(int32(floor_f32(float32(((c3 + -1)/3)))), (int32(floor_f32(float32(((c3 + 2)/4)))) + 255)) - max((int32(floor_f32(float32((c3/3)))) + -340), (int32(floor_f32(float32((c3/4)))) + 1))) + 1)) {
+        buf_output[(((c5*4) - c3) + int32((int64((c3 - (c5*3)))*(int64)1024)))] = (((((((buf_output[(int32((int64(((c5*4) - c3)) + (int64)-1)) + int32(((int64((c3 - (c5*3)))*(int64)1024) + (int64)-1024)))] + buf_output[(((c5*4) - c3) + int32(((int64((c3 - (c5*3)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(((c5*4) - c3)) + (int64)1)) + int32(((int64((c3 - (c5*3)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(((c5*4) - c3)) + (int64)-1)) + int32((int64((c3 - (c5*3)))*(int64)1024)))]) + buf_output[(int32((int64(((c5*4) - c3)) + (int64)1)) + int32((int64((c3 - (c5*3)))*(int64)1024)))]) + buf_output[(int32((int64(((c5*4) - c3)) + (int64)-1)) + int32(((int64((c3 - (c5*3)))*(int64)1024) + (int64)1024)))]) + buf_output[(((c5*4) - c3) + int32(((int64((c3 - (c5*3)))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(((c5*4) - c3)) + (int64)1)) + int32(((int64((c3 - (c5*3)))*(int64)1024) + (int64)1024)))])
+      }
+    }
+  }
+}
+
+-----------
+Skewing L1 4 L2 3
+0- for 0 <= t < 200 | 0
+	1- for 4 <= xx_skew_4_3 < 7152 | 0
+		2- for 0 <= yy_skew < 147 | 0
+			conv
+Evaluation : 1351.280029
+
+{ conv[t4, t5, t6] -> conv[t232 = 0, t233 = 0, t = t4, t235 = 0, xx_skew_4_3 = 4t5 + 3t6, t237 = 0, yy_skew = t5 + t6, t239 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+src:0 1 0 -7 ,0 0 1 -2 ,
+src:0 1 0 -4 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -3 ,0 0 1 -1 ,
+src:0 1 0 3 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 4 ,0 0 1 1 ,
+src:0 1 0 7 ,0 0 1 2 ,
+
+<legal>
+ vars t xx yy  Skewing : xx & yy
+ transformation map:{[i,j]->[5*i1*j ,4*i1*j]}
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 0, 200) {
+    for (c3, 6, 6127) {
+      for (c5, max((c3 + -1022), ((c3 - int32(floor_f32(float32(((c3 + 4)/5))))) + 1)), (min(c3, ((c3 - int32(floor_f32(float32(((c3 + 2)/5))))) + 205)) - max((c3 + -1022), ((c3 - int32(floor_f32(float32(((c3 + 4)/5))))) + 1)))) {
+        buf_output[(((c5*5) - (c3*4)) + int32((int64((c3 - c5))*(int64)1024)))] = (((((((buf_output[(int32((int64(((c5*5) - (c3*4))) + (int64)-1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)-1024)))] + buf_output[(((c5*5) - (c3*4)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(((c5*5) - (c3*4))) + (int64)1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(((c5*5) - (c3*4))) + (int64)-1)) + int32((int64((c3 - c5))*(int64)1024)))]) + buf_output[(int32((int64(((c5*5) - (c3*4))) + (int64)1)) + int32((int64((c3 - c5))*(int64)1024)))]) + buf_output[(int32((int64(((c5*5) - (c3*4))) + (int64)-1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)1024)))]) + buf_output[(((c5*5) - (c3*4)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(((c5*5) - (c3*4))) + (int64)1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)1024)))])
+      }
+    }
+  }
+}
+
+-----------
+Skewing L1 5 L2 1
+0- for 0 <= t < 200 | 0
+	1- for 5 <= xx_skew_5_1 < 6132 | 0
+		2- for 0 <= yy_skew < 172 | 0
+			conv
+Evaluation : 809.270020
+
+{ conv[t4, t5, t6] -> conv[t254 = 0, t255 = 0, t = t4, t257 = 0, xx_skew_5_1 = 5t5 + t6, t259 = 0, yy_skew = 4t5 + t6, t261 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+src:0 1 0 -6 ,0 0 1 -5 ,
+src:0 1 0 -5 ,0 0 1 -4 ,
+src:0 1 0 -4 ,0 0 1 -3 ,
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 1 ,
+src:0 1 0 4 ,0 0 1 3 ,
+src:0 1 0 5 ,0 0 1 4 ,
+src:0 1 0 6 ,0 0 1 5 ,
+
+<legal>
+ vars t xx yy  Skewing : xx & yy
+ transformation map:{[i,j]->[1*i1*j ,0*i1*j]}
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 0, 200) {
+    for (c3, 2, 2043) {
+      for (c5, max((c3 + -1022), 1), (min(c3, 1023) - max((c3 + -1022), 1))) {
+        buf_output[(c5 + int32((int64((c3 - c5))*(int64)1024)))] = (((((((buf_output[(int32((int64(c5) + (int64)-1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)-1024)))] + buf_output[(c5 + int32(((int64((c3 - c5))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c5) + (int64)1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c5) + (int64)-1)) + int32((int64((c3 - c5))*(int64)1024)))]) + buf_output[(int32((int64(c5) + (int64)1)) + int32((int64((c3 - c5))*(int64)1024)))]) + buf_output[(int32((int64(c5) + (int64)-1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)1024)))]) + buf_output[(c5 + int32(((int64((c3 - c5))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(c5) + (int64)1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)1024)))])
+      }
+    }
+  }
+}
+
+-----------
+Skewing L1 1 L2 1
+0- for 0 <= t < 200 | 0
+	1- for 1 <= xx_skew_1_1 < 2044 | 0
+		2- for 0 <= yy_skew < 512 | 0
+			conv
+Evaluation : 981.421997
+
+{ conv[t4, t5, t6] -> conv[t285 = 0, t286 = 0, t = t4, t288 = 0, xx_skew_1_1 = t5 + t6, t290 = 0, yy_skew_R = -t6, t292 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+src:0 1 0 -2 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 0 ,0 0 1 1 ,
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 1 ,
+src:0 1 0 0 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 2 ,0 0 1 1 ,
+
+<legal>
+
+original list
+581.617981+581.041992+581.059021+581.171021+579.164001+578.320007+1012.469971+1017.780029+1188.550049+1102.380005+1351.280029+809.270020+981.421997+578.552002+
+remaining list
+578.320007+578.552002+579.164001+581.041992+581.059021+581.171021+581.617981+809.270020+981.421997+1012.469971+1017.780029+1102.380005+1188.550049+1351.280029+genPARA1genPARA8genPARA64genPARA128genPARA256
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 1, 2017) {
+    parallel (c3, max((c1 + -199), ((c1 - int32(floor_f32(float32(((c1 + 4)/5))))) + 1)), ((min(c1, ((c1 - int32(floor_f32(float32(((c1 + 2)/5))))) + 204)) - max((c1 + -199), ((c1 - int32(floor_f32(float32(((c1 + 4)/5))))) + 1))) + 1)) {
+      for (c7, 1, 1022) {
+        buf_output[(c7 + int32((int64(((c3*5) - (c1*4)))*(int64)1024)))] = (((((((buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64(((c3*5) - (c1*4)))*(int64)1024) + (int64)-1024)))] + buf_output[(c7 + int32(((int64(((c3*5) - (c1*4)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64(((c3*5) - (c1*4)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32((int64(((c3*5) - (c1*4)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32((int64(((c3*5) - (c1*4)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64(((c3*5) - (c1*4)))*(int64)1024) + (int64)1024)))]) + buf_output[(c7 + int32(((int64(((c3*5) - (c1*4)))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64(((c3*5) - (c1*4)))*(int64)1024) + (int64)1024)))])
+      }
+    }
+  }
+}
+
+-----------
+Skewing L0 5 L1 1
+Parallelize L1 1
+0- for 0 <= t_skew_5_1 < 2017 | 0
+	1- for 0 <= xx_skew_outer < 102 | 0 | P
+		2- for 0 <= xx_skew_inner < 1 | 0
+			3- for 1 <= yy < 1023 | 0
+				conv
+Evaluation : 183.098999
+
+{ conv[t4, t5, t6] -> conv[t122 = 0, t123 = 0, t_skew_5_1 = 5t4 + t5, t125 = 0, xx_skew = 4t4 + t5, t127 = 0, yy = t6, t129 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 1 ,
+src:0 1 0 0 ,0 0 1 -1 ,
+src:0 1 0 0 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 1 ,0 0 1 1 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 1, 2017) {
+    parallel (c3, max((int32(floor_f32(float32(((c1 + 1)/8)))) + -25), int32(floor_f32(float32(((c1 + 1)/10))))), ((min(int32(floor_f32(float32((c1/8)))), (int32(floor_f32(float32(((c1 + 5)/10)))) + 25)) - max((int32(floor_f32(float32(((c1 + 1)/8)))) + -25), int32(floor_f32(float32(((c1 + 1)/10)))))) + 1)) {
+      for (c5, max(max(((c1 - (c3*8)) + -199), (((c1 - (c3*8)) - int32(floor_f32(float32(((c1 + 4)/5))))) + 1)), 0), ((min(min((c1 - (c3*8)), (((c1 - (c3*8)) - int32(floor_f32(float32(((c1 + 2)/5))))) + 204)), 7) - max(max(((c1 - (c3*8)) + -199), (((c1 - (c3*8)) - int32(floor_f32(float32(((c1 + 4)/5))))) + 1)), 0)) + 1)) {
+        for (c7, 1, 1022) {
+          buf_output[(c7 + int32((int64((((c3*40) - (c1*4)) + (c5*5)))*(int64)1024)))] = (((((((buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64((((c3*40) - (c1*4)) + (c5*5)))*(int64)1024) + (int64)-1024)))] + buf_output[(c7 + int32(((int64((((c3*40) - (c1*4)) + (c5*5)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64((((c3*40) - (c1*4)) + (c5*5)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32((int64((((c3*40) - (c1*4)) + (c5*5)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32((int64((((c3*40) - (c1*4)) + (c5*5)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64((((c3*40) - (c1*4)) + (c5*5)))*(int64)1024) + (int64)1024)))]) + buf_output[(c7 + int32(((int64((((c3*40) - (c1*4)) + (c5*5)))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64((((c3*40) - (c1*4)) + (c5*5)))*(int64)1024) + (int64)1024)))])
+        }
+      }
+    }
+  }
+}
+
+-----------
+Skewing L0 5 L1 1
+Parallelize L1 8
+0- for 0 <= t_skew_5_1 < 2017 | 0
+	1- for 0 <= xx_skew_outer < 12 | 0 | P
+		2- for 0 <= xx_skew_inner < 8 | 0
+			3- for 1 <= yy < 1023 | 0
+				conv
+Evaluation : 190.908997
+
+{ conv[t4, t5, t6] -> conv[t122 = 0, t123 = 0, t_skew_5_1 = 5t4 + t5, t125 = 0, xx_skew = 4t4 + t5, t127 = 0, yy = t6, t129 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 1 ,
+src:0 1 0 0 ,0 0 1 -1 ,
+src:0 1 0 0 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 1 ,0 0 1 1 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 1, 2017) {
+    parallel (c3, max((int32(floor_f32(float32(((c1 + -7)/64)))) + -3), int32(floor_f32(float32(((c1 + 1)/80))))), ((min(int32(floor_f32(float32((c1/64)))), (int32(floor_f32(float32(((c1 + 15)/80)))) + 3)) - max((int32(floor_f32(float32(((c1 + -7)/64)))) + -3), int32(floor_f32(float32(((c1 + 1)/80)))))) + 1)) {
+      for (c5, max(max(((c1 - (c3*64)) + -199), (((c1 - (c3*64)) - int32(floor_f32(float32(((c1 + 4)/5))))) + 1)), 0), ((min(min((c1 - (c3*64)), (((c1 - (c3*64)) - int32(floor_f32(float32(((c1 + 2)/5))))) + 204)), 63) - max(max(((c1 - (c3*64)) + -199), (((c1 - (c3*64)) - int32(floor_f32(float32(((c1 + 4)/5))))) + 1)), 0)) + 1)) {
+        for (c7, 1, 1022) {
+          buf_output[(c7 + int32((int64((((c3*320) - (c1*4)) + (c5*5)))*(int64)1024)))] = (((((((buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64((((c3*320) - (c1*4)) + (c5*5)))*(int64)1024) + (int64)-1024)))] + buf_output[(c7 + int32(((int64((((c3*320) - (c1*4)) + (c5*5)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64((((c3*320) - (c1*4)) + (c5*5)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32((int64((((c3*320) - (c1*4)) + (c5*5)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32((int64((((c3*320) - (c1*4)) + (c5*5)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64((((c3*320) - (c1*4)) + (c5*5)))*(int64)1024) + (int64)1024)))]) + buf_output[(c7 + int32(((int64((((c3*320) - (c1*4)) + (c5*5)))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64((((c3*320) - (c1*4)) + (c5*5)))*(int64)1024) + (int64)1024)))])
+        }
+      }
+    }
+  }
+}
+
+-----------
+Skewing L0 5 L1 1
+Parallelize L1 64
+0- for 0 <= t_skew_5_1 < 2017 | 0
+	1- for 0 <= xx_skew_outer < 1 | 0 | P
+		2- for 0 <= xx_skew_inner < 64 | 0
+			3- for 1 <= yy < 1023 | 0
+				conv
+Evaluation : 341.934998
+
+{ conv[t4, t5, t6] -> conv[t122 = 0, t123 = 0, t_skew_5_1 = 5t4 + t5, t125 = 0, xx_skew = 4t4 + t5, t127 = 0, yy = t6, t129 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 1 ,
+src:0 1 0 0 ,0 0 1 -1 ,
+src:0 1 0 0 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 1 ,0 0 1 1 ,
+
+<legal>
+genPARA1genPARA8genPARA64genPARA128genPARA256
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 3, 3860) {
+    parallel (c3, max((int32(floor_f32(float32(((c1 + 1)/3)))) + -66), (int32(floor_f32(float32((c1/4)))) + 1)), ((min(int32(floor_f32(float32((c1/3)))), (int32(floor_f32(float32(((c1 + 2)/4)))) + 255)) - max((int32(floor_f32(float32(((c1 + 1)/3)))) + -66), (int32(floor_f32(float32((c1/4)))) + 1))) + 1)) {
+      for (c7, 1, 1022) {
+        buf_output[(c7 + int32((int64(((c3*4) - c1))*(int64)1024)))] = (((((((buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64(((c3*4) - c1))*(int64)1024) + (int64)-1024)))] + buf_output[(c7 + int32(((int64(((c3*4) - c1))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64(((c3*4) - c1))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32((int64(((c3*4) - c1))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32((int64(((c3*4) - c1))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64(((c3*4) - c1))*(int64)1024) + (int64)1024)))]) + buf_output[(c7 + int32(((int64(((c3*4) - c1))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64(((c3*4) - c1))*(int64)1024) + (int64)1024)))])
+      }
+    }
+  }
+}
+
+-----------
+Skewing L0 4 L1 3
+Parallelize L1 1
+0- for 0 <= t_skew_4_3 < 3860 | 0
+	1- for 0 <= xx_skew_outer < 54 | 0 | P
+		2- for 0 <= xx_skew_inner < 1 | 0
+			3- for 1 <= yy < 1023 | 0
+				conv
+Evaluation : 213.104996
+
+{ conv[t4, t5, t6] -> conv[t100 = 0, t101 = 0, t_skew_4_3 = 4t4 + 3t5, t103 = 0, xx_skew = t4 + t5, t105 = 0, yy = t6, t107 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 1 ,
+src:0 1 0 0 ,0 0 1 -1 ,
+src:0 1 0 0 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 1 ,0 0 1 1 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 3, 3860) {
+    parallel (c3, max((int32(floor_f32(float32(((c1 + -5)/24)))) + -8), int32(floor_f32(float32(((c1 + 4)/32))))), ((min(int32(floor_f32(float32((c1/24)))), (int32(floor_f32(float32(((c1 + -2)/32)))) + 32)) - max((int32(floor_f32(float32(((c1 + -5)/24)))) + -8), int32(floor_f32(float32(((c1 + 4)/32)))))) + 1)) {
+      for (c5, max(max(((int32(floor_f32(float32(((c1 + 1)/3)))) - (c3*8)) + -66), ((int32(floor_f32(float32((c1/4)))) - (c3*8)) + 1)), 0), ((min(min((int32(floor_f32(float32((c1/3)))) - (c3*8)), ((int32(floor_f32(float32(((c1 + 2)/4)))) - (c3*8)) + 255)), 7) - max(max(((int32(floor_f32(float32(((c1 + 1)/3)))) - (c3*8)) + -66), ((int32(floor_f32(float32((c1/4)))) - (c3*8)) + 1)), 0)) + 1)) {
+        for (c7, 1, 1022) {
+          buf_output[(c7 + int32((int64((((c3*32) - c1) + (c5*4)))*(int64)1024)))] = (((((((buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64((((c3*32) - c1) + (c5*4)))*(int64)1024) + (int64)-1024)))] + buf_output[(c7 + int32(((int64((((c3*32) - c1) + (c5*4)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64((((c3*32) - c1) + (c5*4)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32((int64((((c3*32) - c1) + (c5*4)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32((int64((((c3*32) - c1) + (c5*4)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64((((c3*32) - c1) + (c5*4)))*(int64)1024) + (int64)1024)))]) + buf_output[(c7 + int32(((int64((((c3*32) - c1) + (c5*4)))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64((((c3*32) - c1) + (c5*4)))*(int64)1024) + (int64)1024)))])
+        }
+      }
+    }
+  }
+}
+
+-----------
+Skewing L0 4 L1 3
+Parallelize L1 8
+0- for 0 <= t_skew_4_3 < 3860 | 0
+	1- for 0 <= xx_skew_outer < 6 | 0 | P
+		2- for 0 <= xx_skew_inner < 8 | 0
+			3- for 1 <= yy < 1023 | 0
+				conv
+Evaluation : 220.923004
+
+{ conv[t4, t5, t6] -> conv[t100 = 0, t101 = 0, t_skew_4_3 = 4t4 + 3t5, t103 = 0, xx_skew = t4 + t5, t105 = 0, yy = t6, t107 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 1 ,
+src:0 1 0 0 ,0 0 1 -1 ,
+src:0 1 0 0 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 1 ,0 0 1 1 ,
+
+<legal>
+genPARA1genPARA8genPARA64genPARA128genPARA256
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 1, 1619) {
+    parallel (c3, max((c1 + -199), ((c1 - int32(floor_f32(float32(((c1 + 2)/3))))) + 1)), ((min(c1, ((c1 - int32(floor_f32(float32(((c1/3) + 1))))) + 341)) - max((c1 + -199), ((c1 - int32(floor_f32(float32(((c1 + 2)/3))))) + 1))) + 1)) {
+      for (c7, 1, 1022) {
+        buf_output[(c7 + int32((int64(((c3*3) - (c1*2)))*(int64)1024)))] = (((((((buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64(((c3*3) - (c1*2)))*(int64)1024) + (int64)-1024)))] + buf_output[(c7 + int32(((int64(((c3*3) - (c1*2)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64(((c3*3) - (c1*2)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32((int64(((c3*3) - (c1*2)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32((int64(((c3*3) - (c1*2)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64(((c3*3) - (c1*2)))*(int64)1024) + (int64)1024)))]) + buf_output[(c7 + int32(((int64(((c3*3) - (c1*2)))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64(((c3*3) - (c1*2)))*(int64)1024) + (int64)1024)))])
+      }
+    }
+  }
+}
+
+-----------
+Skewing L0 3 L1 1
+Parallelize L1 1
+0- for 0 <= t_skew_3_1 < 1619 | 0
+	1- for 0 <= xx_skew_outer < 127 | 0 | P
+		2- for 0 <= xx_skew_inner < 1 | 0
+			3- for 1 <= yy < 1023 | 0
+				conv
+Evaluation : 186.459000
+
+{ conv[t4, t5, t6] -> conv[t34 = 0, t35 = 0, t_skew_3_1 = 3t4 + t5, t37 = 0, xx_skew = 2t4 + t5, t39 = 0, yy = t6, t41 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 1 ,
+src:0 1 0 0 ,0 0 1 -1 ,
+src:0 1 0 0 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 1 ,0 0 1 1 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 1, 1619) {
+    parallel (c3, max((int32(floor_f32(float32(((c1 + 1)/8)))) + -25), int32(floor_f32(float32(((c1 + 1)/12))))), ((min(int32(floor_f32(float32((c1/8)))), (int32(floor_f32(float32(((c1 + 7)/12)))) + 42)) - max((int32(floor_f32(float32(((c1 + 1)/8)))) + -25), int32(floor_f32(float32(((c1 + 1)/12)))))) + 1)) {
+      for (c5, max(max(((c1 - (c3*8)) + -199), (((c1 - (c3*8)) - int32(floor_f32(float32(((c1 + 2)/3))))) + 1)), 0), ((min(min((c1 - (c3*8)), (((c1 - (c3*8)) - int32(floor_f32(float32(((c1/3) + 1))))) + 341)), 7) - max(max(((c1 - (c3*8)) + -199), (((c1 - (c3*8)) - int32(floor_f32(float32(((c1 + 2)/3))))) + 1)), 0)) + 1)) {
+        for (c7, 1, 1022) {
+          buf_output[(c7 + int32((int64((((c3*24) - (c1*2)) + (c5*3)))*(int64)1024)))] = (((((((buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64((((c3*24) - (c1*2)) + (c5*3)))*(int64)1024) + (int64)-1024)))] + buf_output[(c7 + int32(((int64((((c3*24) - (c1*2)) + (c5*3)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64((((c3*24) - (c1*2)) + (c5*3)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32((int64((((c3*24) - (c1*2)) + (c5*3)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32((int64((((c3*24) - (c1*2)) + (c5*3)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64((((c3*24) - (c1*2)) + (c5*3)))*(int64)1024) + (int64)1024)))]) + buf_output[(c7 + int32(((int64((((c3*24) - (c1*2)) + (c5*3)))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64((((c3*24) - (c1*2)) + (c5*3)))*(int64)1024) + (int64)1024)))])
+        }
+      }
+    }
+  }
+}
+
+-----------
+Skewing L0 3 L1 1
+Parallelize L1 8
+0- for 0 <= t_skew_3_1 < 1619 | 0
+	1- for 0 <= xx_skew_outer < 15 | 0 | P
+		2- for 0 <= xx_skew_inner < 8 | 0
+			3- for 1 <= yy < 1023 | 0
+				conv
+Evaluation : 197.535004
+
+{ conv[t4, t5, t6] -> conv[t34 = 0, t35 = 0, t_skew_3_1 = 3t4 + t5, t37 = 0, xx_skew = 2t4 + t5, t39 = 0, yy = t6, t41 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 1 ,
+src:0 1 0 0 ,0 0 1 -1 ,
+src:0 1 0 0 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 1 ,0 0 1 1 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 1, 1619) {
+    parallel (c3, max((int32(floor_f32(float32(((c1 + -7)/64)))) + -3), int32(floor_f32(float32(((c1 + 1)/96))))), ((min(int32(floor_f32(float32((c1/64)))), (int32(floor_f32(float32(((c1 + 31)/96)))) + 5)) - max((int32(floor_f32(float32(((c1 + -7)/64)))) + -3), int32(floor_f32(float32(((c1 + 1)/96)))))) + 1)) {
+      for (c5, max(max(((c1 - (c3*64)) + -199), (((c1 - (c3*64)) - int32(floor_f32(float32(((c1 + 2)/3))))) + 1)), 0), ((min(min((c1 - (c3*64)), (((c1 - (c3*64)) - int32(floor_f32(float32(((c1/3) + 1))))) + 341)), 63) - max(max(((c1 - (c3*64)) + -199), (((c1 - (c3*64)) - int32(floor_f32(float32(((c1 + 2)/3))))) + 1)), 0)) + 1)) {
+        for (c7, 1, 1022) {
+          buf_output[(c7 + int32((int64((((c3*192) - (c1*2)) + (c5*3)))*(int64)1024)))] = (((((((buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64((((c3*192) - (c1*2)) + (c5*3)))*(int64)1024) + (int64)-1024)))] + buf_output[(c7 + int32(((int64((((c3*192) - (c1*2)) + (c5*3)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64((((c3*192) - (c1*2)) + (c5*3)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32((int64((((c3*192) - (c1*2)) + (c5*3)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32((int64((((c3*192) - (c1*2)) + (c5*3)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64((((c3*192) - (c1*2)) + (c5*3)))*(int64)1024) + (int64)1024)))]) + buf_output[(c7 + int32(((int64((((c3*192) - (c1*2)) + (c5*3)))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64((((c3*192) - (c1*2)) + (c5*3)))*(int64)1024) + (int64)1024)))])
+        }
+      }
+    }
+  }
+}
+
+-----------
+Skewing L0 3 L1 1
+Parallelize L1 64
+0- for 0 <= t_skew_3_1 < 1619 | 0
+	1- for 0 <= xx_skew_outer < 1 | 0 | P
+		2- for 0 <= xx_skew_inner < 64 | 0
+			3- for 1 <= yy < 1023 | 0
+				conv
+Evaluation : 299.752014
+
+{ conv[t4, t5, t6] -> conv[t34 = 0, t35 = 0, t_skew_3_1 = 3t4 + t5, t37 = 0, xx_skew = 2t4 + t5, t39 = 0, yy = t6, t41 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 1 ,
+src:0 1 0 0 ,0 0 1 -1 ,
+src:0 1 0 0 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 1 ,0 0 1 1 ,
+
+<legal>
+genPARA1genPARA8genPARA64genPARA128genPARA256
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 2, 2640) {
+    parallel (c3, max((int32(floor_f32(float32((c1/2)))) + -99), (int32(floor_f32(float32((c1/3)))) + 1)), ((min(int32(floor_f32(float32((c1/2)))), (int32(floor_f32(float32(((c1 + -1)/3)))) + 341)) - max((int32(floor_f32(float32((c1/2)))) + -99), (int32(floor_f32(float32((c1/3)))) + 1))) + 1)) {
+      for (c7, 1, 1022) {
+        buf_output[(c7 + int32((int64(((c3*3) - c1))*(int64)1024)))] = (((((((buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64(((c3*3) - c1))*(int64)1024) + (int64)-1024)))] + buf_output[(c7 + int32(((int64(((c3*3) - c1))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64(((c3*3) - c1))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32((int64(((c3*3) - c1))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32((int64(((c3*3) - c1))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64(((c3*3) - c1))*(int64)1024) + (int64)1024)))]) + buf_output[(c7 + int32(((int64(((c3*3) - c1))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64(((c3*3) - c1))*(int64)1024) + (int64)1024)))])
+      }
+    }
+  }
+}
+
+-----------
+Skewing L0 3 L1 2
+Parallelize L1 1
+0- for 0 <= t_skew_3_2 < 2640 | 0
+	1- for 0 <= xx_skew_outer < 78 | 0 | P
+		2- for 0 <= xx_skew_inner < 1 | 0
+			3- for 1 <= yy < 1023 | 0
+				conv
+Evaluation : 197.048996
+
+{ conv[t4, t5, t6] -> conv[t56 = 0, t57 = 0, t_skew_3_2 = 3t4 + 2t5, t59 = 0, xx_skew = t4 + t5, t61 = 0, yy = t6, t63 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 1 ,
+src:0 1 0 0 ,0 0 1 -1 ,
+src:0 1 0 0 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 1 ,0 0 1 1 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 2, 2640) {
+    parallel (c3, max((int32(floor_f32(float32(((c1 + -6)/16)))) + -12), int32(floor_f32(float32(((c1 + 3)/24))))), ((min(int32(floor_f32(float32((c1/16)))), (int32(floor_f32(float32(((c1 + 14)/24)))) + 42)) - max((int32(floor_f32(float32(((c1 + -6)/16)))) + -12), int32(floor_f32(float32(((c1 + 3)/24)))))) + 1)) {
+      for (c5, max(max(((int32(floor_f32(float32((c1/2)))) - (c3*8)) + -99), ((int32(floor_f32(float32((c1/3)))) - (c3*8)) + 1)), 0), ((min(min((int32(floor_f32(float32((c1/2)))) - (c3*8)), ((int32(floor_f32(float32(((c1 + -1)/3)))) - (c3*8)) + 341)), 7) - max(max(((int32(floor_f32(float32((c1/2)))) - (c3*8)) + -99), ((int32(floor_f32(float32((c1/3)))) - (c3*8)) + 1)), 0)) + 1)) {
+        for (c7, 1, 1022) {
+          buf_output[(c7 + int32((int64((((c3*24) - c1) + (c5*3)))*(int64)1024)))] = (((((((buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64((((c3*24) - c1) + (c5*3)))*(int64)1024) + (int64)-1024)))] + buf_output[(c7 + int32(((int64((((c3*24) - c1) + (c5*3)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64((((c3*24) - c1) + (c5*3)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32((int64((((c3*24) - c1) + (c5*3)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32((int64((((c3*24) - c1) + (c5*3)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64((((c3*24) - c1) + (c5*3)))*(int64)1024) + (int64)1024)))]) + buf_output[(c7 + int32(((int64((((c3*24) - c1) + (c5*3)))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64((((c3*24) - c1) + (c5*3)))*(int64)1024) + (int64)1024)))])
+        }
+      }
+    }
+  }
+}
+
+-----------
+Skewing L0 3 L1 2
+Parallelize L1 8
+0- for 0 <= t_skew_3_2 < 2640 | 0
+	1- for 0 <= xx_skew_outer < 9 | 0 | P
+		2- for 0 <= xx_skew_inner < 8 | 0
+			3- for 1 <= yy < 1023 | 0
+				conv
+Evaluation : 200.548004
+
+{ conv[t4, t5, t6] -> conv[t56 = 0, t57 = 0, t_skew_3_2 = 3t4 + 2t5, t59 = 0, xx_skew = t4 + t5, t61 = 0, yy = t6, t63 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 1 ,
+src:0 1 0 0 ,0 0 1 -1 ,
+src:0 1 0 0 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 1 ,0 0 1 1 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 2, 2640) {
+    parallel (c3, max((int32(floor_f32(float32(((c1 + 58)/128)))) + -2), int32(floor_f32(float32(((c1 + 3)/192))))), ((min(int32(floor_f32(float32((c1/128)))), (int32(floor_f32(float32(((c1 + 62)/192)))) + 5)) - max((int32(floor_f32(float32(((c1 + 58)/128)))) + -2), int32(floor_f32(float32(((c1 + 3)/192)))))) + 1)) {
+      for (c5, max(max(((int32(floor_f32(float32((c1/2)))) - (c3*64)) + -99), ((int32(floor_f32(float32((c1/3)))) - (c3*64)) + 1)), 0), ((min(min((int32(floor_f32(float32((c1/2)))) - (c3*64)), ((int32(floor_f32(float32(((c1 + -1)/3)))) - (c3*64)) + 341)), 63) - max(max(((int32(floor_f32(float32((c1/2)))) - (c3*64)) + -99), ((int32(floor_f32(float32((c1/3)))) - (c3*64)) + 1)), 0)) + 1)) {
+        for (c7, 1, 1022) {
+          buf_output[(c7 + int32((int64((((c3*192) - c1) + (c5*3)))*(int64)1024)))] = (((((((buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64((((c3*192) - c1) + (c5*3)))*(int64)1024) + (int64)-1024)))] + buf_output[(c7 + int32(((int64((((c3*192) - c1) + (c5*3)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64((((c3*192) - c1) + (c5*3)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32((int64((((c3*192) - c1) + (c5*3)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32((int64((((c3*192) - c1) + (c5*3)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64((((c3*192) - c1) + (c5*3)))*(int64)1024) + (int64)1024)))]) + buf_output[(c7 + int32(((int64((((c3*192) - c1) + (c5*3)))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64((((c3*192) - c1) + (c5*3)))*(int64)1024) + (int64)1024)))])
+        }
+      }
+    }
+  }
+}
+
+-----------
+Skewing L0 3 L1 2
+Parallelize L1 64
+0- for 0 <= t_skew_3_2 < 2640 | 0
+	1- for 0 <= xx_skew_outer < 1 | 0 | P
+		2- for 0 <= xx_skew_inner < 64 | 0
+			3- for 1 <= yy < 1023 | 0
+				conv
+Evaluation : 442.221985
+
+{ conv[t4, t5, t6] -> conv[t56 = 0, t57 = 0, t_skew_3_2 = 3t4 + 2t5, t59 = 0, xx_skew = t4 + t5, t61 = 0, yy = t6, t63 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 1 ,
+src:0 1 0 0 ,0 0 1 -1 ,
+src:0 1 0 0 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 1 ,0 0 1 1 ,
+
+<legal>
+genPARA1genPARA8genPARA64genPARA128genPARA256
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 1, 1818) {
+    parallel (c3, max((c1 + -199), ((c1 - int32(floor_f32(float32(((c1 + 3)/4))))) + 1)), ((min(c1, ((c1 - int32(floor_f32(float32(((c1 + 1)/4))))) + 255)) - max((c1 + -199), ((c1 - int32(floor_f32(float32(((c1 + 3)/4))))) + 1))) + 1)) {
+      for (c7, 1, 1022) {
+        buf_output[(c7 + int32((int64(((c3*4) - (c1*3)))*(int64)1024)))] = (((((((buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64(((c3*4) - (c1*3)))*(int64)1024) + (int64)-1024)))] + buf_output[(c7 + int32(((int64(((c3*4) - (c1*3)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64(((c3*4) - (c1*3)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32((int64(((c3*4) - (c1*3)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32((int64(((c3*4) - (c1*3)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64(((c3*4) - (c1*3)))*(int64)1024) + (int64)1024)))]) + buf_output[(c7 + int32(((int64(((c3*4) - (c1*3)))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64(((c3*4) - (c1*3)))*(int64)1024) + (int64)1024)))])
+      }
+    }
+  }
+}
+
+-----------
+Skewing L0 4 L1 1
+Parallelize L1 1
+0- for 0 <= t_skew_4_1 < 1818 | 0
+	1- for 0 <= xx_skew_outer < 113 | 0 | P
+		2- for 0 <= xx_skew_inner < 1 | 0
+			3- for 1 <= yy < 1023 | 0
+				conv
+Evaluation : 181.320007
+
+{ conv[t4, t5, t6] -> conv[t78 = 0, t79 = 0, t_skew_4_1 = 4t4 + t5, t81 = 0, xx_skew = 3t4 + t5, t83 = 0, yy = t6, t85 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 1 ,
+src:0 1 0 0 ,0 0 1 -1 ,
+src:0 1 0 0 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 1 ,0 0 1 1 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 1, 1818) {
+    parallel (c3, max((int32(floor_f32(float32(((c1 + 1)/8)))) + -25), int32(floor_f32(float32((((c1*3) + 4)/32))))), ((min(int32(floor_f32(float32((c1/8)))), (int32(floor_f32(float32((((c1*3) + -2)/32)))) + 32)) - max((int32(floor_f32(float32(((c1 + 1)/8)))) + -25), int32(floor_f32(float32((((c1*3) + 4)/32)))))) + 1)) {
+      for (c5, max(max(((c1 - (c3*8)) + -199), (((c1 - (c3*8)) - int32(floor_f32(float32(((c1 + 3)/4))))) + 1)), 0), ((min(min((c1 - (c3*8)), (((c1 - (c3*8)) - int32(floor_f32(float32(((c1 + 1)/4))))) + 255)), 7) - max(max(((c1 - (c3*8)) + -199), (((c1 - (c3*8)) - int32(floor_f32(float32(((c1 + 3)/4))))) + 1)), 0)) + 1)) {
+        for (c7, 1, 1022) {
+          buf_output[(c7 + int32((int64((((c3*32) - (c1*3)) + (c5*4)))*(int64)1024)))] = (((((((buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64((((c3*32) - (c1*3)) + (c5*4)))*(int64)1024) + (int64)-1024)))] + buf_output[(c7 + int32(((int64((((c3*32) - (c1*3)) + (c5*4)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64((((c3*32) - (c1*3)) + (c5*4)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32((int64((((c3*32) - (c1*3)) + (c5*4)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32((int64((((c3*32) - (c1*3)) + (c5*4)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64((((c3*32) - (c1*3)) + (c5*4)))*(int64)1024) + (int64)1024)))]) + buf_output[(c7 + int32(((int64((((c3*32) - (c1*3)) + (c5*4)))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64((((c3*32) - (c1*3)) + (c5*4)))*(int64)1024) + (int64)1024)))])
+        }
+      }
+    }
+  }
+}
+
+-----------
+Skewing L0 4 L1 1
+Parallelize L1 8
+0- for 0 <= t_skew_4_1 < 1818 | 0
+	1- for 0 <= xx_skew_outer < 14 | 0 | P
+		2- for 0 <= xx_skew_inner < 8 | 0
+			3- for 1 <= yy < 1023 | 0
+				conv
+Evaluation : 190.839005
+
+{ conv[t4, t5, t6] -> conv[t78 = 0, t79 = 0, t_skew_4_1 = 4t4 + t5, t81 = 0, xx_skew = 3t4 + t5, t83 = 0, yy = t6, t85 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 1 ,
+src:0 1 0 0 ,0 0 1 -1 ,
+src:0 1 0 0 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 1 ,0 0 1 1 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 1, 1818) {
+    parallel (c3, max((int32(floor_f32(float32(((c1 + -7)/64)))) + -3), int32(floor_f32(float32((((c1*3) + 4)/256))))), ((min(int32(floor_f32(float32((c1/64)))), (int32(floor_f32(float32((((c1*3) + -2)/256)))) + 4)) - max((int32(floor_f32(float32(((c1 + -7)/64)))) + -3), int32(floor_f32(float32((((c1*3) + 4)/256)))))) + 1)) {
+      for (c5, max(max(((c1 - (c3*64)) + -199), (((c1 - (c3*64)) - int32(floor_f32(float32(((c1 + 3)/4))))) + 1)), 0), ((min(min((c1 - (c3*64)), (((c1 - (c3*64)) - int32(floor_f32(float32(((c1 + 1)/4))))) + 255)), 63) - max(max(((c1 - (c3*64)) + -199), (((c1 - (c3*64)) - int32(floor_f32(float32(((c1 + 3)/4))))) + 1)), 0)) + 1)) {
+        for (c7, 1, 1022) {
+          buf_output[(c7 + int32((int64((((c3*256) - (c1*3)) + (c5*4)))*(int64)1024)))] = (((((((buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64((((c3*256) - (c1*3)) + (c5*4)))*(int64)1024) + (int64)-1024)))] + buf_output[(c7 + int32(((int64((((c3*256) - (c1*3)) + (c5*4)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64((((c3*256) - (c1*3)) + (c5*4)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32((int64((((c3*256) - (c1*3)) + (c5*4)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32((int64((((c3*256) - (c1*3)) + (c5*4)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64((((c3*256) - (c1*3)) + (c5*4)))*(int64)1024) + (int64)1024)))]) + buf_output[(c7 + int32(((int64((((c3*256) - (c1*3)) + (c5*4)))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64((((c3*256) - (c1*3)) + (c5*4)))*(int64)1024) + (int64)1024)))])
+        }
+      }
+    }
+  }
+}
+
+-----------
+Skewing L0 4 L1 1
+Parallelize L1 64
+0- for 0 <= t_skew_4_1 < 1818 | 0
+	1- for 0 <= xx_skew_outer < 1 | 0 | P
+		2- for 0 <= xx_skew_inner < 64 | 0
+			3- for 1 <= yy < 1023 | 0
+				conv
+Evaluation : 317.536987
+
+{ conv[t4, t5, t6] -> conv[t78 = 0, t79 = 0, t_skew_4_1 = 4t4 + t5, t81 = 0, xx_skew = 3t4 + t5, t83 = 0, yy = t6, t85 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 1 ,
+src:0 1 0 0 ,0 0 1 -1 ,
+src:0 1 0 0 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 1 ,0 0 1 1 ,
+
+<legal>
+genPARA1genPARA8genPARA64genPARA128genPARA256
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 1, 1420) {
+    parallel (c3, max((c1 + -199), (int32(floor_f32(float32((c1/2)))) + 1)), ((min(c1, (int32(floor_f32(float32((c1/2)))) + 511)) - max((c1 + -199), (int32(floor_f32(float32((c1/2)))) + 1))) + 1)) {
+      for (c7, 1, 1022) {
+        buf_output[(c7 + int32((int64(((c3*2) - c1))*(int64)1024)))] = (((((((buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64(((c3*2) - c1))*(int64)1024) + (int64)-1024)))] + buf_output[(c7 + int32(((int64(((c3*2) - c1))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64(((c3*2) - c1))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32((int64(((c3*2) - c1))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32((int64(((c3*2) - c1))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64(((c3*2) - c1))*(int64)1024) + (int64)1024)))]) + buf_output[(c7 + int32(((int64(((c3*2) - c1))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64(((c3*2) - c1))*(int64)1024) + (int64)1024)))])
+      }
+    }
+  }
+}
+
+-----------
+Skewing L0 2 L1 1
+Parallelize L1 1
+0- for 0 <= t_skew_2_1 < 1420 | 0
+	1- for 0 <= xx_skew_outer < 145 | 0 | P
+		2- for 0 <= xx_skew_inner < 1 | 0
+			3- for 1 <= yy < 1023 | 0
+				conv
+Evaluation : 174.910004
+
+{ conv[t4, t5, t6] -> conv[t12 = 0, t13 = 0, t_skew_2_1 = 2t4 + t5, t15 = 0, xx_skew = t4 + t5, t17 = 0, yy = t6, t19 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 1 ,
+src:0 1 0 0 ,0 0 1 -1 ,
+src:0 1 0 0 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 1 ,0 0 1 1 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 1, 1420) {
+    parallel (c3, max((int32(floor_f32(float32(((c1 + 1)/8)))) + -25), int32(floor_f32(float32(((c1 + 2)/16))))), ((min(int32(floor_f32(float32((c1/8)))), (int32(floor_f32(float32(((c1 + 14)/16)))) + 63)) - max((int32(floor_f32(float32(((c1 + 1)/8)))) + -25), int32(floor_f32(float32(((c1 + 2)/16)))))) + 1)) {
+      for (c5, max(max(((c1 - (c3*8)) + -199), ((int32(floor_f32(float32((c1/2)))) - (c3*8)) + 1)), 0), ((min(min((c1 - (c3*8)), ((int32(floor_f32(float32((c1/2)))) - (c3*8)) + 511)), 7) - max(max(((c1 - (c3*8)) + -199), ((int32(floor_f32(float32((c1/2)))) - (c3*8)) + 1)), 0)) + 1)) {
+        for (c7, 1, 1022) {
+          buf_output[(c7 + int32((int64((((c3*16) - c1) + (c5*2)))*(int64)1024)))] = (((((((buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64((((c3*16) - c1) + (c5*2)))*(int64)1024) + (int64)-1024)))] + buf_output[(c7 + int32(((int64((((c3*16) - c1) + (c5*2)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64((((c3*16) - c1) + (c5*2)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32((int64((((c3*16) - c1) + (c5*2)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32((int64((((c3*16) - c1) + (c5*2)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64((((c3*16) - c1) + (c5*2)))*(int64)1024) + (int64)1024)))]) + buf_output[(c7 + int32(((int64((((c3*16) - c1) + (c5*2)))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64((((c3*16) - c1) + (c5*2)))*(int64)1024) + (int64)1024)))])
+        }
+      }
+    }
+  }
+}
+
+-----------
+Skewing L0 2 L1 1
+Parallelize L1 8
+0- for 0 <= t_skew_2_1 < 1420 | 0
+	1- for 0 <= xx_skew_outer < 18 | 0 | P
+		2- for 0 <= xx_skew_inner < 8 | 0
+			3- for 1 <= yy < 1023 | 0
+				conv
+Evaluation : 188.949997
+
+{ conv[t4, t5, t6] -> conv[t12 = 0, t13 = 0, t_skew_2_1 = 2t4 + t5, t15 = 0, xx_skew = t4 + t5, t17 = 0, yy = t6, t19 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 1 ,
+src:0 1 0 0 ,0 0 1 -1 ,
+src:0 1 0 0 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 1 ,0 0 1 1 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 1, 1420) {
+    parallel (c3, max((int32(floor_f32(float32(((c1 + -7)/64)))) + -3), int32(floor_f32(float32(((c1 + 2)/128))))), ((min(int32(floor_f32(float32((c1/64)))), (int32(floor_f32(float32(((c1 + 126)/128)))) + 7)) - max((int32(floor_f32(float32(((c1 + -7)/64)))) + -3), int32(floor_f32(float32(((c1 + 2)/128)))))) + 1)) {
+      for (c5, max(max(((c1 - (c3*64)) + -199), ((int32(floor_f32(float32((c1/2)))) - (c3*64)) + 1)), 0), ((min(min((c1 - (c3*64)), ((int32(floor_f32(float32((c1/2)))) - (c3*64)) + 511)), 63) - max(max(((c1 - (c3*64)) + -199), ((int32(floor_f32(float32((c1/2)))) - (c3*64)) + 1)), 0)) + 1)) {
+        for (c7, 1, 1022) {
+          buf_output[(c7 + int32((int64((((c3*128) - c1) + (c5*2)))*(int64)1024)))] = (((((((buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64((((c3*128) - c1) + (c5*2)))*(int64)1024) + (int64)-1024)))] + buf_output[(c7 + int32(((int64((((c3*128) - c1) + (c5*2)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64((((c3*128) - c1) + (c5*2)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32((int64((((c3*128) - c1) + (c5*2)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32((int64((((c3*128) - c1) + (c5*2)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64((((c3*128) - c1) + (c5*2)))*(int64)1024) + (int64)1024)))]) + buf_output[(c7 + int32(((int64((((c3*128) - c1) + (c5*2)))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64((((c3*128) - c1) + (c5*2)))*(int64)1024) + (int64)1024)))])
+        }
+      }
+    }
+  }
+}
+
+-----------
+Skewing L0 2 L1 1
+Parallelize L1 64
+0- for 0 <= t_skew_2_1 < 1420 | 0
+	1- for 0 <= xx_skew_outer < 2 | 0 | P
+		2- for 0 <= xx_skew_inner < 64 | 0
+			3- for 1 <= yy < 1023 | 0
+				conv
+Evaluation : 271.052002
+
+{ conv[t4, t5, t6] -> conv[t12 = 0, t13 = 0, t_skew_2_1 = 2t4 + t5, t15 = 0, xx_skew = t4 + t5, t17 = 0, yy = t6, t19 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 1 ,
+src:0 1 0 0 ,0 0 1 -1 ,
+src:0 1 0 0 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 1 ,0 0 1 1 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 1, 1420) {
+    parallel (c3, max((int32(floor_f32(float32(((c1 + 57)/128)))) + -2), int32(floor_f32(float32(((c1 + 2)/256))))), ((min(int32(floor_f32(float32((c1/128)))), (int32(floor_f32(float32(((c1 + 254)/256)))) + 3)) - max((int32(floor_f32(float32(((c1 + 57)/128)))) + -2), int32(floor_f32(float32(((c1 + 2)/256)))))) + 1)) {
+      for (c5, max(max(((c1 - (c3*128)) + -199), ((int32(floor_f32(float32((c1/2)))) - (c3*128)) + 1)), 0), ((min(min((c1 - (c3*128)), ((int32(floor_f32(float32((c1/2)))) - (c3*128)) + 511)), 127) - max(max(((c1 - (c3*128)) + -199), ((int32(floor_f32(float32((c1/2)))) - (c3*128)) + 1)), 0)) + 1)) {
+        for (c7, 1, 1022) {
+          buf_output[(c7 + int32((int64((((c3*256) - c1) + (c5*2)))*(int64)1024)))] = (((((((buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64((((c3*256) - c1) + (c5*2)))*(int64)1024) + (int64)-1024)))] + buf_output[(c7 + int32(((int64((((c3*256) - c1) + (c5*2)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64((((c3*256) - c1) + (c5*2)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32((int64((((c3*256) - c1) + (c5*2)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32((int64((((c3*256) - c1) + (c5*2)))*(int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)-1)) + int32(((int64((((c3*256) - c1) + (c5*2)))*(int64)1024) + (int64)1024)))]) + buf_output[(c7 + int32(((int64((((c3*256) - c1) + (c5*2)))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(c7) + (int64)1)) + int32(((int64((((c3*256) - c1) + (c5*2)))*(int64)1024) + (int64)1024)))])
+        }
+      }
+    }
+  }
+}
+
+-----------
+Skewing L0 2 L1 1
+Parallelize L1 128
+0- for 0 <= t_skew_2_1 < 1420 | 0
+	1- for 0 <= xx_skew_outer < 1 | 0 | P
+		2- for 0 <= xx_skew_inner < 128 | 0
+			3- for 1 <= yy < 1023 | 0
+				conv
+Evaluation : 423.201996
+
+{ conv[t4, t5, t6] -> conv[t12 = 0, t13 = 0, t_skew_2_1 = 2t4 + t5, t15 = 0, xx_skew = t4 + t5, t17 = 0, yy = t6, t19 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 1 ,
+src:0 1 0 0 ,0 0 1 -1 ,
+src:0 1 0 0 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 1 ,0 0 1 1 ,
+
+<legal>
+genPARA1genPARA8genPARA64genPARA128genPARA256
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 0, 200) {
+    for (c3, 6, 6127) {
+      parallel (c5, max((c3 + -1022), ((c3 - int32(floor_f32(float32(((c3 + 4)/5))))) + 1)), (min(c3, ((c3 - int32(floor_f32(float32(((c3 + 2)/5))))) + 205)) - max((c3 + -1022), ((c3 - int32(floor_f32(float32(((c3 + 4)/5))))) + 1)))) {
+        buf_output[(((c5*5) - (c3*4)) + int32((int64((c3 - c5))*(int64)1024)))] = (((((((buf_output[(int32((int64(((c5*5) - (c3*4))) + (int64)-1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)-1024)))] + buf_output[(((c5*5) - (c3*4)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(((c5*5) - (c3*4))) + (int64)1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(((c5*5) - (c3*4))) + (int64)-1)) + int32((int64((c3 - c5))*(int64)1024)))]) + buf_output[(int32((int64(((c5*5) - (c3*4))) + (int64)1)) + int32((int64((c3 - c5))*(int64)1024)))]) + buf_output[(int32((int64(((c5*5) - (c3*4))) + (int64)-1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)1024)))]) + buf_output[(((c5*5) - (c3*4)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(((c5*5) - (c3*4))) + (int64)1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)1024)))])
+      }
+    }
+  }
+}
+
+-----------
+Skewing L1 5 L2 1
+Parallelize L2 1
+0- for 0 <= t < 200 | 0
+	1- for 5 <= xx_skew_5_1 < 6132 | 0
+		2- for 0 <= yy_skew_outer < 172 | 0 | P
+			3- for 0 <= yy_skew_inner < 1 | 0
+				conv
+Evaluation : 40308.601562
+
+{ conv[t4, t5, t6] -> conv[t254 = 0, t255 = 0, t = t4, t257 = 0, xx_skew_5_1 = 5t5 + t6, t259 = 0, yy_skew = 4t5 + t6, t261 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -6 ,0 0 1 -5 ,
+src:0 1 0 -5 ,0 0 1 -4 ,
+src:0 1 0 -4 ,0 0 1 -3 ,
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 1 ,
+src:0 1 0 4 ,0 0 1 3 ,
+src:0 1 0 5 ,0 0 1 4 ,
+src:0 1 0 6 ,0 0 1 5 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 0, 200) {
+    for (c3, 6, 6127) {
+      parallel (c5, max((int32(floor_f32(float32(((c3 + 2)/8)))) + -128), int32(floor_f32(float32(((c3 + 1)/10))))), ((min(int32(floor_f32(float32(((c3 + -1)/8)))), (int32(floor_f32(float32(((c3 + 5)/10)))) + 25)) - max((int32(floor_f32(float32(((c3 + 2)/8)))) + -128), int32(floor_f32(float32(((c3 + 1)/10)))))) + 1)) {
+        for (c7, max(max(((c3 - (c5*8)) + -1022), (((c3 - (c5*8)) - int32(floor_f32(float32(((c3 + 4)/5))))) + 1)), 0), ((min(min(((c3 - (c5*8)) + -1), (((c3 - (c5*8)) - int32(floor_f32(float32(((c3 + 2)/5))))) + 204)), 7) - max(max(((c3 - (c5*8)) + -1022), (((c3 - (c5*8)) - int32(floor_f32(float32(((c3 + 4)/5))))) + 1)), 0)) + 1)) {
+          buf_output[((((c5*40) - (c3*4)) + (c7*5)) + int32((int64(((c3 - (c5*8)) - c7))*(int64)1024)))] = (((((((buf_output[(int32((int64((((c5*40) - (c3*4)) + (c7*5))) + (int64)-1)) + int32(((int64(((c3 - (c5*8)) - c7))*(int64)1024) + (int64)-1024)))] + buf_output[((((c5*40) - (c3*4)) + (c7*5)) + int32(((int64(((c3 - (c5*8)) - c7))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*40) - (c3*4)) + (c7*5))) + (int64)1)) + int32(((int64(((c3 - (c5*8)) - c7))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*40) - (c3*4)) + (c7*5))) + (int64)-1)) + int32((int64(((c3 - (c5*8)) - c7))*(int64)1024)))]) + buf_output[(int32((int64((((c5*40) - (c3*4)) + (c7*5))) + (int64)1)) + int32((int64(((c3 - (c5*8)) - c7))*(int64)1024)))]) + buf_output[(int32((int64((((c5*40) - (c3*4)) + (c7*5))) + (int64)-1)) + int32(((int64(((c3 - (c5*8)) - c7))*(int64)1024) + (int64)1024)))]) + buf_output[((((c5*40) - (c3*4)) + (c7*5)) + int32(((int64(((c3 - (c5*8)) - c7))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64((((c5*40) - (c3*4)) + (c7*5))) + (int64)1)) + int32(((int64(((c3 - (c5*8)) - c7))*(int64)1024) + (int64)1024)))])
+        }
+      }
+    }
+  }
+}
+
+-----------
+Skewing L1 5 L2 1
+Parallelize L2 8
+0- for 0 <= t < 200 | 0
+	1- for 5 <= xx_skew_5_1 < 6132 | 0
+		2- for 0 <= yy_skew_outer < 21 | 0 | P
+			3- for 0 <= yy_skew_inner < 8 | 0
+				conv
+Evaluation : 15306.500000
+
+{ conv[t4, t5, t6] -> conv[t254 = 0, t255 = 0, t = t4, t257 = 0, xx_skew_5_1 = 5t5 + t6, t259 = 0, yy_skew = 4t5 + t6, t261 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -6 ,0 0 1 -5 ,
+src:0 1 0 -5 ,0 0 1 -4 ,
+src:0 1 0 -4 ,0 0 1 -3 ,
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 1 ,
+src:0 1 0 4 ,0 0 1 3 ,
+src:0 1 0 5 ,0 0 1 4 ,
+src:0 1 0 6 ,0 0 1 5 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 0, 200) {
+    for (c3, 6, 6127) {
+      parallel (c5, max((int32(floor_f32(float32(((c3 + 2)/64)))) + -16), int32(floor_f32(float32(((c3 + 1)/80))))), ((min(int32(floor_f32(float32(((c3 + -1)/64)))), (int32(floor_f32(float32(((c3 + 15)/80)))) + 3)) - max((int32(floor_f32(float32(((c3 + 2)/64)))) + -16), int32(floor_f32(float32(((c3 + 1)/80)))))) + 1)) {
+        for (c7, max(max(((c3 - (c5*64)) + -1022), (((c3 - (c5*64)) - int32(floor_f32(float32(((c3 + 4)/5))))) + 1)), 0), ((min(min(((c3 - (c5*64)) + -1), (((c3 - (c5*64)) - int32(floor_f32(float32(((c3 + 2)/5))))) + 204)), 63) - max(max(((c3 - (c5*64)) + -1022), (((c3 - (c5*64)) - int32(floor_f32(float32(((c3 + 4)/5))))) + 1)), 0)) + 1)) {
+          buf_output[((((c5*320) - (c3*4)) + (c7*5)) + int32((int64(((c3 - (c5*64)) - c7))*(int64)1024)))] = (((((((buf_output[(int32((int64((((c5*320) - (c3*4)) + (c7*5))) + (int64)-1)) + int32(((int64(((c3 - (c5*64)) - c7))*(int64)1024) + (int64)-1024)))] + buf_output[((((c5*320) - (c3*4)) + (c7*5)) + int32(((int64(((c3 - (c5*64)) - c7))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*320) - (c3*4)) + (c7*5))) + (int64)1)) + int32(((int64(((c3 - (c5*64)) - c7))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*320) - (c3*4)) + (c7*5))) + (int64)-1)) + int32((int64(((c3 - (c5*64)) - c7))*(int64)1024)))]) + buf_output[(int32((int64((((c5*320) - (c3*4)) + (c7*5))) + (int64)1)) + int32((int64(((c3 - (c5*64)) - c7))*(int64)1024)))]) + buf_output[(int32((int64((((c5*320) - (c3*4)) + (c7*5))) + (int64)-1)) + int32(((int64(((c3 - (c5*64)) - c7))*(int64)1024) + (int64)1024)))]) + buf_output[((((c5*320) - (c3*4)) + (c7*5)) + int32(((int64(((c3 - (c5*64)) - c7))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64((((c5*320) - (c3*4)) + (c7*5))) + (int64)1)) + int32(((int64(((c3 - (c5*64)) - c7))*(int64)1024) + (int64)1024)))])
+        }
+      }
+    }
+  }
+}
+
+-----------
+Skewing L1 5 L2 1
+Parallelize L2 64
+0- for 0 <= t < 200 | 0
+	1- for 5 <= xx_skew_5_1 < 6132 | 0
+		2- for 0 <= yy_skew_outer < 2 | 0 | P
+			3- for 0 <= yy_skew_inner < 64 | 0
+				conv
+Evaluation : 10910.099609
+
+{ conv[t4, t5, t6] -> conv[t254 = 0, t255 = 0, t = t4, t257 = 0, xx_skew_5_1 = 5t5 + t6, t259 = 0, yy_skew = 4t5 + t6, t261 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -6 ,0 0 1 -5 ,
+src:0 1 0 -5 ,0 0 1 -4 ,
+src:0 1 0 -4 ,0 0 1 -3 ,
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 1 ,
+src:0 1 0 4 ,0 0 1 3 ,
+src:0 1 0 5 ,0 0 1 4 ,
+src:0 1 0 6 ,0 0 1 5 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 0, 200) {
+    for (c3, 6, 6127) {
+      parallel (c5, max((int32(floor_f32(float32(((c3 + 2)/128)))) + -8), int32(floor_f32(float32(((c3 + 1)/160))))), ((min(int32(floor_f32(float32(((c3 + -1)/128)))), (int32(floor_f32(float32(((c3 + 95)/160)))) + 1)) - max((int32(floor_f32(float32(((c3 + 2)/128)))) + -8), int32(floor_f32(float32(((c3 + 1)/160)))))) + 1)) {
+        for (c7, max(max(((c3 - (c5*128)) + -1022), (((c3 - (c5*128)) - int32(floor_f32(float32(((c3 + 4)/5))))) + 1)), 0), ((min(min(((c3 - (c5*128)) + -1), (((c3 - (c5*128)) - int32(floor_f32(float32(((c3 + 2)/5))))) + 204)), 127) - max(max(((c3 - (c5*128)) + -1022), (((c3 - (c5*128)) - int32(floor_f32(float32(((c3 + 4)/5))))) + 1)), 0)) + 1)) {
+          buf_output[((((c5*640) - (c3*4)) + (c7*5)) + int32((int64(((c3 - (c5*128)) - c7))*(int64)1024)))] = (((((((buf_output[(int32((int64((((c5*640) - (c3*4)) + (c7*5))) + (int64)-1)) + int32(((int64(((c3 - (c5*128)) - c7))*(int64)1024) + (int64)-1024)))] + buf_output[((((c5*640) - (c3*4)) + (c7*5)) + int32(((int64(((c3 - (c5*128)) - c7))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*640) - (c3*4)) + (c7*5))) + (int64)1)) + int32(((int64(((c3 - (c5*128)) - c7))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*640) - (c3*4)) + (c7*5))) + (int64)-1)) + int32((int64(((c3 - (c5*128)) - c7))*(int64)1024)))]) + buf_output[(int32((int64((((c5*640) - (c3*4)) + (c7*5))) + (int64)1)) + int32((int64(((c3 - (c5*128)) - c7))*(int64)1024)))]) + buf_output[(int32((int64((((c5*640) - (c3*4)) + (c7*5))) + (int64)-1)) + int32(((int64(((c3 - (c5*128)) - c7))*(int64)1024) + (int64)1024)))]) + buf_output[((((c5*640) - (c3*4)) + (c7*5)) + int32(((int64(((c3 - (c5*128)) - c7))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64((((c5*640) - (c3*4)) + (c7*5))) + (int64)1)) + int32(((int64(((c3 - (c5*128)) - c7))*(int64)1024) + (int64)1024)))])
+        }
+      }
+    }
+  }
+}
+
+-----------
+Skewing L1 5 L2 1
+Parallelize L2 128
+0- for 0 <= t < 200 | 0
+	1- for 5 <= xx_skew_5_1 < 6132 | 0
+		2- for 0 <= yy_skew_outer < 1 | 0 | P
+			3- for 0 <= yy_skew_inner < 128 | 0
+				conv
+Evaluation : 7721.209961
+
+{ conv[t4, t5, t6] -> conv[t254 = 0, t255 = 0, t = t4, t257 = 0, xx_skew_5_1 = 5t5 + t6, t259 = 0, yy_skew = 4t5 + t6, t261 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -6 ,0 0 1 -5 ,
+src:0 1 0 -5 ,0 0 1 -4 ,
+src:0 1 0 -4 ,0 0 1 -3 ,
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 1 ,
+src:0 1 0 4 ,0 0 1 3 ,
+src:0 1 0 5 ,0 0 1 4 ,
+src:0 1 0 6 ,0 0 1 5 ,
+
+<legal>
+genPARA1genPARA8genPARA64genPARA128genPARA256
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 0, 200) {
+    for (c3, 3, 3064) {
+      parallel (c5, max((c3 + -1022), (int32(floor_f32(float32((c3/2)))) + 1)), (min(c3, (int32(floor_f32(float32((c3/2)))) + 512)) - max((c3 + -1022), (int32(floor_f32(float32((c3/2)))) + 1)))) {
+        buf_output[(((c5*2) - c3) + int32((int64((c3 - c5))*(int64)1024)))] = (((((((buf_output[(int32((int64(((c5*2) - c3)) + (int64)-1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)-1024)))] + buf_output[(((c5*2) - c3) + int32(((int64((c3 - c5))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(((c5*2) - c3)) + (int64)1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(((c5*2) - c3)) + (int64)-1)) + int32((int64((c3 - c5))*(int64)1024)))]) + buf_output[(int32((int64(((c5*2) - c3)) + (int64)1)) + int32((int64((c3 - c5))*(int64)1024)))]) + buf_output[(int32((int64(((c5*2) - c3)) + (int64)-1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)1024)))]) + buf_output[(((c5*2) - c3) + int32(((int64((c3 - c5))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(((c5*2) - c3)) + (int64)1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)1024)))])
+      }
+    }
+  }
+}
+
+-----------
+Skewing L1 2 L2 1
+Parallelize L2 1
+0- for 0 <= t < 200 | 0
+	1- for 2 <= xx_skew_2_1 < 3066 | 0
+		2- for 0 <= yy_skew_outer < 342 | 0 | P
+			3- for 0 <= yy_skew_inner < 1 | 0
+				conv
+Evaluation : 35298.500000
+
+{ conv[t4, t5, t6] -> conv[t144 = 0, t145 = 0, t = t4, t147 = 0, xx_skew_2_1 = 2t5 + t6, t149 = 0, yy_skew = t5 + t6, t151 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -3 ,0 0 1 -2 ,
+src:0 1 0 -2 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 2 ,0 0 1 1 ,
+src:0 1 0 3 ,0 0 1 2 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 0, 200) {
+    for (c3, 3, 3064) {
+      parallel (c5, max((int32(floor_f32(float32(((c3 + 2)/8)))) + -128), int32(floor_f32(float32(((c3 + 2)/16))))), ((min(int32(floor_f32(float32(((c3 + -1)/8)))), (int32(floor_f32(float32(((c3 + -2)/16)))) + 64)) - max((int32(floor_f32(float32(((c3 + 2)/8)))) + -128), int32(floor_f32(float32(((c3 + 2)/16)))))) + 1)) {
+        for (c7, max(max(((c3 - (c5*8)) + -1022), ((int32(floor_f32(float32((c3/2)))) - (c5*8)) + 1)), 0), ((min(min(((c3 - (c5*8)) + -1), ((int32(floor_f32(float32((c3/2)))) - (c5*8)) + 511)), 7) - max(max(((c3 - (c5*8)) + -1022), ((int32(floor_f32(float32((c3/2)))) - (c5*8)) + 1)), 0)) + 1)) {
+          buf_output[((((c5*16) - c3) + (c7*2)) + int32((int64(((c3 - (c5*8)) - c7))*(int64)1024)))] = (((((((buf_output[(int32((int64((((c5*16) - c3) + (c7*2))) + (int64)-1)) + int32(((int64(((c3 - (c5*8)) - c7))*(int64)1024) + (int64)-1024)))] + buf_output[((((c5*16) - c3) + (c7*2)) + int32(((int64(((c3 - (c5*8)) - c7))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*16) - c3) + (c7*2))) + (int64)1)) + int32(((int64(((c3 - (c5*8)) - c7))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*16) - c3) + (c7*2))) + (int64)-1)) + int32((int64(((c3 - (c5*8)) - c7))*(int64)1024)))]) + buf_output[(int32((int64((((c5*16) - c3) + (c7*2))) + (int64)1)) + int32((int64(((c3 - (c5*8)) - c7))*(int64)1024)))]) + buf_output[(int32((int64((((c5*16) - c3) + (c7*2))) + (int64)-1)) + int32(((int64(((c3 - (c5*8)) - c7))*(int64)1024) + (int64)1024)))]) + buf_output[((((c5*16) - c3) + (c7*2)) + int32(((int64(((c3 - (c5*8)) - c7))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64((((c5*16) - c3) + (c7*2))) + (int64)1)) + int32(((int64(((c3 - (c5*8)) - c7))*(int64)1024) + (int64)1024)))])
+        }
+      }
+    }
+  }
+}
+
+-----------
+Skewing L1 2 L2 1
+Parallelize L2 8
+0- for 0 <= t < 200 | 0
+	1- for 2 <= xx_skew_2_1 < 3066 | 0
+		2- for 0 <= yy_skew_outer < 42 | 0 | P
+			3- for 0 <= yy_skew_inner < 8 | 0
+				conv
+Evaluation : 10429.700195
+
+{ conv[t4, t5, t6] -> conv[t144 = 0, t145 = 0, t = t4, t147 = 0, xx_skew_2_1 = 2t5 + t6, t149 = 0, yy_skew = t5 + t6, t151 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -3 ,0 0 1 -2 ,
+src:0 1 0 -2 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 2 ,0 0 1 1 ,
+src:0 1 0 3 ,0 0 1 2 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 0, 200) {
+    for (c3, 3, 3064) {
+      parallel (c5, max((int32(floor_f32(float32(((c3 + 2)/64)))) + -16), int32(floor_f32(float32(((c3 + 2)/128))))), ((min(int32(floor_f32(float32(((c3 + -1)/64)))), (int32(floor_f32(float32(((c3 + -2)/128)))) + 8)) - max((int32(floor_f32(float32(((c3 + 2)/64)))) + -16), int32(floor_f32(float32(((c3 + 2)/128)))))) + 1)) {
+        for (c7, max(max(((c3 - (c5*64)) + -1022), ((int32(floor_f32(float32((c3/2)))) - (c5*64)) + 1)), 0), ((min(min(((c3 - (c5*64)) + -1), ((int32(floor_f32(float32((c3/2)))) - (c5*64)) + 511)), 63) - max(max(((c3 - (c5*64)) + -1022), ((int32(floor_f32(float32((c3/2)))) - (c5*64)) + 1)), 0)) + 1)) {
+          buf_output[((((c5*128) - c3) + (c7*2)) + int32((int64(((c3 - (c5*64)) - c7))*(int64)1024)))] = (((((((buf_output[(int32((int64((((c5*128) - c3) + (c7*2))) + (int64)-1)) + int32(((int64(((c3 - (c5*64)) - c7))*(int64)1024) + (int64)-1024)))] + buf_output[((((c5*128) - c3) + (c7*2)) + int32(((int64(((c3 - (c5*64)) - c7))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*128) - c3) + (c7*2))) + (int64)1)) + int32(((int64(((c3 - (c5*64)) - c7))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*128) - c3) + (c7*2))) + (int64)-1)) + int32((int64(((c3 - (c5*64)) - c7))*(int64)1024)))]) + buf_output[(int32((int64((((c5*128) - c3) + (c7*2))) + (int64)1)) + int32((int64(((c3 - (c5*64)) - c7))*(int64)1024)))]) + buf_output[(int32((int64((((c5*128) - c3) + (c7*2))) + (int64)-1)) + int32(((int64(((c3 - (c5*64)) - c7))*(int64)1024) + (int64)1024)))]) + buf_output[((((c5*128) - c3) + (c7*2)) + int32(((int64(((c3 - (c5*64)) - c7))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64((((c5*128) - c3) + (c7*2))) + (int64)1)) + int32(((int64(((c3 - (c5*64)) - c7))*(int64)1024) + (int64)1024)))])
+        }
+      }
+    }
+  }
+}
+
+-----------
+Skewing L1 2 L2 1
+Parallelize L2 64
+0- for 0 <= t < 200 | 0
+	1- for 2 <= xx_skew_2_1 < 3066 | 0
+		2- for 0 <= yy_skew_outer < 5 | 0 | P
+			3- for 0 <= yy_skew_inner < 64 | 0
+				conv
+Evaluation : 5903.350098
+
+{ conv[t4, t5, t6] -> conv[t144 = 0, t145 = 0, t = t4, t147 = 0, xx_skew_2_1 = 2t5 + t6, t149 = 0, yy_skew = t5 + t6, t151 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -3 ,0 0 1 -2 ,
+src:0 1 0 -2 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 2 ,0 0 1 1 ,
+src:0 1 0 3 ,0 0 1 2 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 0, 200) {
+    for (c3, 3, 3064) {
+      parallel (c5, max((int32(floor_f32(float32(((c3 + 2)/128)))) + -8), int32(floor_f32(float32(((c3 + 2)/256))))), ((min(int32(floor_f32(float32(((c3 + -1)/128)))), (int32(floor_f32(float32(((c3 + -2)/256)))) + 4)) - max((int32(floor_f32(float32(((c3 + 2)/128)))) + -8), int32(floor_f32(float32(((c3 + 2)/256)))))) + 1)) {
+        for (c7, max(max(((c3 - (c5*128)) + -1022), ((int32(floor_f32(float32((c3/2)))) - (c5*128)) + 1)), 0), ((min(min(((c3 - (c5*128)) + -1), ((int32(floor_f32(float32((c3/2)))) - (c5*128)) + 511)), 127) - max(max(((c3 - (c5*128)) + -1022), ((int32(floor_f32(float32((c3/2)))) - (c5*128)) + 1)), 0)) + 1)) {
+          buf_output[((((c5*256) - c3) + (c7*2)) + int32((int64(((c3 - (c5*128)) - c7))*(int64)1024)))] = (((((((buf_output[(int32((int64((((c5*256) - c3) + (c7*2))) + (int64)-1)) + int32(((int64(((c3 - (c5*128)) - c7))*(int64)1024) + (int64)-1024)))] + buf_output[((((c5*256) - c3) + (c7*2)) + int32(((int64(((c3 - (c5*128)) - c7))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*256) - c3) + (c7*2))) + (int64)1)) + int32(((int64(((c3 - (c5*128)) - c7))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*256) - c3) + (c7*2))) + (int64)-1)) + int32((int64(((c3 - (c5*128)) - c7))*(int64)1024)))]) + buf_output[(int32((int64((((c5*256) - c3) + (c7*2))) + (int64)1)) + int32((int64(((c3 - (c5*128)) - c7))*(int64)1024)))]) + buf_output[(int32((int64((((c5*256) - c3) + (c7*2))) + (int64)-1)) + int32(((int64(((c3 - (c5*128)) - c7))*(int64)1024) + (int64)1024)))]) + buf_output[((((c5*256) - c3) + (c7*2)) + int32(((int64(((c3 - (c5*128)) - c7))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64((((c5*256) - c3) + (c7*2))) + (int64)1)) + int32(((int64(((c3 - (c5*128)) - c7))*(int64)1024) + (int64)1024)))])
+        }
+      }
+    }
+  }
+}
+
+-----------
+Skewing L1 2 L2 1
+Parallelize L2 128
+0- for 0 <= t < 200 | 0
+	1- for 2 <= xx_skew_2_1 < 3066 | 0
+		2- for 0 <= yy_skew_outer < 2 | 0 | P
+			3- for 0 <= yy_skew_inner < 128 | 0
+				conv
+Evaluation : 5281.290039
+
+{ conv[t4, t5, t6] -> conv[t144 = 0, t145 = 0, t = t4, t147 = 0, xx_skew_2_1 = 2t5 + t6, t149 = 0, yy_skew = t5 + t6, t151 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -3 ,0 0 1 -2 ,
+src:0 1 0 -2 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 2 ,0 0 1 1 ,
+src:0 1 0 3 ,0 0 1 2 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 0, 200) {
+    for (c3, 3, 3064) {
+      parallel (c5, max((int32(floor_f32(float32(((c3 + 2)/256)))) + -4), int32(floor_f32(float32(((c3 + 2)/512))))), ((min(int32(floor_f32(float32(((c3 + -1)/256)))), (int32(floor_f32(float32(((c3 + -2)/512)))) + 2)) - max((int32(floor_f32(float32(((c3 + 2)/256)))) + -4), int32(floor_f32(float32(((c3 + 2)/512)))))) + 1)) {
+        for (c7, max(max(((c3 - (c5*256)) + -1022), ((int32(floor_f32(float32((c3/2)))) - (c5*256)) + 1)), 0), ((min(min(((c3 - (c5*256)) + -1), ((int32(floor_f32(float32((c3/2)))) - (c5*256)) + 511)), 255) - max(max(((c3 - (c5*256)) + -1022), ((int32(floor_f32(float32((c3/2)))) - (c5*256)) + 1)), 0)) + 1)) {
+          buf_output[((((c5*512) - c3) + (c7*2)) + int32((int64(((c3 - (c5*256)) - c7))*(int64)1024)))] = (((((((buf_output[(int32((int64((((c5*512) - c3) + (c7*2))) + (int64)-1)) + int32(((int64(((c3 - (c5*256)) - c7))*(int64)1024) + (int64)-1024)))] + buf_output[((((c5*512) - c3) + (c7*2)) + int32(((int64(((c3 - (c5*256)) - c7))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*512) - c3) + (c7*2))) + (int64)1)) + int32(((int64(((c3 - (c5*256)) - c7))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*512) - c3) + (c7*2))) + (int64)-1)) + int32((int64(((c3 - (c5*256)) - c7))*(int64)1024)))]) + buf_output[(int32((int64((((c5*512) - c3) + (c7*2))) + (int64)1)) + int32((int64(((c3 - (c5*256)) - c7))*(int64)1024)))]) + buf_output[(int32((int64((((c5*512) - c3) + (c7*2))) + (int64)-1)) + int32(((int64(((c3 - (c5*256)) - c7))*(int64)1024) + (int64)1024)))]) + buf_output[((((c5*512) - c3) + (c7*2)) + int32(((int64(((c3 - (c5*256)) - c7))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64((((c5*512) - c3) + (c7*2))) + (int64)1)) + int32(((int64(((c3 - (c5*256)) - c7))*(int64)1024) + (int64)1024)))])
+        }
+      }
+    }
+  }
+}
+
+-----------
+Skewing L1 2 L2 1
+Parallelize L2 256
+0- for 0 <= t < 200 | 0
+	1- for 2 <= xx_skew_2_1 < 3066 | 0
+		2- for 0 <= yy_skew_outer < 1 | 0 | P
+			3- for 0 <= yy_skew_inner < 256 | 0
+				conv
+Evaluation : 4075.540039
+
+{ conv[t4, t5, t6] -> conv[t144 = 0, t145 = 0, t = t4, t147 = 0, xx_skew_2_1 = 2t5 + t6, t149 = 0, yy_skew = t5 + t6, t151 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -3 ,0 0 1 -2 ,
+src:0 1 0 -2 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 0 ,
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 1 ,
+src:0 1 0 1 ,0 0 1 0 ,
+src:0 1 0 2 ,0 0 1 1 ,
+src:0 1 0 3 ,0 0 1 2 ,
+
+<legal>
+genPARA1genPARA8genPARA64genPARA128genPARA256
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 0, 200) {
+    for (c3, 4, 4085) {
+      parallel (c5, max((c3 + -1022), ((c3 - int32(floor_f32(float32(((c3 + 2)/3))))) + 1)), (min(c3, ((c3 - int32(floor_f32(float32(((c3/3) + 1))))) + 342)) - max((c3 + -1022), ((c3 - int32(floor_f32(float32(((c3 + 2)/3))))) + 1)))) {
+        buf_output[(((c5*3) - (c3*2)) + int32((int64((c3 - c5))*(int64)1024)))] = (((((((buf_output[(int32((int64(((c5*3) - (c3*2))) + (int64)-1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)-1024)))] + buf_output[(((c5*3) - (c3*2)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(((c5*3) - (c3*2))) + (int64)1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(((c5*3) - (c3*2))) + (int64)-1)) + int32((int64((c3 - c5))*(int64)1024)))]) + buf_output[(int32((int64(((c5*3) - (c3*2))) + (int64)1)) + int32((int64((c3 - c5))*(int64)1024)))]) + buf_output[(int32((int64(((c5*3) - (c3*2))) + (int64)-1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)1024)))]) + buf_output[(((c5*3) - (c3*2)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(((c5*3) - (c3*2))) + (int64)1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)1024)))])
+      }
+    }
+  }
+}
+
+-----------
+Skewing L1 3 L2 1
+Parallelize L2 1
+0- for 0 <= t < 200 | 0
+	1- for 3 <= xx_skew_3_1 < 4088 | 0
+		2- for 0 <= yy_skew_outer < 257 | 0 | P
+			3- for 0 <= yy_skew_inner < 1 | 0
+				conv
+Evaluation : 41442.800781
+
+{ conv[t4, t5, t6] -> conv[t166 = 0, t167 = 0, t = t4, t169 = 0, xx_skew_3_1 = 3t5 + t6, t171 = 0, yy_skew = 2t5 + t6, t173 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -4 ,0 0 1 -3 ,
+src:0 1 0 -3 ,0 0 1 -2 ,
+src:0 1 0 -2 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 1 ,
+src:0 1 0 2 ,0 0 1 1 ,
+src:0 1 0 3 ,0 0 1 2 ,
+src:0 1 0 4 ,0 0 1 3 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 0, 200) {
+    for (c3, 4, 4085) {
+      parallel (c5, max((int32(floor_f32(float32(((c3 + 2)/8)))) + -128), int32(floor_f32(float32(((c3 + 1)/12))))), ((min(int32(floor_f32(float32(((c3 + -1)/8)))), (int32(floor_f32(float32(((c3 + 7)/12)))) + 42)) - max((int32(floor_f32(float32(((c3 + 2)/8)))) + -128), int32(floor_f32(float32(((c3 + 1)/12)))))) + 1)) {
+        for (c7, max(max(((c3 - (c5*8)) + -1022), (((c3 - (c5*8)) - int32(floor_f32(float32(((c3 + 2)/3))))) + 1)), 0), ((min(min(((c3 - (c5*8)) + -1), (((c3 - (c5*8)) - int32(floor_f32(float32(((c3/3) + 1))))) + 341)), 7) - max(max(((c3 - (c5*8)) + -1022), (((c3 - (c5*8)) - int32(floor_f32(float32(((c3 + 2)/3))))) + 1)), 0)) + 1)) {
+          buf_output[((((c5*24) - (c3*2)) + (c7*3)) + int32((int64(((c3 - (c5*8)) - c7))*(int64)1024)))] = (((((((buf_output[(int32((int64((((c5*24) - (c3*2)) + (c7*3))) + (int64)-1)) + int32(((int64(((c3 - (c5*8)) - c7))*(int64)1024) + (int64)-1024)))] + buf_output[((((c5*24) - (c3*2)) + (c7*3)) + int32(((int64(((c3 - (c5*8)) - c7))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*24) - (c3*2)) + (c7*3))) + (int64)1)) + int32(((int64(((c3 - (c5*8)) - c7))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*24) - (c3*2)) + (c7*3))) + (int64)-1)) + int32((int64(((c3 - (c5*8)) - c7))*(int64)1024)))]) + buf_output[(int32((int64((((c5*24) - (c3*2)) + (c7*3))) + (int64)1)) + int32((int64(((c3 - (c5*8)) - c7))*(int64)1024)))]) + buf_output[(int32((int64((((c5*24) - (c3*2)) + (c7*3))) + (int64)-1)) + int32(((int64(((c3 - (c5*8)) - c7))*(int64)1024) + (int64)1024)))]) + buf_output[((((c5*24) - (c3*2)) + (c7*3)) + int32(((int64(((c3 - (c5*8)) - c7))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64((((c5*24) - (c3*2)) + (c7*3))) + (int64)1)) + int32(((int64(((c3 - (c5*8)) - c7))*(int64)1024) + (int64)1024)))])
+        }
+      }
+    }
+  }
+}
+
+-----------
+Skewing L1 3 L2 1
+Parallelize L2 8
+0- for 0 <= t < 200 | 0
+	1- for 3 <= xx_skew_3_1 < 4088 | 0
+		2- for 0 <= yy_skew_outer < 32 | 0 | P
+			3- for 0 <= yy_skew_inner < 8 | 0
+				conv
+Evaluation : 12445.700195
+
+{ conv[t4, t5, t6] -> conv[t166 = 0, t167 = 0, t = t4, t169 = 0, xx_skew_3_1 = 3t5 + t6, t171 = 0, yy_skew = 2t5 + t6, t173 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -4 ,0 0 1 -3 ,
+src:0 1 0 -3 ,0 0 1 -2 ,
+src:0 1 0 -2 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 1 ,
+src:0 1 0 2 ,0 0 1 1 ,
+src:0 1 0 3 ,0 0 1 2 ,
+src:0 1 0 4 ,0 0 1 3 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 0, 200) {
+    for (c3, 4, 4085) {
+      parallel (c5, max((int32(floor_f32(float32(((c3 + 2)/64)))) + -16), int32(floor_f32(float32(((c3 + 1)/96))))), ((min(int32(floor_f32(float32(((c3 + -1)/64)))), (int32(floor_f32(float32(((c3 + 31)/96)))) + 5)) - max((int32(floor_f32(float32(((c3 + 2)/64)))) + -16), int32(floor_f32(float32(((c3 + 1)/96)))))) + 1)) {
+        for (c7, max(max(((c3 - (c5*64)) + -1022), (((c3 - (c5*64)) - int32(floor_f32(float32(((c3 + 2)/3))))) + 1)), 0), ((min(min(((c3 - (c5*64)) + -1), (((c3 - (c5*64)) - int32(floor_f32(float32(((c3/3) + 1))))) + 341)), 63) - max(max(((c3 - (c5*64)) + -1022), (((c3 - (c5*64)) - int32(floor_f32(float32(((c3 + 2)/3))))) + 1)), 0)) + 1)) {
+          buf_output[((((c5*192) - (c3*2)) + (c7*3)) + int32((int64(((c3 - (c5*64)) - c7))*(int64)1024)))] = (((((((buf_output[(int32((int64((((c5*192) - (c3*2)) + (c7*3))) + (int64)-1)) + int32(((int64(((c3 - (c5*64)) - c7))*(int64)1024) + (int64)-1024)))] + buf_output[((((c5*192) - (c3*2)) + (c7*3)) + int32(((int64(((c3 - (c5*64)) - c7))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*192) - (c3*2)) + (c7*3))) + (int64)1)) + int32(((int64(((c3 - (c5*64)) - c7))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*192) - (c3*2)) + (c7*3))) + (int64)-1)) + int32((int64(((c3 - (c5*64)) - c7))*(int64)1024)))]) + buf_output[(int32((int64((((c5*192) - (c3*2)) + (c7*3))) + (int64)1)) + int32((int64(((c3 - (c5*64)) - c7))*(int64)1024)))]) + buf_output[(int32((int64((((c5*192) - (c3*2)) + (c7*3))) + (int64)-1)) + int32(((int64(((c3 - (c5*64)) - c7))*(int64)1024) + (int64)1024)))]) + buf_output[((((c5*192) - (c3*2)) + (c7*3)) + int32(((int64(((c3 - (c5*64)) - c7))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64((((c5*192) - (c3*2)) + (c7*3))) + (int64)1)) + int32(((int64(((c3 - (c5*64)) - c7))*(int64)1024) + (int64)1024)))])
+        }
+      }
+    }
+  }
+}
+
+-----------
+Skewing L1 3 L2 1
+Parallelize L2 64
+0- for 0 <= t < 200 | 0
+	1- for 3 <= xx_skew_3_1 < 4088 | 0
+		2- for 0 <= yy_skew_outer < 4 | 0 | P
+			3- for 0 <= yy_skew_inner < 64 | 0
+				conv
+Evaluation : 7949.020020
+
+{ conv[t4, t5, t6] -> conv[t166 = 0, t167 = 0, t = t4, t169 = 0, xx_skew_3_1 = 3t5 + t6, t171 = 0, yy_skew = 2t5 + t6, t173 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -4 ,0 0 1 -3 ,
+src:0 1 0 -3 ,0 0 1 -2 ,
+src:0 1 0 -2 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 1 ,
+src:0 1 0 2 ,0 0 1 1 ,
+src:0 1 0 3 ,0 0 1 2 ,
+src:0 1 0 4 ,0 0 1 3 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 0, 200) {
+    for (c3, 4, 4085) {
+      parallel (c5, max((int32(floor_f32(float32(((c3 + 2)/128)))) + -8), int32(floor_f32(float32(((c3 + 1)/192))))), ((min(int32(floor_f32(float32(((c3 + -1)/128)))), (int32(floor_f32(float32(((c3 + 127)/192)))) + 2)) - max((int32(floor_f32(float32(((c3 + 2)/128)))) + -8), int32(floor_f32(float32(((c3 + 1)/192)))))) + 1)) {
+        for (c7, max(max(((c3 - (c5*128)) + -1022), (((c3 - (c5*128)) - int32(floor_f32(float32(((c3 + 2)/3))))) + 1)), 0), ((min(min(((c3 - (c5*128)) + -1), (((c3 - (c5*128)) - int32(floor_f32(float32(((c3/3) + 1))))) + 341)), 127) - max(max(((c3 - (c5*128)) + -1022), (((c3 - (c5*128)) - int32(floor_f32(float32(((c3 + 2)/3))))) + 1)), 0)) + 1)) {
+          buf_output[((((c5*384) - (c3*2)) + (c7*3)) + int32((int64(((c3 - (c5*128)) - c7))*(int64)1024)))] = (((((((buf_output[(int32((int64((((c5*384) - (c3*2)) + (c7*3))) + (int64)-1)) + int32(((int64(((c3 - (c5*128)) - c7))*(int64)1024) + (int64)-1024)))] + buf_output[((((c5*384) - (c3*2)) + (c7*3)) + int32(((int64(((c3 - (c5*128)) - c7))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*384) - (c3*2)) + (c7*3))) + (int64)1)) + int32(((int64(((c3 - (c5*128)) - c7))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*384) - (c3*2)) + (c7*3))) + (int64)-1)) + int32((int64(((c3 - (c5*128)) - c7))*(int64)1024)))]) + buf_output[(int32((int64((((c5*384) - (c3*2)) + (c7*3))) + (int64)1)) + int32((int64(((c3 - (c5*128)) - c7))*(int64)1024)))]) + buf_output[(int32((int64((((c5*384) - (c3*2)) + (c7*3))) + (int64)-1)) + int32(((int64(((c3 - (c5*128)) - c7))*(int64)1024) + (int64)1024)))]) + buf_output[((((c5*384) - (c3*2)) + (c7*3)) + int32(((int64(((c3 - (c5*128)) - c7))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64((((c5*384) - (c3*2)) + (c7*3))) + (int64)1)) + int32(((int64(((c3 - (c5*128)) - c7))*(int64)1024) + (int64)1024)))])
+        }
+      }
+    }
+  }
+}
+
+-----------
+Skewing L1 3 L2 1
+Parallelize L2 128
+0- for 0 <= t < 200 | 0
+	1- for 3 <= xx_skew_3_1 < 4088 | 0
+		2- for 0 <= yy_skew_outer < 2 | 0 | P
+			3- for 0 <= yy_skew_inner < 128 | 0
+				conv
+Evaluation : 7175.229980
+
+{ conv[t4, t5, t6] -> conv[t166 = 0, t167 = 0, t = t4, t169 = 0, xx_skew_3_1 = 3t5 + t6, t171 = 0, yy_skew = 2t5 + t6, t173 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -4 ,0 0 1 -3 ,
+src:0 1 0 -3 ,0 0 1 -2 ,
+src:0 1 0 -2 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 1 ,
+src:0 1 0 2 ,0 0 1 1 ,
+src:0 1 0 3 ,0 0 1 2 ,
+src:0 1 0 4 ,0 0 1 3 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 0, 200) {
+    for (c3, 4, 4085) {
+      parallel (c5, max((int32(floor_f32(float32(((c3 + 2)/256)))) + -4), int32(floor_f32(float32(((c3 + 1)/384))))), ((min(int32(floor_f32(float32(((c3 + -1)/256)))), (int32(floor_f32(float32(((c3 + 127)/384)))) + 1)) - max((int32(floor_f32(float32(((c3 + 2)/256)))) + -4), int32(floor_f32(float32(((c3 + 1)/384)))))) + 1)) {
+        for (c7, max(max(((c3 - (c5*256)) + -1022), (((c3 - (c5*256)) - int32(floor_f32(float32(((c3 + 2)/3))))) + 1)), 0), ((min(min(((c3 - (c5*256)) + -1), (((c3 - (c5*256)) - int32(floor_f32(float32(((c3/3) + 1))))) + 341)), 255) - max(max(((c3 - (c5*256)) + -1022), (((c3 - (c5*256)) - int32(floor_f32(float32(((c3 + 2)/3))))) + 1)), 0)) + 1)) {
+          buf_output[((((c5*768) - (c3*2)) + (c7*3)) + int32((int64(((c3 - (c5*256)) - c7))*(int64)1024)))] = (((((((buf_output[(int32((int64((((c5*768) - (c3*2)) + (c7*3))) + (int64)-1)) + int32(((int64(((c3 - (c5*256)) - c7))*(int64)1024) + (int64)-1024)))] + buf_output[((((c5*768) - (c3*2)) + (c7*3)) + int32(((int64(((c3 - (c5*256)) - c7))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*768) - (c3*2)) + (c7*3))) + (int64)1)) + int32(((int64(((c3 - (c5*256)) - c7))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*768) - (c3*2)) + (c7*3))) + (int64)-1)) + int32((int64(((c3 - (c5*256)) - c7))*(int64)1024)))]) + buf_output[(int32((int64((((c5*768) - (c3*2)) + (c7*3))) + (int64)1)) + int32((int64(((c3 - (c5*256)) - c7))*(int64)1024)))]) + buf_output[(int32((int64((((c5*768) - (c3*2)) + (c7*3))) + (int64)-1)) + int32(((int64(((c3 - (c5*256)) - c7))*(int64)1024) + (int64)1024)))]) + buf_output[((((c5*768) - (c3*2)) + (c7*3)) + int32(((int64(((c3 - (c5*256)) - c7))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64((((c5*768) - (c3*2)) + (c7*3))) + (int64)1)) + int32(((int64(((c3 - (c5*256)) - c7))*(int64)1024) + (int64)1024)))])
+        }
+      }
+    }
+  }
+}
+
+-----------
+Skewing L1 3 L2 1
+Parallelize L2 256
+0- for 0 <= t < 200 | 0
+	1- for 3 <= xx_skew_3_1 < 4088 | 0
+		2- for 0 <= yy_skew_outer < 1 | 0 | P
+			3- for 0 <= yy_skew_inner < 256 | 0
+				conv
+Evaluation : 4695.020020
+
+{ conv[t4, t5, t6] -> conv[t166 = 0, t167 = 0, t = t4, t169 = 0, xx_skew_3_1 = 3t5 + t6, t171 = 0, yy_skew = 2t5 + t6, t173 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -4 ,0 0 1 -3 ,
+src:0 1 0 -3 ,0 0 1 -2 ,
+src:0 1 0 -2 ,0 0 1 -1 ,
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 1 ,
+src:0 1 0 2 ,0 0 1 1 ,
+src:0 1 0 3 ,0 0 1 2 ,
+src:0 1 0 4 ,0 0 1 3 ,
+
+<legal>
+genPARA1genPARA8genPARA64genPARA128genPARA256
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 0, 200) {
+    for (c3, 5, 5106) {
+      parallel (c5, max((c3 + -1022), ((c3 - int32(floor_f32(float32(((c3 + 3)/4))))) + 1)), (min(c3, ((c3 - int32(floor_f32(float32(((c3 + 1)/4))))) + 256)) - max((c3 + -1022), ((c3 - int32(floor_f32(float32(((c3 + 3)/4))))) + 1)))) {
+        buf_output[(((c5*4) - (c3*3)) + int32((int64((c3 - c5))*(int64)1024)))] = (((((((buf_output[(int32((int64(((c5*4) - (c3*3))) + (int64)-1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)-1024)))] + buf_output[(((c5*4) - (c3*3)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(((c5*4) - (c3*3))) + (int64)1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(((c5*4) - (c3*3))) + (int64)-1)) + int32((int64((c3 - c5))*(int64)1024)))]) + buf_output[(int32((int64(((c5*4) - (c3*3))) + (int64)1)) + int32((int64((c3 - c5))*(int64)1024)))]) + buf_output[(int32((int64(((c5*4) - (c3*3))) + (int64)-1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)1024)))]) + buf_output[(((c5*4) - (c3*3)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(((c5*4) - (c3*3))) + (int64)1)) + int32(((int64((c3 - c5))*(int64)1024) + (int64)1024)))])
+      }
+    }
+  }
+}
+
+-----------
+Skewing L1 4 L2 1
+Parallelize L2 1
+0- for 0 <= t < 200 | 0
+	1- for 4 <= xx_skew_4_1 < 5110 | 0
+		2- for 0 <= yy_skew_outer < 206 | 0 | P
+			3- for 0 <= yy_skew_inner < 1 | 0
+				conv
+Evaluation : 44236.398438
+
+{ conv[t4, t5, t6] -> conv[t210 = 0, t211 = 0, t = t4, t213 = 0, xx_skew_4_1 = 4t5 + t6, t215 = 0, yy_skew = 3t5 + t6, t217 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -5 ,0 0 1 -4 ,
+src:0 1 0 -4 ,0 0 1 -3 ,
+src:0 1 0 -3 ,0 0 1 -2 ,
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 1 ,
+src:0 1 0 3 ,0 0 1 2 ,
+src:0 1 0 4 ,0 0 1 3 ,
+src:0 1 0 5 ,0 0 1 4 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 0, 200) {
+    for (c3, 5, 5106) {
+      parallel (c5, max((int32(floor_f32(float32(((c3 + 2)/8)))) + -128), int32(floor_f32(float32((((c3*3) + 4)/32))))), ((min(int32(floor_f32(float32(((c3 + -1)/8)))), (int32(floor_f32(float32((((c3*3) + -2)/32)))) + 32)) - max((int32(floor_f32(float32(((c3 + 2)/8)))) + -128), int32(floor_f32(float32((((c3*3) + 4)/32)))))) + 1)) {
+        for (c7, max(max(((c3 - (c5*8)) + -1022), (((c3 - (c5*8)) - int32(floor_f32(float32(((c3 + 3)/4))))) + 1)), 0), ((min(min(((c3 - (c5*8)) + -1), (((c3 - (c5*8)) - int32(floor_f32(float32(((c3 + 1)/4))))) + 255)), 7) - max(max(((c3 - (c5*8)) + -1022), (((c3 - (c5*8)) - int32(floor_f32(float32(((c3 + 3)/4))))) + 1)), 0)) + 1)) {
+          buf_output[((((c5*32) - (c3*3)) + (c7*4)) + int32((int64(((c3 - (c5*8)) - c7))*(int64)1024)))] = (((((((buf_output[(int32((int64((((c5*32) - (c3*3)) + (c7*4))) + (int64)-1)) + int32(((int64(((c3 - (c5*8)) - c7))*(int64)1024) + (int64)-1024)))] + buf_output[((((c5*32) - (c3*3)) + (c7*4)) + int32(((int64(((c3 - (c5*8)) - c7))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*32) - (c3*3)) + (c7*4))) + (int64)1)) + int32(((int64(((c3 - (c5*8)) - c7))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*32) - (c3*3)) + (c7*4))) + (int64)-1)) + int32((int64(((c3 - (c5*8)) - c7))*(int64)1024)))]) + buf_output[(int32((int64((((c5*32) - (c3*3)) + (c7*4))) + (int64)1)) + int32((int64(((c3 - (c5*8)) - c7))*(int64)1024)))]) + buf_output[(int32((int64((((c5*32) - (c3*3)) + (c7*4))) + (int64)-1)) + int32(((int64(((c3 - (c5*8)) - c7))*(int64)1024) + (int64)1024)))]) + buf_output[((((c5*32) - (c3*3)) + (c7*4)) + int32(((int64(((c3 - (c5*8)) - c7))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64((((c5*32) - (c3*3)) + (c7*4))) + (int64)1)) + int32(((int64(((c3 - (c5*8)) - c7))*(int64)1024) + (int64)1024)))])
+        }
+      }
+    }
+  }
+}
+
+-----------
+Skewing L1 4 L2 1
+Parallelize L2 8
+0- for 0 <= t < 200 | 0
+	1- for 4 <= xx_skew_4_1 < 5110 | 0
+		2- for 0 <= yy_skew_outer < 25 | 0 | P
+			3- for 0 <= yy_skew_inner < 8 | 0
+				conv
+Evaluation : 13507.400391
+
+{ conv[t4, t5, t6] -> conv[t210 = 0, t211 = 0, t = t4, t213 = 0, xx_skew_4_1 = 4t5 + t6, t215 = 0, yy_skew = 3t5 + t6, t217 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -5 ,0 0 1 -4 ,
+src:0 1 0 -4 ,0 0 1 -3 ,
+src:0 1 0 -3 ,0 0 1 -2 ,
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 1 ,
+src:0 1 0 3 ,0 0 1 2 ,
+src:0 1 0 4 ,0 0 1 3 ,
+src:0 1 0 5 ,0 0 1 4 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 0, 200) {
+    for (c3, 5, 5106) {
+      parallel (c5, max((int32(floor_f32(float32(((c3 + 2)/64)))) + -16), int32(floor_f32(float32((((c3*3) + 4)/256))))), ((min(int32(floor_f32(float32(((c3 + -1)/64)))), (int32(floor_f32(float32((((c3*3) + -2)/256)))) + 4)) - max((int32(floor_f32(float32(((c3 + 2)/64)))) + -16), int32(floor_f32(float32((((c3*3) + 4)/256)))))) + 1)) {
+        for (c7, max(max(((c3 - (c5*64)) + -1022), (((c3 - (c5*64)) - int32(floor_f32(float32(((c3 + 3)/4))))) + 1)), 0), ((min(min(((c3 - (c5*64)) + -1), (((c3 - (c5*64)) - int32(floor_f32(float32(((c3 + 1)/4))))) + 255)), 63) - max(max(((c3 - (c5*64)) + -1022), (((c3 - (c5*64)) - int32(floor_f32(float32(((c3 + 3)/4))))) + 1)), 0)) + 1)) {
+          buf_output[((((c5*256) - (c3*3)) + (c7*4)) + int32((int64(((c3 - (c5*64)) - c7))*(int64)1024)))] = (((((((buf_output[(int32((int64((((c5*256) - (c3*3)) + (c7*4))) + (int64)-1)) + int32(((int64(((c3 - (c5*64)) - c7))*(int64)1024) + (int64)-1024)))] + buf_output[((((c5*256) - (c3*3)) + (c7*4)) + int32(((int64(((c3 - (c5*64)) - c7))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*256) - (c3*3)) + (c7*4))) + (int64)1)) + int32(((int64(((c3 - (c5*64)) - c7))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*256) - (c3*3)) + (c7*4))) + (int64)-1)) + int32((int64(((c3 - (c5*64)) - c7))*(int64)1024)))]) + buf_output[(int32((int64((((c5*256) - (c3*3)) + (c7*4))) + (int64)1)) + int32((int64(((c3 - (c5*64)) - c7))*(int64)1024)))]) + buf_output[(int32((int64((((c5*256) - (c3*3)) + (c7*4))) + (int64)-1)) + int32(((int64(((c3 - (c5*64)) - c7))*(int64)1024) + (int64)1024)))]) + buf_output[((((c5*256) - (c3*3)) + (c7*4)) + int32(((int64(((c3 - (c5*64)) - c7))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64((((c5*256) - (c3*3)) + (c7*4))) + (int64)1)) + int32(((int64(((c3 - (c5*64)) - c7))*(int64)1024) + (int64)1024)))])
+        }
+      }
+    }
+  }
+}
+
+-----------
+Skewing L1 4 L2 1
+Parallelize L2 64
+0- for 0 <= t < 200 | 0
+	1- for 4 <= xx_skew_4_1 < 5110 | 0
+		2- for 0 <= yy_skew_outer < 3 | 0 | P
+			3- for 0 <= yy_skew_inner < 64 | 0
+				conv
+Evaluation : 8320.009766
+
+{ conv[t4, t5, t6] -> conv[t210 = 0, t211 = 0, t = t4, t213 = 0, xx_skew_4_1 = 4t5 + t6, t215 = 0, yy_skew = 3t5 + t6, t217 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -5 ,0 0 1 -4 ,
+src:0 1 0 -4 ,0 0 1 -3 ,
+src:0 1 0 -3 ,0 0 1 -2 ,
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 1 ,
+src:0 1 0 3 ,0 0 1 2 ,
+src:0 1 0 4 ,0 0 1 3 ,
+src:0 1 0 5 ,0 0 1 4 ,
+
+<legal>
+
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 0, 200) {
+    for (c3, 5, 5106) {
+      parallel (c5, max((int32(floor_f32(float32(((c3 + 2)/128)))) + -8), int32(floor_f32(float32((((c3*3) + 4)/512))))), ((min(int32(floor_f32(float32(((c3 + -1)/128)))), (int32(floor_f32(float32((((c3*3) + -2)/512)))) + 2)) - max((int32(floor_f32(float32(((c3 + 2)/128)))) + -8), int32(floor_f32(float32((((c3*3) + 4)/512)))))) + 1)) {
+        for (c7, max(max(((c3 - (c5*128)) + -1022), (((c3 - (c5*128)) - int32(floor_f32(float32(((c3 + 3)/4))))) + 1)), 0), ((min(min(((c3 - (c5*128)) + -1), (((c3 - (c5*128)) - int32(floor_f32(float32(((c3 + 1)/4))))) + 255)), 127) - max(max(((c3 - (c5*128)) + -1022), (((c3 - (c5*128)) - int32(floor_f32(float32(((c3 + 3)/4))))) + 1)), 0)) + 1)) {
+          buf_output[((((c5*512) - (c3*3)) + (c7*4)) + int32((int64(((c3 - (c5*128)) - c7))*(int64)1024)))] = (((((((buf_output[(int32((int64((((c5*512) - (c3*3)) + (c7*4))) + (int64)-1)) + int32(((int64(((c3 - (c5*128)) - c7))*(int64)1024) + (int64)-1024)))] + buf_output[((((c5*512) - (c3*3)) + (c7*4)) + int32(((int64(((c3 - (c5*128)) - c7))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*512) - (c3*3)) + (c7*4))) + (int64)1)) + int32(((int64(((c3 - (c5*128)) - c7))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64((((c5*512) - (c3*3)) + (c7*4))) + (int64)-1)) + int32((int64(((c3 - (c5*128)) - c7))*(int64)1024)))]) + buf_output[(int32((int64((((c5*512) - (c3*3)) + (c7*4))) + (int64)1)) + int32((int64(((c3 - (c5*128)) - c7))*(int64)1024)))]) + buf_output[(int32((int64((((c5*512) - (c3*3)) + (c7*4))) + (int64)-1)) + int32(((int64(((c3 - (c5*128)) - c7))*(int64)1024) + (int64)1024)))]) + buf_output[((((c5*512) - (c3*3)) + (c7*4)) + int32(((int64(((c3 - (c5*128)) - c7))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64((((c5*512) - (c3*3)) + (c7*4))) + (int64)1)) + int32(((int64(((c3 - (c5*128)) - c7))*(int64)1024) + (int64)1024)))])
+        }
+      }
+    }
+  }
+}
+
+-----------
+Skewing L1 4 L2 1
+Parallelize L2 128
+0- for 0 <= t < 200 | 0
+	1- for 4 <= xx_skew_4_1 < 5110 | 0
+		2- for 0 <= yy_skew_outer < 1 | 0 | P
+			3- for 0 <= yy_skew_inner < 128 | 0
+				conv
+Evaluation : 6978.529785
+
+{ conv[t4, t5, t6] -> conv[t210 = 0, t211 = 0, t = t4, t213 = 0, xx_skew_4_1 = 4t5 + t6, t215 = 0, yy_skew = 3t5 + t6, t217 = 0] : 0 <= t4 <= 199 and 0 < t5 <= 1022 and 0 < t6 <= 1022 }
+
+
+
+src:0 1 0 -5 ,0 0 1 -4 ,
+src:0 1 0 -4 ,0 0 1 -3 ,
+src:0 1 0 -3 ,0 0 1 -2 ,
+src:0 1 0 -1 ,0 0 1 -1 ,
+src:0 1 0 1 ,0 0 1 1 ,
+src:0 1 0 3 ,0 0 1 2 ,
+src:0 1 0 4 ,0 0 1 3 ,
+src:0 1 0 5 ,0 0 1 4 ,
+
+<legal>
+genPARA1genPARA8genPARA64genPARA128genPARA256
+Generated Halide IR:
+assert((reinterpret(uint64, buf_output.buffer) != (uint64)0), halide_error_buffer_argument_is_null("buf_output"))
+let buf_output = _halide_buffer_get_host(buf_output.buffer)
+produce  {
+  allocate _src_b0[int32 * 1024 * 1024]
+  allocate _conv_b1[int32 * 1022 * 1022 * 200]
+  for (c1, 0, 200) {
+    for (c3, 5, 5106) {
+      parallel (c5, max((int32(floor_f32(float32(((c3 + 1)/2)))) + -511), (int32(floor_f32(float32((c3/3)))) + 1)), (min(int32(floor_f32(float32(((c3 + 1)/2)))), (int32(floor_f32(float32(((c3 + -1)/3)))) + 342)) - max((int32(floor_f32(float32(((c3 + 1)/2)))) + -511), (int32(floor_f32(float32((c3/3)))) + 1)))) {
+        buf_output[(((c5*3) - c3) + int32((int64((c3 - (c5*2)))*(int64)1024)))] = (((((((buf_output[(int32((int64(((c5*3) - c3)) + (int64)-1)) + int32(((int64((c3 - (c5*2)))*(int64)1024) + (int64)-1024)))] + buf_output[(((c5*3) - c3) + int32(((int64((c3 - (c5*2)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(((c5*3) - c3)) + (int64)1)) + int32(((int64((c3 - (c5*2)))*(int64)1024) + (int64)-1024)))]) + buf_output[(int32((int64(((c5*3) - c3)) + (int64)-1)) + int32((int64((c3 - (c5*2)))*(int64)1024)))]) + buf_output[(int32((int64(((c5*3) - c3)) + (int64)1)) + int32((int64((c3 - (c5*2)))*(int64)1024)))]) + buf_output[(int32((int64(((c5*3) - c3)) + (int64)-1)) + int32(((int64((c3 - (c5*2)))*(int64)1024) + (int64)1024)))]) + buf_output[(((c5*3) - c3) + int32(((int64((c3 - (c5*2)))*(int64)1024) + (int64)1024)))]) + buf_output[(int32((int64(((c5*3) - c3)) + (int64)1)) + int32(((int64((c3 - (c5*2)))*(int64)1024) + (int64)1024)))])
       }
     }
   }

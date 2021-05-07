@@ -9,6 +9,7 @@ namespace tiramisu::auto_scheduler
 
 const std::vector<int> TILING_FACTORS_DEFAULT_LIST = {32, 64, 128};
 const std::vector<int> UNROLLING_FACTORS_DEFAULT_LIST = {4, 8, 16};
+const std::vector<int> PARALLELISM_DEFAULT_SIPLITTINGS = {1,8, 64, 128,256};
 const std::vector<std::tuple<int,int>> SKEWING_FACTORS_DEFAULT_LIST = {{1,1}, {1,2}, {2,1}};
 const int DEFAULT_MAX_NB_ITERATORS = 7;
 
@@ -37,6 +38,11 @@ protected:
     std::vector<std::tuple<int,int>> skewing_factors_list;
 
     /**
+     * A list of splitting factors for parallelism 
+    */
+    std::vector<int> parallelism_splitting_factors = PARALLELISM_DEFAULT_SIPLITTINGS;
+
+    /**
      * Max Number of dimension to explore for unrolling, starting from the innermost loop level,
     */
     int unrolling_search_deapth = 3;
@@ -55,12 +61,13 @@ protected:
     /**
      * The number of diffrent skewing proposed, skewing versions that enable inner parallelism in our case.
     */
-    int skewing_inner_parallelism_number = 3;
+    int skewing_inner_parallelism_number = 6;
 
 
 public:
     schedules_generator(std::vector<int> const& tiling_factors_list = TILING_FACTORS_DEFAULT_LIST,
                         std::vector<int> const& unrolling_factors_list = UNROLLING_FACTORS_DEFAULT_LIST,
+                        std::vector<int> const& parallelism_splitting_factors = PARALLELISM_DEFAULT_SIPLITTINGS,
                         std::vector<std::tuple<int,int>> skewing_factors_list = SKEWING_FACTORS_DEFAULT_LIST)
         
         : tiling_factors_list(tiling_factors_list), unrolling_factors_list(unrolling_factors_list), skewing_factors_list(skewing_factors_list) {}
@@ -109,7 +116,8 @@ protected:
 
 public:
     exhaustive_generator(std::vector<int> const& tiling_factors_list = TILING_FACTORS_DEFAULT_LIST,
-                         std::vector<int> const& unrolling_factors_list = UNROLLING_FACTORS_DEFAULT_LIST)
+                        std::vector<int> const& parallelism_splitting_factors = PARALLELISM_DEFAULT_SIPLITTINGS,
+                        std::vector<int> const& unrolling_factors_list = UNROLLING_FACTORS_DEFAULT_LIST)
         
         : schedules_generator(tiling_factors_list, unrolling_factors_list) {}
 
@@ -134,6 +142,7 @@ protected:
 public:
     ml_model_schedules_generator(int max_nb_iterators = DEFAULT_MAX_NB_ITERATORS,
                      std::vector<int> const& tiling_factors_list = TILING_FACTORS_DEFAULT_LIST,
+                     std::vector<int> const& parallelism_splitting_factors = PARALLELISM_DEFAULT_SIPLITTINGS,
                      std::vector<int> const& unrolling_factors_list = UNROLLING_FACTORS_DEFAULT_LIST)
         
         : schedules_generator(tiling_factors_list, unrolling_factors_list),    

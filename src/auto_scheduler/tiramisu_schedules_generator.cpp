@@ -486,6 +486,7 @@ std::vector<syntax_tree*> ml_model_schedules_generator::generate_schedules(synta
 
             for (ast_node* commun_node: shared_nodes)
             {
+                
                 std::vector<std::string> loop_names = involved_computations[0]->get_loop_level_names();
             
                 std::string loop_name = loop_names[commun_node->depth];
@@ -496,22 +497,32 @@ std::vector<syntax_tree*> ml_model_schedules_generator::generate_schedules(synta
                 {
                     ast.recover_isl_states();
 
-                    // Copy the AST and add unrolling to the list of optimizations
-                    syntax_tree* new_ast = new syntax_tree();
-                    ast_node *new_node = ast.copy_and_return_node(*new_ast, commun_node);
+                    for (int parallel_factor : parallelism_splitting_factors)
+                    {
+                        std::cout<<"genPARA"<<std::to_string(parallel_factor);
 
-                    optimization_info optim_info;
-                    optim_info.type = optimization_type::PARALLELIZE;
-                    optim_info.nb_l = 1;
-                    
-                    optim_info.l0 = new_node->depth;
-                    optim_info.l0_fact = 0;
-                    // select this node
-                    optim_info.node = new_node;
+                        if(can_split_iterator_sup(commun_node->get_extent(),parallel_factor))
+                        {
+                            // Copy the AST and add unrolling to the list of optimizations
+                            syntax_tree* new_ast = new syntax_tree();
+                            ast_node *new_node = ast.copy_and_return_node(*new_ast, commun_node);
 
-                    optim_info.comps = involved_computations;
-                    new_ast->new_optims.push_back(optim_info);
-                    states.push_back(new_ast);
+                            optimization_info optim_info;
+                            optim_info.type = optimization_type::PARALLELIZE;
+                            optim_info.nb_l = 1;
+                            optim_info.l0_fact = parallel_factor;
+                            
+                            optim_info.l0 = new_node->depth;
+
+                            // select this node
+                            optim_info.node = new_node;
+
+                            optim_info.comps = involved_computations;
+                            new_ast->new_optims.push_back(optim_info);
+                            states.push_back(new_ast);
+
+                        }
+                    }
                 
 
                     ast.stage_isl_states();

@@ -71,6 +71,9 @@ void apply_optimizations(optimization_info const& optim_info)
 
         case optimization_type::PARALLELIZE:
             // tiramisu::block doesn't implement tag_parallel_level(int), the solution is to iterate over computations and parallelize each
+            
+            block.split(optim_info.l0,optim_info.l0_fact);
+
             for (auto comp: optim_info.comps)
                 comp->tag_parallel_level(optim_info.l0);
             break;
@@ -153,7 +156,7 @@ void print_optim(optimization_info optim)
             break;
 
         case optimization_type::PARALLELIZE:
-            std::cout << "Parallelize" << " L" << optim.l0 << std::endl;
+            std::cout << "Parallelize" << " L" << optim.l0 << " "<<std::to_string(optim.l0_fact)<<std::endl;
             break;
 
         case optimization_type::SKEWING:
