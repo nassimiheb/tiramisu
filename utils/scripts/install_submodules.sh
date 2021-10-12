@@ -10,7 +10,7 @@ fi
 
 PROJECT_SRC_DIR=$1
 CMAKE=cmake
-CORES=1
+CORES=4
 
 # For Travis build we skip LLVM installation and use a custom binary.
 # Second argument specifies the custom path of the LLVM bin dir.
@@ -40,6 +40,7 @@ echo "#### Cloning submodules ####"
 echo_and_run_cmd "cd ${PROJECT_SRC_DIR}"
 echo_and_run_cmd "git submodule update --init --remote --recursive"
 
+sed -i '' -e '32s/^//p; 32s/^.*/#include <sys\/syslimits.h>/' ${PROJECT_SRC_DIR}/3rdParty/Halide/src/Util.cpp
 
 # Get ISL installed
 echo "#### Installing isl ####"

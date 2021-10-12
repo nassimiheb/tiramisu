@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CXX=g++
+#CXX=g++
 
 #set -x
 
