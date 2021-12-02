@@ -288,12 +288,16 @@ std::vector<syntax_tree*> ml_model_schedules_generator::generate_schedules(synta
             
             for (auto& node_iterator:shared_nodes)
             {
-                for (int tiling_size1 : tiling_factors_list)
+                std::vector<int> tiling_factors_list1(node_iterator->get_node_loop_extent()/2-1);
+                std::iota(tiling_factors_list1.begin(), tiling_factors_list1.end(), 2);
+                for (int tiling_size1 : tiling_factors_list1)
                 {   
                     // Check if tiling_size1 splits perfectly this iterator
                     if (can_split_iterator_sup(node_iterator->get_node_loop_extent(), tiling_size1))
                     {
-                        for (int tiling_size2 : tiling_factors_list)
+                        std::vector<int> tiling_factors_list2(node_iterator->children[0]->get_node_loop_extent()/2-1);
+                        std::iota(tiling_factors_list2.begin(), tiling_factors_list2.end(), 2);
+                        for (int tiling_size2 : tiling_factors_list2)
                         {
                             if (can_split_iterator_sup(node_iterator->children[0]->get_node_loop_extent(), tiling_size2))
                             {
@@ -320,7 +324,9 @@ std::vector<syntax_tree*> ml_model_schedules_generator::generate_schedules(synta
                                 
                                 if((nb_try + 1) < shared_nodes.size())
                                 {
-                                    for (int tiling_size3 : tiling_factors_list)
+                                    std::vector<int> tiling_factors_list3(node_iterator->children[0]->children[0]->get_node_loop_extent()/2-1);
+                                    std::iota(tiling_factors_list3.begin(), tiling_factors_list3.end(), 2);
+                                    for (int tiling_size3 : tiling_factors_list3)
                                     {
                                         if (can_split_iterator_sup(node_iterator->children[0]->children[0]->get_node_loop_extent(), tiling_size3))
                                         {

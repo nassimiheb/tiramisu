@@ -16,28 +16,20 @@ const std::string py_interface_path = "/home/nassim/Desktop/tiramisu_raw/tutoria
 int main(int argc, char **argv)
 {
     tiramisu::init("conv");
-    
-    var t("t", 0, 200), y("y", 0, 1024), x("x", 0, 1024);
 
-    var  yy("yy", 1, 128), xx("xx", 1, 128);
-
-    var t2("t2"),t1("t1"),y1("y1"),x1("x1"),y2("y2"),x2("x2") ,x0("x0");
-    
-    // Declare computations
-
-    input src("src", {x, y}, p_int32);
-
-
-    computation conv("conv", {t,xx,yy}, p_int32);
-    conv.set_expression(  2*src(xx,yy));
-    //conv.set_expression( src(xx-1,yy-1) + src(xx-1,yy)+src(xx-1,yy+1)+src(xx,yy-1)        + src(xx,yy+1)+src(xx+1,yy-1)+src(xx+1,yy)+src(xx+1,yy+1) );
-    // Declare buffers
-    
-    buffer buf_output("buf_output", {1024, 1024}, p_int32, a_output);
-
-    src.store_in(&buf_output);
-    
-    conv.store_in(&buf_output, {xx, yy});
+    var i0("i0", 0, 192), i1("i1", 0, 64), i2("i2", 0, 128), i3("i3", 0, 128);
+    input icomp00("icomp00", {i1,i2,i3}, p_float64);
+    input input01("input01", {i1}, p_float64);
+    input input02("input02", {i1,i2}, p_float64);
+    computation comp00("comp00", {i0,i1,i2,i3},  p_float64);
+    comp00.set_expression(icomp00(i1, i2, i3) + input01(i1) + input02(i1, i2));
+    buffer buf00("buf00", {64,128,128}, p_float64, a_output);
+    buffer buf01("buf01", {64}, p_float64, a_temporary);
+    buffer buf02("buf02", {64,128}, p_float64, a_temporary);
+    icomp00.store_in(&buf00);
+    input01.store_in(&buf01);
+    input02.store_in(&buf02);
+    comp00.store_in(&buf00, {i1,i2,i3});
 
     prepare_schedules_for_legality_checks();
     performe_full_dependency_analysis();
@@ -97,11 +89,11 @@ int main(int argc, char **argv)
 
 
     const int beam_size = 1;
-    const int max_depth = 6;
+    const int max_depth = 1;
 
 
     auto_scheduler::schedules_generator *scheds_gen = new auto_scheduler::ml_model_schedules_generator();
-    auto_scheduler::evaluate_by_execution *exec_eval = new auto_scheduler::evaluate_by_execution({&buf_output}, "function.o", "./wrapper");
+    auto_scheduler::evaluate_by_execution *exec_eval = new auto_scheduler::evaluate_by_execution({&buf00}, "function.o", "./wrapper");
     auto_scheduler::search_method *bs = new auto_scheduler::beam_search(beam_size, max_depth, exec_eval, scheds_gen);
     auto_scheduler::auto_scheduler as(bs, exec_eval);
     as.set_exec_evaluator(exec_eval);

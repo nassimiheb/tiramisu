@@ -3,11 +3,12 @@
 
 #include "ast.h"
 #include "evaluator.h"
+#include <numeric>
 
 namespace tiramisu::auto_scheduler
 {
 
-const std::vector<int> TILING_FACTORS_DEFAULT_LIST = {32, 64, 128};
+const std::vector<int> TILING_FACTORS_DEFAULT_LIST = {};
 const std::vector<int> UNROLLING_FACTORS_DEFAULT_LIST = {4, 8, 16};
 const std::vector<std::tuple<int,int>> SKEWING_FACTORS_DEFAULT_LIST = {{1,1}, {1,2}, {2,1}};
 const int DEFAULT_MAX_NB_ITERATORS = 7;
