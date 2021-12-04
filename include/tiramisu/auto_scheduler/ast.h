@@ -491,11 +491,12 @@ public:
      * Transform the AST by applying the last optimization found.
      */
     void transform_ast();
-
+    void transform_ast_matrix(vector < vector<int> > matrix);
     /**
      * Transform the AST by applying the given optimization.
      */
     void transform_ast(optimization_info const& opt);
+    void transform_ast_matrix(optimization_info const& opt, vector < vector<int> > matrix);
 
     /**
      * These methods are used to transform the AST given a specific type of optimization.

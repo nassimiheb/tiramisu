@@ -41,6 +41,12 @@ void block::interchange(var L0, var L1) {
     }
 }
 
+void block::matrix_transform(vector < vector<int> > matrix) {
+    for (auto &child : this->children) {
+        child->matrix_transform(matrix);
+    }
+}
+
 void block::interchange(int L0, int L1) {
     for (auto &child : this->children) {
         child->interchange(L0, L1);

@@ -258,7 +258,188 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
         search_save(*child, schedules_annotations, parent_trace->child_mappings[child], schedule_timeout);
     }
 }
+vector < vector < vector<int> > > beam_search::get_random_matrcies(int nb_out_matrcies)
+{
+    std::vector <std::vector <  std::vector<int> >>  result;
+    random.at(0)= std::vector<int> (2);
+    int nb_out_matrices = 5;
+    int nb_valid_matrices = 0;
+    int max_depth = 5
+    while(nb_valid_matrices<nb_out_matrices)
+    {
+        std::vector <  std::vector<int> >  random (max_depth);
+        int i, o;
+        srand(time(NULL));
+        for(o = 0; o<3; o++){
+            random.at(o)= std::vector<int> (max_depth);
+            for(i = 0; i<3; i++)
+                random.at(o).at(i) = rand();
+        
+        valid = 0;
+        
+        nb_valid_matrices++;
+            
+        }
+    }
+}
+void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout)
+{
+    std::default_random_engine rand_generator;
 
+    if (ast.nb_explored_optims % NB_OPTIMIZATIONS_MATRIX == 0)
+        ast.clear_new_optimizations();
+
+    std::vector<syntax_tree*> children;
+
+    // Look for an optimization that can be applied
+    int nb_optims_tried = 0;
+    int nb_explored_optims = ast.nb_explored_optims;
+
+    while (children.size() == 0 && nb_optims_tried < NB_OPTIMIZATIONS_MATRIX && nb_explored_optims < max_depth)
+    {
+        optimization_type optim_type = DEFAULT_OPTIMIZATIONS_ORDER_MATRIX[nb_explored_optims % NB_OPTIMIZATIONS_MATRIX];
+        children = scheds_gen->generate_schedules(ast, optim_type);
+
+        nb_explored_optims++;
+        nb_optims_tried++;
+    }
+
+    // Stop if no more optimizations can be applied
+    if (children.size() == 0)
+        return ;
+
+    // Evaluate children and sort them from smallest to highest evaluation
+    // evaluate while removing illegal versions
+    auto iterator = children.begin();
+    int nb_matrices = 5;
+    vector < vector < vector<int> > > matrices;
+    matrices = get_random_matrcies();
+    while (iterator != children.end())
+    {
+        while(nb_matrices!=0)
+        {
+            syntax_tree *child = *iterator;
+            child->nb_explored_optims = nb_explored_optims;
+            child->transform_ast_matrix(matrices[nb_matrices]);
+            nb_matrices--;
+            if (child->schedule_is_prunable()){
+                if (std::atoi(read_env_var("AS_VERBOSE"))==1){
+                    // print deleted Ast
+                    child->print_previous_optims();
+                    std::cout << "\n-----------" << std::endl;
+                    child->print_new_optims();
+                    child->print_ast();
+                    std::cout << "\n<Schedule pruned>\n";
+                }
+                delete child;
+                iterator = children.erase(iterator);
+            }
+
+            else if (!child->ast_is_legal()) {
+                if (std::atoi(read_env_var("AS_VERBOSE"))==1){
+                    // print deleted Ast
+                    child->print_previous_optims();
+                    std::cout << "\n-----------" << std::endl;
+                    child->print_new_optims();
+                    child->print_ast();
+                    child->print_isl_states();
+                    std::cout << "\n<illegal>\n";
+                }
+                delete child;
+                iterator = children.erase(iterator);
+            }
+            else {
+
+                // print and evaluate Ast
+
+                if (std::atoi(read_env_var("AS_VERBOSE"))==1){
+                    child->print_previous_optims();
+                    std::cout << "\n-----------" << std::endl;
+                    child->print_new_optims();
+                    child->print_ast();
+                    child->print_isl_states();
+                    std::cout << "\n<legal>\n";
+                    child->print_computations_accesses();
+                }
+
+                std::vector<float> measurements;
+                if (child->can_set_default_evaluation()) { // if yes the child's evaluation is set to a default value
+                    measurements = {child->evaluation};
+                }
+                else{
+                    measurements = exec_eval->get_measurements(*child, false, schedule_timeout);
+                    child->evaluation = min_eval(measurements);
+                }
+
+                parent_trace->add_child_path(child, schedules_annotations->size());
+
+                std::string schedule_annot = evaluate_by_learning_model::get_schedule_json(*child);
+
+                //remove the last two characters }\n
+                schedule_annot.pop_back();
+                schedule_annot.pop_back();
+
+                if (std::isfinite(child->evaluation)) // the evaluation is not finite mean that the schedule didn't run
+                    schedule_annot += ", \n\"execution_times\" : " + measurements_to_str(measurements) + "\n}\n";
+                else
+                    schedule_annot += ", \n\"execution_times\" : null\n}\n";
+
+                schedules_annotations->push_back(schedule_annot);
+
+                if (std::atoi(read_env_var("AS_VERBOSE"))==1){
+                    std::cout << "Schedule number "<< schedules_annotations->size() << std::endl;
+                    std::cout << "Evaluation : " << child->evaluation << std::endl;
+                    std::cout << "Number of measurements : " << measurements.size() << std::endl;
+                    std::cout << "===================================" << std::endl << std::endl;
+                }
+
+                if (std::isinf(child->evaluation))
+                    std::cerr<< "Evaluation of schedule "<< schedules_annotations->size() <<" failed "<< std::endl;
+
+                if (child->evaluation < best_evaluation)
+                {
+                    best_evaluation = child->evaluation;
+                    best_ast = child;
+                }
+
+                ++iterator;
+
+            }
+
+            nb_explored_schedules++;
+        }
+}
+
+    // Stop if we reached the maximum depth
+    if (nb_explored_optims >= max_depth)
+        return ;
+
+    // Add the current AST to the list of children
+    syntax_tree *ast_copy = ast.copy_ast();
+    ast_copy->nb_explored_optims = nb_explored_optims;
+    children.push_back(ast_copy);
+    parent_trace->add_child_path(ast_copy, parent_trace->get_candidate_id()); // keeps the same id since it's just copy
+
+    // Sort children from smallest evaluation to largest
+//    std::sort(children.begin(), children.end(), [](syntax_tree *a, syntax_tree *b) {
+//        return a->evaluation < b->evaluation;
+//    });
+    // shuffle the children so that they are selected a random
+    std::shuffle(std::begin(children), std::end(children), rand_generator);
+
+    // keep the top 'beam_size' children and delete the rest
+    for (int i = beam_size; i < children.size(); ++i)
+        delete children[i];
+
+    children.resize(std::min(beam_size, (int)children.size()));
+
+    // Search recursively on the best children
+    for (syntax_tree *child : children)
+    {
+        child->search_depth = ast.search_depth + 1;
+        search_save_matrix(*child, schedules_annotations, parent_trace->child_mappings[child], schedule_timeout);
+    }
+}
 void mcts::search(syntax_tree& ast)
 {
     std::default_random_engine rand_generator;

@@ -301,6 +301,13 @@ void syntax_tree::transform_ast()
     transform_ast(new_optims.back());
 }
 
+void syntax_tree::transform_ast_matrix(vector < vector<int> > matrix)
+{
+    if (new_optims.size() == 0)
+        return ;
+        
+    transform_ast_matrix(new_optims.back(), matrix);
+}
 void syntax_tree::transform_ast(optimization_info const& opt)
 {
     switch(opt.type)
@@ -336,8 +343,79 @@ void syntax_tree::transform_ast(optimization_info const& opt)
         default:
             break;
     }
-}
 
+}
+void syntax_tree::transform_ast_matrix(optimization_info const& opt, vector < vector<int> > matrix )
+{
+    switch(opt.type)
+    {
+        case optimization_type::FUSION:
+            transform_ast_by_fusion(opt);
+            break;
+            
+        case optimization_type::UNFUSE:
+            transform_ast_by_unfuse(opt);
+            break;
+            
+        case optimization_type::TILING:
+            transform_ast_by_tiling(opt);
+            break;
+            
+        case optimization_type::INTERCHANGE:
+            transform_ast_by_interchange(opt);
+            break;
+            
+        case optimization_type::UNROLLING:
+            transform_ast_by_unrolling(opt);
+            break;
+        
+        case optimization_type::MATRIX:
+            transform_ast_by_matrix(opt);
+            break;
+
+        case optimization_type::PARALLELIZE:
+            transform_ast_by_parallelism(opt);
+            break;
+
+        case optimization_type::SKEWING:
+            transform_ast_by_skewing(opt);
+            break;
+
+        default:
+            break;
+    }
+
+}
+void syntax_tree::transform_ast_by_matrix(vector < vector<int> > matrix)
+{
+    stage_isl_states();
+
+    ast_node *node2 = this.roots[0]; // replace with leaf
+
+    /**
+     * Applying to staging
+    */
+
+    std::vector<tiramisu::computation*> all_data;
+        
+    //collect computations to tile
+    node2->get_all_computations(all_data);
+
+    for(computation* info:all_data)
+    {
+    
+        info->matrix_transform(matrix);
+           
+        std::string f = "";
+        for(auto& str:loop_names)
+        {
+            f+=str+" ";
+        }
+
+    }
+
+    recover_isl_states();
+}
 void syntax_tree::transform_ast_by_fusion(optimization_info const& opt)
 {
     std::vector<ast_node*> *tree_level;
@@ -1189,6 +1267,8 @@ void state_computation::move_schedule_to_staging()
 
     is_state_staged = true;
 }
+
+
 
 
 void state_computation::recover_schedule_from_staging()

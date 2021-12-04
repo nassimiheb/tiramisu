@@ -14,7 +14,9 @@ namespace tiramisu::auto_scheduler
 
 //const std::vector<optimization_type> DEFAULT_OPTIMIZATIONS_ORDER = {UNFUSE, INTERCHANGE, SKEWING, PARALLELIZE, TILING};
 const std::vector<optimization_type> DEFAULT_OPTIMIZATIONS_ORDER = {UNFUSE, INTERCHANGE, SKEWING, PARALLELIZE, TILING, UNROLLING};
+const std::vector<optimization_type> DEFAULT_OPTIMIZATIONS_ORDER_MATRIX = {UNFUSE, MATRIX, PARALLELIZE, TILING, UNROLLING};
 const int NB_OPTIMIZATIONS = DEFAULT_OPTIMIZATIONS_ORDER.size();
+const int NB_OPTIMIZATIONS_MATRIX = DEFAULT_OPTIMIZATIONS_ORDER_MATRIX.size();
 const int DEFAULT_MAX_DEPTH = INT_MAX;
 
 /**
@@ -86,6 +88,7 @@ public:
       * The explored schedules annotation and their execution time are stored in schedules_annotations
       */
     virtual void search_save(syntax_tree &ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout=0) =0;
+    virtual void search_save_matrix(syntax_tree &ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout=0) =0;
 };
 
 /**

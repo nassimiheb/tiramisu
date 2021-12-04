@@ -4049,6 +4049,7 @@ public:
       */
     virtual void interchange(var L0, var L1);
 
+    virtual void matrix_transform(vector<vector<int>> matrix);
     /**
       * Identical to
       *     void interchange(var L0, var L1);
