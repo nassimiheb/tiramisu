@@ -3086,6 +3086,7 @@ namespace tiramisu
 
     void computation::matrix_transform(vector<vector<int>> matrix)
     {
+
         DEBUG_FCT_NAME(3);
         DEBUG_INDENT(4);
 
@@ -3099,6 +3100,8 @@ namespace tiramisu
 
         std::vector<isl_id *> dimensions;
 
+        std::vector<std::string> dim_vector;
+       
         // ------------------------------------------------------------
         // Create a map for the duplicate schedule.
         // ------------------------------------------------------------
@@ -3119,7 +3122,7 @@ namespace tiramisu
                     isl_id *new_id = isl_id_alloc(this->get_ctx(), generate_new_variable_name().c_str(), NULL);
                     schedule = isl_map_set_dim_id(schedule, isl_dim_out, i, new_id);
                 }
-
+                dim_vector.push_back(isl_map_get_dim_name(schedule, isl_dim_out, i));
                 map = map + isl_map_get_dim_name(schedule, isl_dim_out, i);
             }
 
@@ -3130,6 +3133,21 @@ namespace tiramisu
         }
 
         map = map + "] ->" + this->get_name() + "[";
+        std::vector<std::string> temp_vector;
+        std::string vector_content;
+
+        for (int i = 0; i < matrix.size(); i++) {
+            for (int j = 0; j < matrix[i].size(); j++){
+                if(j != matrix[i].size()-1){
+                    vector_content = vector_content + std::to_string(matrix[i][j])+dim_vector[j] + "+";
+                }
+                else{
+                vector_content = vector_content + std::to_string(matrix[i][j])+dim_vector[j];
+                }
+            }
+            temp_vector.push_back(vector_content);
+            vector_content.clear();     
+        }
 
         for (int i = 0; i < n_dims; i++)
         {
@@ -3140,7 +3158,8 @@ namespace tiramisu
             }
             else
             {
-                if ((i != inDim0) && (i != inDim1))
+                map = map + temp_vector[i];
+                /*if ((i != inDim0) && (i != inDim1))
                 {
                     map = map + isl_map_get_dim_name(schedule, isl_dim_out, i);
                     dimensions.push_back(isl_map_get_dim_id(schedule, isl_dim_out, i));
@@ -3156,7 +3175,7 @@ namespace tiramisu
                     map = map + inDim0_str;
                     isl_id *id1 = isl_id_alloc(this->get_ctx(), inDim0_str.c_str(), NULL);
                     dimensions.push_back(id1);
-                }
+                }*/
             }
 
             if (i != n_dims - 1)
@@ -3179,13 +3198,13 @@ namespace tiramisu
             transformation_map, isl_dim_out, id_range);
 
         // Check that the names of each dimension is well set
-        for (int i = 1; i < isl_map_dim(transformation_map, isl_dim_in); i++)
+        /*for (int i = 1; i < isl_map_dim(transformation_map, isl_dim_in); i++)
         {
             isl_id *dim_id = isl_id_copy(dimensions[i - 1]);
             transformation_map = isl_map_set_dim_id(transformation_map, isl_dim_out, i, dim_id);
             assert(isl_map_has_dim_name(transformation_map, isl_dim_in, i));
             assert(isl_map_has_dim_name(transformation_map, isl_dim_out, i));
-        }
+        }*/
 
         DEBUG(3, tiramisu::str_dump("Final transformation map : ", isl_map_to_str(transformation_map)));
 
