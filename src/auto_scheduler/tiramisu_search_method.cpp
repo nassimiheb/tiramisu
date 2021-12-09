@@ -258,7 +258,7 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
         search_save(*child, schedules_annotations, parent_trace->child_mappings[child], schedule_timeout);
     }
 }
-vector < vector < vector<int> > > beam_search::get_random_matrcies(int nb_out_matrcies)
+std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcies(int nb_out_matrcies)
 {
     std::vector <std::vector <  std::vector<int> >>  result;
     random.at(0)= std::vector<int> (2);
@@ -312,7 +312,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     // evaluate while removing illegal versions
     auto iterator = children.begin();
     int nb_matrices = 5;
-    vector < vector < vector<int> > > matrices;
+    std::vector < std::vector < std::vector<int> > > matrices;
     matrices = get_random_matrcies();
     while (iterator != children.end())
     {

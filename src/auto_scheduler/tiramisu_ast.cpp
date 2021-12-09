@@ -301,7 +301,7 @@ void syntax_tree::transform_ast()
     transform_ast(new_optims.back());
 }
 
-void syntax_tree::transform_ast_matrix(vector < vector<int> > matrix)
+void syntax_tree::transform_ast_matrix(std::vector< std::vector<int> > matrix)
 {
     if (new_optims.size() == 0)
         return ;
@@ -345,7 +345,7 @@ void syntax_tree::transform_ast(optimization_info const& opt)
     }
 
 }
-void syntax_tree::transform_ast_matrix(optimization_info const& opt, vector < vector<int> > matrix )
+void syntax_tree::transform_ast_matrix(optimization_info const& opt, std::vector< std::vector<int> > matrix )
 {
     switch(opt.type)
     {
@@ -386,7 +386,7 @@ void syntax_tree::transform_ast_matrix(optimization_info const& opt, vector < ve
     }
 
 }
-void syntax_tree::transform_ast_by_matrix(vector < vector<int> > matrix)
+void syntax_tree::transform_ast_by_matrix(std::vector< std::vector<int> > matrix)
 {
     stage_isl_states();
 

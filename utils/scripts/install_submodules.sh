@@ -49,7 +49,7 @@ if [ ! -d "build" ]; then
 fi
 echo_and_run_cmd "touch aclocal.m4 Makefile.am Makefile.in"
 echo_and_run_cmd "./configure --prefix=$PWD/build/ --with-int=imath"
-echo_and_run_cmd "make -j $CORES"
+echo_and_run_cmd "make -j$(nproc)"
 echo_and_run_cmd "make install"
 echo "Done installing isl"
 
@@ -68,7 +68,7 @@ if [ "$2" = "" ]; then
     fi
     echo_and_run_cmd "cd build"
     echo_and_run_cmd "$CMAKE -DHAVE_LIBEDIT=0 -DLLVM_ENABLE_TERMINFO=OFF -DLLVM_TARGETS_TO_BUILD='X86;ARM;AArch64;Mips;NVPTX;PowerPC' -DLLVM_ENABLE_ASSERTIONS=ON -DCMAKE_BUILD_TYPE=Release .. -DCMAKE_INSTALL_PREFIX=$PWD/../prefix/ -DLLVM_EXTERNAL_CLANG_SOURCE_DIR=${PROJECT_SRC_DIR}/3rdParty/clang"
-    echo_and_run_cmd "make -j $CORES"
+    echo_and_run_cmd "make -j$(nproc)"
     echo_and_run_cmd "make install"
 else
     echo "#### Skipping LLVM Installation ####"
@@ -95,7 +95,7 @@ if [ "${USE_LIBPNG}" = "0" ]; then
 fi
 
 echo_and_run_cmd "make clean"
-make CXXFLAGS="${CXXFLAGS_JPEG} ${CXXFLAGS_PNG}" -j $CORES
+make CXXFLAGS="${CXXFLAGS_JPEG} ${CXXFLAGS_PNG}" -j$(nproc)
 
 cd ${PROJECT_SRC_DIR}
 echo "Done installing Halide"

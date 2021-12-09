@@ -3084,7 +3084,7 @@ namespace tiramisu
         DEBUG_INDENT(-4);
     }
 
-    void computation::matrix_transform(vector<vector<int>> matrix)
+    void computation::matrix_transform(std::vector<std::vector<int>> matrix)
     {
 
         DEBUG_FCT_NAME(3);

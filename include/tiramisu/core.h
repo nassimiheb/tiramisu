@@ -4049,7 +4049,7 @@ public:
       */
     virtual void interchange(var L0, var L1);
 
-    virtual void matrix_transform(vector<vector<int>> matrix);
+    virtual void matrix_transform(std::vector<std::vector<int>> matrix);
     /**
       * Identical to
       *     void interchange(var L0, var L1);

@@ -87,8 +87,9 @@ public:
       * The method to call to start a search.
       * The explored schedules annotation and their execution time are stored in schedules_annotations
       */
-    virtual void search_save(syntax_tree &ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout=0) =0;
     virtual void search_save_matrix(syntax_tree &ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout=0) =0;
+    virtual void search_save(syntax_tree &ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout=0) =0;
+    
 };
 
 /**
@@ -121,6 +122,7 @@ public:
      * Searches for the best schedule and saves the explored schedules and their execution time
      *
      */
+    virtual void search_save_matrix(syntax_tree &ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout=0);
     virtual void search_save(syntax_tree &ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout=0);
 };
 
@@ -163,6 +165,7 @@ public:
      *
      */
     virtual void search_save(syntax_tree &ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout=0);
+    virtual void search_save_matrix(syntax_tree &ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout=0);
 };
 
 // ----------------------------------------------------------------------- //
@@ -213,6 +216,7 @@ public:
      *
      */
     virtual void search_save(syntax_tree &ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout=0);
+    virtual void search_save_matrix(syntax_tree &ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout=0);
     
     /**
      * A subroutine used by search(syntax_tree& ast);

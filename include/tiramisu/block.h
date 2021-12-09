@@ -58,7 +58,7 @@ public:
     void gpu_tile(var L0, var L1, var L2, int sizeX, int sizeY, int sizeZ,
                   var L0_outer, var L1_outer, var L2_outer,
                   var L0_inner, var L1_inner, var L2_inner) override;
-    void matrix_transform(vector < vector<int> > matrix);
+    void matrix_transform(std::vector < std::vector<int> > matrix);
     void interchange(var L0, var L1) override;
     void interchange(int L0, int L1) override;
     void parallelize(var L) override;

@@ -41,7 +41,7 @@ void block::interchange(var L0, var L1) {
     }
 }
 
-void block::matrix_transform(vector < vector<int> > matrix) {
+void block::matrix_transform(std::vector< std::vector<int> > matrix) {
     for (auto &child : this->children) {
         child->matrix_transform(matrix);
     }
