@@ -508,6 +508,7 @@ public:
     void transform_ast_by_unrolling(optimization_info const& opt);
     void transform_ast_by_parallelism(const optimization_info &info);
     void transform_ast_by_skewing(const optimization_info &opt);
+    void transform_ast_by_matrix(std::vector< std::vector<int> > matrix);
     
     /**
      * Copy this AST, and return the copy.
