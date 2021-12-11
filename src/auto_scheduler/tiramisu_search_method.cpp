@@ -510,6 +510,11 @@ void mcts::search_save(syntax_tree& ast, std::vector<std::string> *schedules_ann
     std::cerr<< "mcts::search_save not yet implemented" << std::endl;
     exit(1);
 }
+void mcts::search_save_matrix(syntax_tree& ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout)
+{
+    std::cerr<< "mcts::search_save not yet implemented" << std::endl;
+    exit(1);
+}
 
 // -------------------------------------------------------------------------- //
 
@@ -536,6 +541,11 @@ void beam_search_topk::search(syntax_tree& ast)
 }
 
 void beam_search_topk::search_save(syntax_tree& ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout)
+{
+    std::cerr<< "beam_search_topk::search_save not yet implemented" << std::endl;
+    exit(1);
+}
+void beam_search_topk::search_save_matrix(syntax_tree& ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout)
 {
     std::cerr<< "beam_search_topk::search_save not yet implemented" << std::endl;
     exit(1);
