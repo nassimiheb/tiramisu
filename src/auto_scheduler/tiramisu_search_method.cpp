@@ -261,10 +261,11 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
 std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcies(int nb_out_matrcies)
 {
     std::vector <std::vector <  std::vector<int> >>  result;
-    random.at(0)= std::vector<int> (2);
+    //result.at(0)= std::vector<int> (2); ERROR !!
     int nb_out_matrices = 5;
     int nb_valid_matrices = 0;
-    int max_depth = 5
+    int max_depth = 5;
+    int valid=0;
     while(nb_valid_matrices<nb_out_matrices)
     {
         std::vector <  std::vector<int> >  random (max_depth);
@@ -313,7 +314,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     auto iterator = children.begin();
     int nb_matrices = 5;
     std::vector < std::vector < std::vector<int> > > matrices;
-    matrices = get_random_matrcies();
+    matrices = get_random_matrcies(32);
     while (iterator != children.end())
     {
         while(nb_matrices!=0)

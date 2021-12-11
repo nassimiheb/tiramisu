@@ -1,6 +1,7 @@
 #include <tiramisu/auto_scheduler/ast.h>
 #include <tiramisu/auto_scheduler/evaluator.h>
 
+
 namespace tiramisu::auto_scheduler
 {
 
@@ -370,7 +371,7 @@ void syntax_tree::transform_ast_matrix(optimization_info const& opt, std::vector
             break;
         
         case optimization_type::MATRIX:
-            transform_ast_by_matrix(opt);
+            transform_ast_by_matrix(matrix);
             break;
 
         case optimization_type::PARALLELIZE:
@@ -389,8 +390,8 @@ void syntax_tree::transform_ast_matrix(optimization_info const& opt, std::vector
 void syntax_tree::transform_ast_by_matrix(std::vector< std::vector<int> > matrix)
 {
     stage_isl_states();
-
-    ast_node *node2 = this.roots[0]; // replace with leaf
+ 
+    //ast_node *node2 = this.roots[0]; // replace with leaf ERROR !
 
     /**
      * Applying to staging
@@ -399,7 +400,7 @@ void syntax_tree::transform_ast_by_matrix(std::vector< std::vector<int> > matrix
     std::vector<tiramisu::computation*> all_data;
         
     //collect computations to tile
-    node2->get_all_computations(all_data);
+    /*node2->get_all_computations(all_data);
 
     for(computation* info:all_data)
     {
@@ -412,7 +413,7 @@ void syntax_tree::transform_ast_by_matrix(std::vector< std::vector<int> > matrix
             f+=str+" ";
         }
 
-    }
+    }*/
 
     recover_isl_states();
 }
