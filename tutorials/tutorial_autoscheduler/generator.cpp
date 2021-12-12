@@ -5,13 +5,13 @@
 using namespace tiramisu;
 
 // Set to true to perform autoscheduling
-bool perform_autoscheduling = false;
+bool perform_autoscheduling = true;
 
 // Path to python (please give absolute path)
 const std::string py_cmd_path = "/usr/bin/python";
 
 // Path to a script that executes the ML model (please give absolute path)
-const std::string py_interface_path = "/data/tiramisu/tutorials/tutorial_autoscheduler/model/main.py";
+const std::string py_interface_path = "/home/afif/tir/tiramisu/tutorials/tutorial_autoscheduler/model/main.py";
 
 int main(int argc, char **argv)
 {
@@ -66,29 +66,31 @@ int main(int argc, char **argv)
     const int topk = 1;
 
     // An object used by search methods to generate schedules
-    auto_scheduler::schedules_generator *scheds_gen = new auto_scheduler::ml_model_schedules_generator();
+    auto_scheduler::schedules_generator *scheds_gen = new auto_scheduler::exhaustive_generator();
 
     // An evaluation function that measures execution time by compiling and executing the program
     auto_scheduler::evaluate_by_execution *exec_eval = new auto_scheduler::evaluate_by_execution({&buf_output, &buf_bias, &buf_src, &buf_weights},
                                                                                                  "function.o", "./wrapper");
 
     // An evaluation function that uses an ML model to estimate speedup
-    auto_scheduler::evaluation_function *model_eval = new auto_scheduler::evaluate_by_learning_model(py_cmd_path, {py_interface_path});
+    //auto_scheduler::evaluation_function *model_eval = new auto_scheduler::evaluate_by_learning_model(py_cmd_path, {py_interface_path});
 
     // Two search methods : Beam Search and MCTS
-    auto_scheduler::search_method *bs = new auto_scheduler::beam_search(beam_size, max_depth, model_eval, scheds_gen);
-    auto_scheduler::mcts *mcts = new auto_scheduler::mcts(nb_samples, topk, max_depth, model_eval, exec_eval, scheds_gen);
-
+    auto_scheduler::search_method *bs = new auto_scheduler::beam_search(beam_size, max_depth, exec_eval, scheds_gen);
+    //auto_scheduler::mcts *mcts = new auto_scheduler::mcts(nb_samples, topk, max_depth, model_eval, exec_eval, scheds_gen);
+	
     // Create the autoscheduler and start search
-    auto_scheduler::auto_scheduler as(bs, model_eval);
+    auto_scheduler::auto_scheduler as(bs, exec_eval);
     as.set_exec_evaluator(exec_eval);
+
     as.find_schedule();
+std::cout << "ddsaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaacds";
     as.apply_best_schedule();
 
     delete scheds_gen;
     delete exec_eval;
     delete bs;
-    delete mcts;
-
+    //delete mcts;
+	
     return 0;
 }

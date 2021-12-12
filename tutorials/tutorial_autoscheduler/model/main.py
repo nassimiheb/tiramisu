@@ -8,7 +8,7 @@ import warnings
 warnings.filterwarnings('ignore', category=DeprecationWarning) 
 warnings.filterwarnings('ignore', category=UserWarning)
 
-model_path = '/data/tiramisu/tutorials/tutorial_autoscheduler/model/hier_LSTM_fusion_tree_tagLo_transfer_5bl.pkl'
+model_path = '/home/afif/tir/tiramisu/tutorials/tutorial_autoscheduler/model/hier_LSTM_fusion_tree_tagLo_transfer_5bl.pkl'
 
 with torch.no_grad():
     device = 'cpu'
@@ -17,7 +17,7 @@ with torch.no_grad():
     environ['layers'] = '600 350 200 180'
     environ['dropouts'] = '0.225 ' * 4
     
-    input_size = 1267 * 2
+    input_size = 2520
     output_size = 1
     
     layers_sizes = list(map(int, environ.get('layers', '300 200 120 80 30').split()))

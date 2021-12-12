@@ -18,12 +18,13 @@ void beam_search::search(syntax_tree& ast)
     while (children.size() == 0 && nb_optims_tried < NB_OPTIMIZATIONS && nb_explored_optims < max_depth)
     {
         optimization_type optim_type = DEFAULT_OPTIMIZATIONS_ORDER[nb_explored_optims % NB_OPTIMIZATIONS];
+        
         children = scheds_gen->generate_schedules(ast, optim_type);
         
         nb_explored_optims++;
         nb_optims_tried++;
     }
-       
+      
     // Stop if no more optimizations can be applied
     if (children.size() == 0)
         return ;
@@ -37,9 +38,9 @@ void beam_search::search(syntax_tree& ast)
     {
         (*iterator)->nb_explored_optims = nb_explored_optims;
         (*iterator)->transform_ast();
-
+        
         if ((*iterator)->ast_is_legal() == false) {
-
+            std::cout << "****if*************";
             // print deleted Ast 
             (*iterator)->print_previous_optims();
             std::cout << "\n-----------" << std::endl;
@@ -51,7 +52,7 @@ void beam_search::search(syntax_tree& ast)
             iterator = children.erase(iterator);
         }
         else {
-
+            std::cout << "*************else******";
             // evaluate and print Ast 
             (*iterator)->evaluation = eval_func->evaluate(*(*iterator));
 
@@ -97,7 +98,7 @@ void beam_search::search(syntax_tree& ast)
         delete children[i];
 
     children.resize(std::min(beam_size, (int)children.size()));
-
+    
     // Search recursively on the best children
     for (syntax_tree *child : children)
     {

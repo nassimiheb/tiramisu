@@ -2628,14 +2628,16 @@ void tiramisu::function::perform_full_dependency_analysis()
 
 bool tiramisu::function::check_legality_for_function()
 {
+    
     DEBUG_FCT_NAME(3);
     DEBUG_INDENT(4);
-
+    
+    this->perform_full_dependency_analysis();
     assert(this->dep_read_after_write!=NULL);
-
+    
     isl_union_map * all_deps = isl_union_map_range_factor_domain(
         isl_union_map_copy(this->dep_read_after_write));
-
+    
     all_deps = isl_union_map_union(all_deps,
         isl_union_map_range_factor_domain(isl_union_map_copy(this->dep_write_after_read)));
 
@@ -2643,7 +2645,7 @@ bool tiramisu::function::check_legality_for_function()
         isl_union_map_range_factor_domain(isl_union_map_copy(this->dep_write_after_write)));
 
     isl_union_map * universe_of_all_deps = isl_union_map_universe(all_deps);
-
+    
     std::vector<isl_map *> all_basic_maps;
     
     auto f = [](isl_map * bmap,void * user) { 

@@ -193,6 +193,7 @@ void auto_scheduler::sample_search_space_random_matrix(std::string filename, boo
 
 void auto_scheduler::find_schedule()
 {
+    
     fct->reset_schedules();
     if (exec_evaluator != nullptr)
         initial_exec_time = exec_evaluator->evaluate(ast);

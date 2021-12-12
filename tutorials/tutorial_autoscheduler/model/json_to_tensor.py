@@ -51,7 +51,7 @@ def get_representation(program_json, schedule_json):
                 iterators_repr.append(0) #tiled: false
                 iterators_repr.append(0) #tile factor 0    
             # is this dimension saved (this dimension does not disapear aftre reduction)
-            iterators_repr.append(+(iterator_name in comp_dict['real_dimensions']))
+            #iterators_repr.append(+(iterator_name in comp_dict['real_dimensions']))
                     
         iterator_repr_size = int(len(iterators_repr)/len(comp_dict['iterators']))
         iterators_repr.extend([0]*iterator_repr_size*(max_dims-len(comp_dict['iterators']))) # adding iterators padding 

@@ -1498,11 +1498,13 @@ void syntax_tree::recover_isl_states() const
 
 bool syntax_tree::ast_is_legal() const
 {
+    
     stage_isl_states();
 
     this->fct->prepare_schedules_for_legality_checks(false);
-
+    
     bool result = this->fct->check_legality_for_function();
+    
     recover_isl_states();
 
     return result;
