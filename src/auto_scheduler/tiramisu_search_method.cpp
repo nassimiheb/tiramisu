@@ -259,30 +259,79 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
         search_save(*child, schedules_annotations, parent_trace->child_mappings[child], schedule_timeout);
     }
 }
-std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcies(int nb_out_matrcies)
+std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcies(int nb_out_matrcies, int depth)
 {
-    std::vector <std::vector <  std::vector<int> >>  result;
+    std::vector <std::vector <  std::vector<int> >>  result(nb_out_matrcies);
     //result.at(0)= std::vector<int> (2); ERROR !!
     int nb_out_matrices = 5;
     int nb_valid_matrices = 0;
     int max_depth = 5;
-    int valid=0;
+    bool valid = false;
     while(nb_valid_matrices<nb_out_matrices)
     {
-        std::vector <  std::vector<int> >  random (max_depth);
-        int i, o;
-        srand(time(NULL));
-        for(o = 0; o<3; o++){
-            random.at(o)= std::vector<int> (max_depth);
-            for(i = 0; i<3; i++)
-                random.at(o).at(i) = rand();
-        
-        valid = 0;
-        
-        nb_valid_matrices++;
-            
+        while (!valid)
+        {
+            std::vector <  std::vector<int> >  random (depth);
+            int i, o;
+            srand(time(NULL));
+            for(o = 0; o<depth; o++){
+                random.at(o)= std::vector<int> (depth);
+                for(i = 0; i<depth; i++)
+                    random.at(o).at(i) = rand() % 14 - 7;;
+            }
+            // Check determinant equals 1
+            bool det_bool = determinant(random, depth)==1;
+            // Check upper right determinants equal 1
+            if (!det_bool) continue;
+            int k,l;
+            int d=0,s=0;
+            bool all_1 = true;
+            for (k=1;k<depth;k++){
+                    
+                    std::vector <  std::vector<int> >  submatrixd(depth-k);
+                    for(l=0;l<depth-k;l++){
+                        submatrixd.at(l) = std::vector<int> (depth-k);
+                    }
+                    for (s=0;s<depth-k;s++){
+                                for (d=0;d<depth-k;d++){
+                                        submatrixd.at(s).at(d) = random.at(s+k).at(d+k); 
+                                } 
+                         }   
+                    if(determinant(submatrixd, depth-k)!=1){ 
+                        all_1 = false;
+                        break;
+                    }
+            }
+            valid = all_1;
         }
+        nb_valid_matrices++;
     }
+}
+int determinant( std::vector <  std::vector<int> >  matrix, int n) {
+   int det = 0;
+   int i, o;
+   std::vector <  std::vector<int> >  submatrix(n);
+   for(o = 0; o<n; o++){
+                submatrix.at(o)= std::vector<int> (n);}
+   if (n == 2)
+   return ((matrix.at(0).at(0) * matrix.at(1).at(1)) - (matrix.at(1).at(0) * matrix.at(0).at(1)));
+   else {
+      for (int x = 0; x < n; x++) {
+         int subi = 0;
+         for (int i = 1; i < n; i++) {
+            int subj = 0;
+            for (int j = 0; j < n; j++) {
+               if (j == x)
+               continue;
+               submatrix.at(subi).at(subj) = matrix.at(i).at(j);
+               subj++;
+            }
+            subi++;
+         }
+         det = det + (pow(-1, x) * matrix.at(0).at(x) * determinant( submatrix, n - 1 ));
+      }
+   }
+   return det;
 }
 void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout)
 {
@@ -313,15 +362,21 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     // Evaluate children and sort them from smallest to highest evaluation
     // evaluate while removing illegal versions
     auto iterator = children.begin();
-    int nb_matrices = 5;
     std::vector < std::vector < std::vector<int> > > matrices;
-    matrices = get_random_matrcies(32);
+    
     while (iterator != children.end())
     {
-        while(nb_matrices!=0)
+        int nb_matrices = 5;
+        syntax_tree *child = *iterator;
+        child->nb_explored_optims = nb_explored_optims;
+        bool illegal = true;
+        int shape = child->get_program_depth();
+        matrices = get_random_matrcies(nb_matrices,shape);
+        bool matrix = true;
+
+        while(matrix && illegal && nb_matrices>0)
         {
-            syntax_tree *child = *iterator;
-            child->nb_explored_optims = nb_explored_optims;
+            matrix = child->new_optims.back().type == MATRIX;
             child->transform_ast_matrix(matrices[nb_matrices]);
             nb_matrices--;
             if (child->schedule_is_prunable()){
@@ -347,11 +402,12 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                     child->print_isl_states();
                     std::cout << "\n<illegal>\n";
                 }
+
                 delete child;
                 iterator = children.erase(iterator);
             }
             else {
-
+                illegal = false;
                 // print and evaluate Ast
 
                 if (std::atoi(read_env_var("AS_VERBOSE"))==1){

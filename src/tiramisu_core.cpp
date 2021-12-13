@@ -3136,6 +3136,7 @@ namespace tiramisu
         std::vector<std::string> temp_vector;
         std::string vector_content;
 
+        
         for (int i = 0; i < matrix.size(); i++) {
             for (int j = 0; j < matrix[i].size(); j++){
                 if(j != matrix[i].size()-1){

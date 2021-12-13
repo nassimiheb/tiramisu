@@ -589,6 +589,12 @@ public:
      */
     void print_ast() const;
 
+
+    /**
+     * Return the depth of the program
+     */
+    int get_program_depth() const;
+
     /**
      * prints the computations's accesses of this AST
     */

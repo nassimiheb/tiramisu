@@ -32,6 +32,7 @@ int main(int argc, char **argv)
     //conv_init.then(conv, x);
 
     // Declare buffers
+	
     buffer buf_bias("buf_bias", {2}, p_int32, a_input);
     buffer buf_src("buf_src", {8, 3, 1026, 1026}, p_int32, a_input);
     buffer buf_weights("buf_weights", {2, 3, 3, 3}, p_int32, a_input);
@@ -83,9 +84,7 @@ int main(int argc, char **argv)
     auto_scheduler::auto_scheduler as(bs, exec_eval);
     as.set_exec_evaluator(exec_eval);
 
-    as.find_schedule();
-std::cout << "ddsaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaacds";
-    as.apply_best_schedule();
+    as.sample_search_space("result_1.json");
 
     delete scheds_gen;
     delete exec_eval;

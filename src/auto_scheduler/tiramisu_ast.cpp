@@ -1,6 +1,6 @@
 #include <tiramisu/auto_scheduler/ast.h>
 #include <tiramisu/auto_scheduler/evaluator.h>
-#include <tiramisu/3rdParty/isl/isl_ast_private.h>
+#include <tiramisu/3rdParty/isl/isl_ast_private.h> //TO-DO Fix path issues
 
 namespace tiramisu::auto_scheduler
 {
@@ -1188,6 +1188,11 @@ namespace tiramisu::auto_scheduler
     {
         for (ast_node *root : roots)
             root->print_node();
+    }
+
+    int syntax_tree::get_program_depth() const
+    {
+        return roots.size()+1;
     }
 
     void syntax_tree::print_new_optims() const
