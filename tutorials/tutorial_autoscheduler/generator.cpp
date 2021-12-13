@@ -25,11 +25,11 @@ int main(int argc, char **argv)
     input src("src", {n, fin, y_pad, x_pad}, p_int32);
     input weights("weights", {n, fout, y, x}, p_int32);
 
-    computation conv_init("conv_init", {n, fout, y, x}, bias(fout));
+    //computation conv_init("conv_init", {n, fout, y, x}, bias(fout));
     computation conv("conv", {n, fout, y, x, fin, k_y, k_x}, p_int32);
     conv.set_expression(conv(n, fout, y, x, fin, k_y, k_x) + src(n, fin, y + k_y, x + k_x) * weights(fout, fin, k_y, k_x));
 
-    conv_init.then(conv, x);
+    //conv_init.then(conv, x);
 
     // Declare buffers
     buffer buf_bias("buf_bias", {2}, p_int32, a_input);
@@ -42,7 +42,7 @@ int main(int argc, char **argv)
     src.store_in(&buf_src);
     weights.store_in(&buf_weights);
 
-    conv_init.store_in(&buf_output);
+    //conv_init.store_in(&buf_output);
     conv.store_in(&buf_output, {n, fout, y, x});
 
     // Generate a program with no schedule

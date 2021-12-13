@@ -3214,6 +3214,8 @@ namespace tiramisu
 
         this->set_schedule(schedule);
 
+       
+
         DEBUG_INDENT(-4);
     }
     /**
@@ -3227,7 +3229,7 @@ namespace tiramisu
 
         int inDim0 = loop_level_into_dynamic_dimension(L0);
         int inDim1 = loop_level_into_dynamic_dimension(L1);
-
+        
         assert(inDim0 >= 0);
         assert(inDim0 < isl_space_dim(isl_map_get_space(this->get_schedule()),
                                       isl_dim_out));
