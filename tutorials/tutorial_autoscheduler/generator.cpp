@@ -84,7 +84,7 @@ int main(int argc, char **argv)
     auto_scheduler::auto_scheduler as(bs, exec_eval);
     as.set_exec_evaluator(exec_eval);
 
-    as.sample_search_space("result_1.json");
+    as.sample_search_space_random_matrix("result_1.json");
 
     delete scheds_gen;
     delete exec_eval;

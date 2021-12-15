@@ -1,6 +1,5 @@
 #include <tiramisu/auto_scheduler/ast.h>
 #include <tiramisu/auto_scheduler/evaluator.h>
-#include <tiramisu/3rdParty/isl/isl_ast_private.h> //TO-DO Fix path issues
 
 namespace tiramisu::auto_scheduler
 {
@@ -415,9 +414,7 @@ namespace tiramisu::auto_scheduler
 
 
 
-        this->fct->gen_isl_ast();
-        isl_ast_node* ast =this->fct->ast;
-        std::cout << ast->ref;
+    
         
         //ast_node *node2 = this.roots[0]; // replace with leaf ERROR !
 
