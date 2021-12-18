@@ -402,8 +402,13 @@ public:
     /**
      * The function represented by the AST.
      */
+
     tiramisu::function *fct;
-    
+    /**
+     * @brief The map that correspand iterators names to isl iterator names
+     * 
+     */
+    std::map <std::string,std::string> *corr_map;
     /**
       * AST root nodes.
       */
@@ -588,6 +593,12 @@ public:
      * Print the AST to stdout.
      */
     void print_ast() const;
+
+
+    /**
+     * Return the depth of the program
+     */
+    int get_program_depth() const;
 
     /**
      * prints the computations's accesses of this AST
