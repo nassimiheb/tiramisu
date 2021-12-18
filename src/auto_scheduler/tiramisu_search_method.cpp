@@ -3,7 +3,7 @@
 
 namespace tiramisu::auto_scheduler
 {
-
+ std::string get_name_ast_expr_isl( isl_ast_expr *expr);
 void beam_search::search(syntax_tree& ast)
 {
     if (ast.nb_explored_optims % NB_OPTIMIZATIONS == 0)
@@ -259,31 +259,197 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
         search_save(*child, schedules_annotations, parent_trace->child_mappings[child], schedule_timeout);
     }
 }
-std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcies(int nb_out_matrcies)
+std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcies(int nb_out_matrcies, int depth)
 {
-    std::vector <std::vector <  std::vector<int> >>  result;
+    std::vector <std::vector <  std::vector<int> >>  result(nb_out_matrcies);
     //result.at(0)= std::vector<int> (2); ERROR !!
     int nb_out_matrices = 5;
     int nb_valid_matrices = 0;
     int max_depth = 5;
-    int valid=0;
+    bool valid = false;
     while(nb_valid_matrices<nb_out_matrices)
     {
-        std::vector <  std::vector<int> >  random (max_depth);
-        int i, o;
-        srand(time(NULL));
-        for(o = 0; o<3; o++){
-            random.at(o)= std::vector<int> (max_depth);
-            for(i = 0; i<3; i++)
-                random.at(o).at(i) = rand();
-        
-        valid = 0;
-        
-        nb_valid_matrices++;
-            
+        while (!valid)
+        {
+            std::vector <  std::vector<int> >  random (depth);
+            int i, o;
+            srand(time(NULL));
+            for(o = 0; o<depth; o++){
+                random.at(o)= std::vector<int> (depth);
+                for(i = 0; i<depth; i++)
+                    random.at(o).at(i) = rand() % 14 - 7;;
+            }
+            // Check determinant equals 1
+            /*bool det_bool = determinant(random, depth)==1;
+            // Check upper right determinants equal 1
+            if (!det_bool) continue;
+            int k,l;
+            int d=0,s=0;
+            bool all_1 = true;
+            for (k=1;k<depth;k++){
+                    
+                    std::vector <  std::vector<int> >  submatrixd(depth-k);
+                    for(l=0;l<depth-k;l++){
+                        submatrixd.at(l) = std::vector<int> (depth-k);
+                    }
+                    for (s=0;s<depth-k;s++){
+                                for (d=0;d<depth-k;d++){
+                                        submatrixd.at(s).at(d) = random.at(s+k).at(d+k); 
+                                } 
+                         }   
+                    if(determinant(submatrixd, depth-k)!=1){ 
+                        all_1 = false;
+                        break;
+                    }
+            }*/
+            //valid = all_1;
         }
+        nb_valid_matrices++;
     }
 }
+int determinant( std::vector <  std::vector<int> >  matrix, int n) {
+   int det = 0;
+   int i, o;
+   std::vector <  std::vector<int> >  submatrix(n);
+   for(o = 0; o<n; o++){
+                submatrix.at(o)= std::vector<int> (n);}
+   if (n == 2)
+   return ((matrix.at(0).at(0) * matrix.at(1).at(1)) - (matrix.at(1).at(0) * matrix.at(0).at(1)));
+   else {
+      for (int x = 0; x < n; x++) {
+         int subi = 0;
+         for (int i = 1; i < n; i++) {
+            int subj = 0;
+            for (int j = 0; j < n; j++) {
+               if (j == x)
+               continue;
+               submatrix.at(subi).at(subj) = matrix.at(i).at(j);
+               subj++;
+            }
+            subi++;
+         }
+         det = det + (pow(-1, x) * matrix.at(0).at(x) * determinant( submatrix, n - 1 ));
+      }
+   }
+   return det;
+}
+static char *op_str[] = {
+	[isl_ast_op_and] = "and",
+	[isl_ast_op_and_then] = "and_then",
+	[isl_ast_op_or] = "or",
+	[isl_ast_op_or_else] = "or_else",
+	[isl_ast_op_max] = "max",
+	[isl_ast_op_min] = "min",
+	[isl_ast_op_minus] = "minus",
+	[isl_ast_op_add] = "add",
+	[isl_ast_op_sub] = "sub",
+	[isl_ast_op_mul] = "mul",
+	[isl_ast_op_div] = "div",
+	[isl_ast_op_fdiv_q] = "fdiv_q",
+	[isl_ast_op_pdiv_q] = "pdiv_q",
+	[isl_ast_op_pdiv_r] = "pdiv_r",
+	[isl_ast_op_zdiv_r] = "zdiv_r",
+	[isl_ast_op_cond] = "cond",
+	[isl_ast_op_select] = "select",
+	[isl_ast_op_eq] = "eq",
+	[isl_ast_op_le] = "le",
+	[isl_ast_op_lt] = "lt",
+	[isl_ast_op_ge] = "ge",
+	[isl_ast_op_gt] = "gt",
+	[isl_ast_op_call] = "call",
+	[isl_ast_op_access] = "access",
+	[isl_ast_op_member] = "member",
+	[isl_ast_op_address_of] = "address_of"
+};
+/**
+ * @brief Get the names of the iterator in the ast and save them into a map 
+ * 
+ * @param node 
+ * @param isl_ast 
+ * @param corr_map 
+ */
+void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::map <std::string,std::string>* corr_map){
+    //static std::map <std::string,std::string> corr_map;
+    static int k=0;
+     for (ast_node *child : node->children)
+        {
+            (*corr_map).insert(std::pair<std::string,std::string> (isl_ast[k],node->name));
+            k++;
+            get_save_name_node(child,isl_ast,corr_map);
+        }
+   
+}
+/**
+ * @brief Get expression info from the ISL AST
+ * 
+ * @param expr 
+ * @return std::string 
+ */
+    std::string get_name_arguments(isl_ast_expr *expr)
+    {
+        int i, n;
+        std::string p;
+        std::cout<<"---------------Args \n";
+        n = isl_ast_expr_get_op_n_arg(expr);
+        if (n < 0) return "$";
+        if (n == 0) return "$";
+
+        for (i = 0; i < n; ++i) {
+            isl_ast_expr *arg;
+
+            arg = isl_ast_expr_get_op_arg(expr, i);
+            if(i!=0)p=p+","+ get_name_ast_expr_isl(arg);
+            else p=p+ get_name_ast_expr_isl(arg);
+            isl_ast_expr_free(arg);
+         
+        }
+      
+
+        return p;
+    }
+   std::string get_name_ast_expr_isl( isl_ast_expr *expr)
+    {
+        enum isl_ast_expr_type type;
+        enum isl_ast_op_type op;
+        isl_id *id;
+        isl_val *v;
+        std::string p;
+        std::cout<<"---------------\n";
+        if (!expr){return "!Expression";}
+            
+        else{
+       
+        type = isl_ast_expr_get_type(expr);
+        switch (type) {
+        case isl_ast_expr_error: return "$"; break;
+            
+        case isl_ast_expr_op:
+            std::cout<<"Entreing OP \n";
+            op = isl_ast_expr_get_op_type(expr);
+            if (op == isl_ast_op_error) return "$";
+            p=p+op_str[op]+"(";
+            p=p+get_name_arguments(expr);
+            p=p+")";
+            break;
+        case isl_ast_expr_id:
+             std::cout<<"Entreing Id \n";
+            id = isl_ast_expr_get_id(expr);
+            p = isl_id_get_name(id);
+            break;
+        case isl_ast_expr_int:
+           std::cout<<"Entreing Int \n";
+            v = isl_ast_expr_get_val(expr);
+            //p= isl_int_get_str(v->n);
+            break;
+        default: return "%";
+         }
+       
+
+        return p;
+        }
+       
+    }
+
 void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout)
 {
     std::default_random_engine rand_generator;
@@ -313,15 +479,48 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     // Evaluate children and sort them from smallest to highest evaluation
     // evaluate while removing illegal versions
     auto iterator = children.begin();
-    int nb_matrices = 5;
     std::vector < std::vector < std::vector<int> > > matrices;
-    matrices = get_random_matrcies(32);
+
+    //Create map between ISL iterator names and the AST iterator names
+    
+    isl_ast_expr * iter_expr;
+    int stop=0;
+
+    std::vector<std::string> isl_ast;
+    std::map <std::string,std::string>* corr_map= new std::map<std::string, std::string>();
+    //Get the iterator names from the ISL ast
+        //Genrate isl ast
+        ast.fct->gen_isl_ast();
+        isl_ast_node *ast_i=ast.fct->get_isl_ast(); 
+        //Fill a vector with the iterator names
+        while(stop!=1)
+        {  
+            if(isl_ast_node_for_get_init(isl_ast_node_for_get_body(ast_i))==NULL)stop=1;
+            iter_expr=isl_ast_node_for_get_iterator(ast_i);
+            isl_ast.push_back(get_name_ast_expr_isl(iter_expr));          
+            ast_i= isl_ast_node_for_get_body(ast_i); //n
+        }
+        //Get the names of iterators of the AST and create the map corr_map
+        for (ast_node *root : ast.roots)
+            {
+                get_save_name_node(root,isl_ast,corr_map);
+            }  
+        // Add the corr_map to the ast structue
+    ast.corr_map = corr_map;
+
     while (iterator != children.end())
     {
-        while(nb_matrices!=0)
+        int nb_matrices = 5;
+        syntax_tree *child = *iterator;
+        child->nb_explored_optims = nb_explored_optims;
+        bool illegal = true;
+        int shape = child->get_program_depth();
+        matrices = get_random_matrcies(nb_matrices,shape);
+        bool matrix = true;
+
+        while(matrix && illegal && nb_matrices>0)
         {
-            syntax_tree *child = *iterator;
-            child->nb_explored_optims = nb_explored_optims;
+            matrix = child->new_optims.back().type == MATRIX;
             child->transform_ast_matrix(matrices[nb_matrices]);
             nb_matrices--;
             if (child->schedule_is_prunable()){
@@ -347,11 +546,12 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                     child->print_isl_states();
                     std::cout << "\n<illegal>\n";
                 }
+
                 delete child;
                 iterator = children.erase(iterator);
             }
             else {
-
+                illegal = false;
                 // print and evaluate Ast
 
                 if (std::atoi(read_env_var("AS_VERBOSE"))==1){
