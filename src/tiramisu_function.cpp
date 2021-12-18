@@ -1464,7 +1464,7 @@ static char *op_str[] = {
         case isl_ast_expr_int:
            std::cout<<"Entreing Int \n";
             v = isl_ast_expr_get_val(expr);
-            p= isl_int_get_str(v->n);
+            //p= isl_int_get_str(v->n);
             break;
         default: return "%";
          }
@@ -1556,7 +1556,7 @@ static char *op_str[] = {
 
        
        
-        isl_ast_node_list *children= (this->ast->u.b.children);
+        //isl_ast_node_list *children= (this->ast->u.b.children);
         int i;
        
         //isl_int* integ;     
