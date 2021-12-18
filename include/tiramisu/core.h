@@ -698,15 +698,7 @@ protected:
     const std::vector<std::string> get_invariant_names() const;
     //@}
 
-    /**
-      * Return an ISL AST that represents this function.
-      * This function itself does not generate the ISL AST, it just
-      * returns it if it already exists.
-      * The function gen_isl_ast() should be called before calling
-      * this function.
-      */
-    isl_ast_node *get_isl_ast() const;
-
+    
     /**
       * Return the union of all the iteration domains
       * of the computations of the function.
@@ -1178,6 +1170,14 @@ public:
       * Generate an isl AST that represents the function.
       */
     void gen_isl_ast();
+    /**
+      * Return an ISL AST that represents this function.
+      * This function itself does not generate the ISL AST, it just
+      * returns it if it already exists.
+      * The function gen_isl_ast() should be called before calling
+      * this function.
+      */
+    isl_ast_node *get_isl_ast() const;
 
     /**
       * Generate the time-space domain of the function.

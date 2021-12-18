@@ -462,7 +462,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     // Look for an optimization that can be applied
     int nb_optims_tried = 0;
     int nb_explored_optims = ast.nb_explored_optims;
-
+    
     while (children.size() == 0 && nb_optims_tried < NB_OPTIMIZATIONS_MATRIX && nb_explored_optims < max_depth)
     {
         optimization_type optim_type = DEFAULT_OPTIMIZATIONS_ORDER_MATRIX[nb_explored_optims % NB_OPTIMIZATIONS_MATRIX];
@@ -471,11 +471,11 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         nb_explored_optims++;
         nb_optims_tried++;
     }
-
     // Stop if no more optimizations can be applied
+    
     if (children.size() == 0)
         return ;
-
+    
     // Evaluate children and sort them from smallest to highest evaluation
     // evaluate while removing illegal versions
     auto iterator = children.begin();
@@ -516,6 +516,9 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         bool illegal = true;
         int shape = child->get_program_depth();
         matrices = get_random_matrcies(nb_matrices,shape);
+        std::cout << "Starting random matrix generation" << std::flush;
+        matrices = get_random_matrcies(nb_matrices,shape);
+        std::cout << "random matrix generation ended"<< std::flush;
         bool matrix = true;
 
         while(matrix && illegal && nb_matrices>0)
