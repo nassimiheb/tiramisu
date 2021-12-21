@@ -423,7 +423,7 @@ static char *op_str[] = {
     {
         int i, n;
         std::string p;
-        std::cout<<"---------------Args \n";
+        //std::cout<<"---------------Args \n";
         n = isl_ast_expr_get_op_n_arg(expr);
         if (n < 0) return "$";
         if (n == 0) return "$";
@@ -1329,7 +1329,13 @@ static char *op_str[] = {
 
     int syntax_tree::get_program_depth() const
     {
-        return roots.size()+1;
+        int depth = 1;
+        ast_node *node = roots.at(0);
+        while(!node->children.empty()){
+                node = node->children.at(0);
+                depth++;
+        } 
+        return depth;
     }
 
     void syntax_tree::print_new_optims() const

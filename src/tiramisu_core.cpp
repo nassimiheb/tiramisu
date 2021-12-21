@@ -3135,10 +3135,6 @@ namespace tiramisu
         map = map + "] ->" + this->get_name() + "[";
         std::vector<std::string> temp_vector;
         std::string vector_content;
-<<<<<<< HEAD
-
-=======
->>>>>>> d88e134e0495642b182824ff870f69ff2f2ddc22
         
         for (int i = 0; i < matrix.size(); i++) {
             for (int j = 0; j < matrix[i].size(); j++){
