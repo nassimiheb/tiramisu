@@ -259,60 +259,6 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
         search_save(*child, schedules_annotations, parent_trace->child_mappings[child], schedule_timeout);
     }
 }
-std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcies(int nb_out_matrcies, int depth)
-{
-    std::vector <std::vector <  std::vector<int> >>  result(nb_out_matrcies);
-    int nb_valid_matrices = 0;
-    int max_depth = 5;
-    bool valid = false;
-    while(nb_valid_matrices<nb_out_matrcies)
-    {
-        std::vector <  std::vector<int> >  random(depth);
-        while (!valid)
-        {   
-            int i, o;
-            srand(time(NULL));
-            for(o = 0; o<depth; o++){
-                random.at(o)= std::vector<int>(depth);
-                for(i = 0; i<depth; i++){
-                        //std::cout<< i << " and " << o << std::endl;
-                        random.at(o).at(i) = rand() % 14 - 7;;
-                } 
-                    
-            }
-            valid=true;
-            // Check determinant equals 1
-            /*bool det_bool = determinant(random, depth)==1;
-            // Check upper right determinants equal 1
-            if (!det_bool) continue;
-            int k,l;
-            int d=0,s=0;
-            bool all_1 = true;
-            for (k=1;k<depth;k++){
-                    
-                    std::vector <  std::vector<int> >  submatrixd(depth-k);
-                    for(l=0;l<depth-k;l++){
-                        submatrixd.at(l) = std::vector<int> (depth-k);
-                    }
-                    for (s=0;s<depth-k;s++){
-                                for (d=0;d<depth-k;d++){
-                                        submatrixd.at(s).at(d) = random.at(s+k).at(d+k); 
-                                } 
-                         }   
-                    if(determinant(submatrixd, depth-k)!=1){ 
-                        all_1 = false;
-                        break;
-                    }
-            }*/
-            //valid = all_1;
-        }
-    //std::cout<< "add to result " <<std::endl;
-    result.at(nb_valid_matrices) = random;
-    nb_valid_matrices++;
-    
-    }
-    return result;
-}
 int determinant( std::vector <  std::vector<int> >  matrix, int n) {
    int det = 0;
    int i, o;
@@ -339,6 +285,103 @@ int determinant( std::vector <  std::vector<int> >  matrix, int n) {
    }
    return det;
 }
+std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcies(int nb_out_matrcies, int depth)
+{
+    std::vector <std::vector <  std::vector<int> >>  result(nb_out_matrcies);
+    int nb_valid_matrices = 0;
+    int max_depth = 6;
+    if (depth>max_depth) std::cout << "WARNING: the depth of this program is too big. Matrix generation will take a long time \n"<< std::endl;
+    if 90
+    bool valid = false;
+    while(nb_valid_matrices<nb_out_matrcies)
+    {
+        std::vector <  std::vector<int> >  random(depth);
+        
+        while (!valid)
+        {   
+            int l, c;
+            srand(time(NULL));
+            std::vector <  std::vector<int> >  randomL(depth);
+            for(l = 0; l<depth; l++){
+                randomL.at(l)= std::vector<int>(depth);
+                for(c = 0; c<depth; c++){
+                    if (l==c){
+                                randomL.at(l).at(c) = 1;
+                            }else{
+                                if (l>c){
+                                    randomL.at(l).at(c) = rand() % 4 - 2;
+                                }else{
+                                    randomL.at(l).at(c) = 0;
+                                }
+                            } 
+                }
+            }
+            
+            std::vector <  std::vector<int> >  randomU(depth);
+            for(l = 0; l<depth; l++){
+                randomU.at(l)= std::vector<int>(depth);
+                for(c = 0; c<depth; c++){
+                        if (l==c){
+                            randomU.at(l).at(c) = 1;
+                        }else{
+                            if (l<c){
+                                randomU.at(l).at(c) = rand() % 4 - 2;
+                            }else{
+                                randomU.at(l).at(c) = 0;
+                            }
+                        } 
+                }
+            }
+            
+            int k;
+            for(l = 0; l < depth; ++l){
+                random.at(l)= std::vector<int>(depth);
+                for(c = 0; c < depth; ++c)
+                    {
+                        for(k = 0; k < depth; ++k)
+                        {
+                            random.at(l).at(c)+= randomL.at(l).at(k) * randomU.at(k).at(c);
+                        }
+                        
+                    }
+            }
+            // Check determinant equals 1
+            int det = determinant(random, depth);
+            bool det_bool = det==1;
+            
+            // Check upper right determinants equal 1
+            bool all_1 = true;
+            if (det_bool){
+                
+                int d=0,s=0;
+                
+                for (k=depth-1;k>1;k--){
+                        
+                        std::vector <  std::vector<int> >  submatrixd(depth-k);
+                        
+                        for (s=0;s<depth-k;s++){
+                                    submatrixd.at(s) = std::vector<int> (depth-k);
+                                    for (d=0;d<depth-k;d++){
+                                            
+                                            submatrixd.at(s).at(d) = random.at(s).at(k+d); 
+                                    } 
+                            }   
+                        if(determinant(submatrixd, depth-k)!=1){ 
+                            all_1 = false;
+                            break;
+                        }
+                }
+            } 
+            valid = det_bool && all_1;
+        }
+    //
+    
+    result.at(nb_valid_matrices) = random;
+    nb_valid_matrices++;
+    }
+    return result;
+}
+
 static char *op_str[] = {
 	[isl_ast_op_and] = "and",
 	[isl_ast_op_and_then] = "and_then",
@@ -438,11 +481,9 @@ void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::ma
             p=p+")";
             break;
         case isl_ast_expr_id:
-            
              //std::cout<<"Entreing Id \n";
             id = isl_ast_expr_get_id(expr);
             p = isl_id_get_name(id);
-             std::cout<<"Entreing Id \n"+p+"\n";
             break;
         case isl_ast_expr_int:
            //std::cout<<"Entreing Int \n";
@@ -502,18 +543,15 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         //std::cout<< "before gen isl ast" << std::flush;
         ast.fct->gen_isl_ast();
         isl_ast_node *ast_i=ast.fct->get_isl_ast(); 
-        std::cout<< "\n######################### Corr map ###########################\n";
         //Fill a vector with the iterator names
-      
-       while(stop!=1)
-        {   //std::cout<<isl_ast_node_get_type(ast_i);
+        while(stop!=1)
+        {  
             if(isl_ast_node_get_type(ast_i)==isl_ast_node_for){
-                //if(isl_ast_node_for_get_init(isl_ast_node_for_get_body(ast_i))==NULL)stop=1;
+                if(isl_ast_node_for_get_init(isl_ast_node_for_get_body(ast_i))==NULL)stop=1;
                 iter_expr=isl_ast_node_for_get_iterator(ast_i);
                 isl_ast.push_back(get_name_ast_expr_isl(iter_expr));          
                 ast_i= isl_ast_node_for_get_body(ast_i); //n
             }
-            else{stop=1;}
         }
         //Get the names of iterators of the AST and create the map corr_map
         for (ast_node *root : ast.roots)
@@ -522,7 +560,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
             }  
         // Add the corr_map to the ast structue
     ast.corr_map = corr_map;
-    
+
     while (iterator != children.end())
     {
         int nb_matrices = 2;
