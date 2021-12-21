@@ -609,15 +609,17 @@ static char *op_str[] = {
         while(stop!=1)
         {   
             std::cout<< "######################### WHILE ###########################\n";
-            if(isl_ast_node_for_get_init(isl_ast_node_for_get_body(ast_i))==NULL)stop=1;
-            init_expr=isl_ast_node_for_get_init(ast_i);
-            cond_expr=isl_ast_node_for_get_cond(ast_i);
-            iter_expr=isl_ast_node_for_get_iterator(ast_i);
-            p = std::make_tuple(print_ast_expr_isl_M(cond_expr,islastMap),print_ast_expr_isl_M(init_expr,islastMap),print_ast_expr_isl_M(iter_expr,islastMap));
-            islastMap.insert(std::pair<int, std::tuple<std::string , std::string,std::string>>(k,p ));
-            k++;
+            //if(isl_ast_node_for_get_init(isl_ast_node_for_get_body(ast_i))==NULL)stop=1;
+            if(isl_ast_node_get_type(ast_i)==isl_ast_node_for){
+                init_expr=isl_ast_node_for_get_init(ast_i);
+                cond_expr=isl_ast_node_for_get_cond(ast_i);
+                iter_expr=isl_ast_node_for_get_iterator(ast_i);
+                p = std::make_tuple(print_ast_expr_isl_M(cond_expr,islastMap),print_ast_expr_isl_M(init_expr,islastMap),print_ast_expr_isl_M(iter_expr,islastMap));
+                islastMap.insert(std::pair<int, std::tuple<std::string , std::string,std::string>>(k,p ));
+                k++;
 
-            ast_i= isl_ast_node_for_get_body(ast_i); //n
+                ast_i= isl_ast_node_for_get_body(ast_i);
+            } else{ stop=1;}
         }
 
 
