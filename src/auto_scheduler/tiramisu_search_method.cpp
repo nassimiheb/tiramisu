@@ -262,6 +262,7 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
 int determinant( std::vector <  std::vector<int> >  matrix, int n) {
    int det = 0;
    int i, o;
+   if(n==1) return matrix.at(0).at(0);
    std::vector <  std::vector<int> >  submatrix(n);
    for(o = 0; o<n; o++){
                 submatrix.at(o)= std::vector<int> (n);}
@@ -290,6 +291,7 @@ std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcie
     std::vector <std::vector <  std::vector<int> >>  result(nb_out_matrcies);
     int nb_valid_matrices = 0;
     int max_depth = 6;
+    depth = 4;
     if (depth>max_depth) std::cout << "WARNING: the depth of this program is too big. Matrix generation will take a long time \n"<< std::endl;
     bool valid = false;
     while(nb_valid_matrices<nb_out_matrcies)
@@ -305,15 +307,11 @@ std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcie
             for(l = 0; l<depth; l++){
                 randomL.at(l)= std::vector<int>(depth);
                 for(c = 0; c<depth; c++){
-                    if (l==c){
-                                randomL.at(l).at(c) = 1;
-                            }else{
                                 if (l>c){
-                                    randomL.at(l).at(c) = rand() % 4 - 2;
+                                    randomL.at(l).at(c) = rand() % 14 - 7;
                                 }else{
                                     randomL.at(l).at(c) = 0;
                                 }
-                            } 
                 }
             }
             
@@ -321,18 +319,31 @@ std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcie
             for(l = 0; l<depth; l++){
                 randomU.at(l)= std::vector<int>(depth);
                 for(c = 0; c<depth; c++){
-                        if (l==c){
-                            randomU.at(l).at(c) = 1;
-                        }else{
                             if (l<c){
-                                randomU.at(l).at(c) = rand() % 4 - 2;
+                                randomU.at(l).at(c) = rand() % 14 - 7;
                             }else{
                                 randomU.at(l).at(c) = 0;
                             }
-                        } 
                 }
             }
-            
+            for(l = 0; l<depth; l++){
+                randomL.at(l).at(l) =1;
+                randomU.at(l).at(l) =1;
+                int sum=0,j=0;
+                if(l<depth-1){
+                    sum=0;
+                    for(j=0;j<l;j++){
+                        sum+= randomL.at(l).at(j) * randomU.at(j).at(depth-1);
+                    }
+                    randomU.at(l).at(depth-1) = (1-sum)/randomL.at(l).at(l);
+                }else{
+                    sum=0;
+                    for(j=1;j<l+1;j++){
+                        sum+= randomL.at(l).at(j) * randomU.at(j).at(depth-1);
+                    }
+                    randomL.at(depth-1).at(0) = (1-sum)/randomU.at(0).at(depth-1);
+                }
+            }
             int k;
             for(l = 0; l < depth; ++l){
                 random.at(l)= std::vector<int>(depth);
@@ -347,16 +358,18 @@ std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcie
             }
             // Check determinant equals 1
             int det = determinant(random, depth);
+            int detl = determinant(randomL, depth);
+            int detu = determinant(randomU, depth);
             bool det_bool = det==1;
-            
+            //std::cout<< "upper: "<< detu << "  lower: "<<detl <<"  mul: "<<det;
             // Check upper right determinants equal 1
             bool all_1 = true;
             if (det_bool){
                 //std::cout << depth;
                 int d=0,s=0;
                 
-                for (k=depth-1;k>1;k--){
-                        
+                for (k=depth-1;k>0;k--){
+                        //std::cout<<" sub matrix at depth: " <<k <<"\n";
                         std::vector <  std::vector<int> >  submatrixd(depth-k);
                         
                         for (s=0;s<depth-k;s++){
@@ -364,18 +377,21 @@ std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcie
                                     for (d=0;d<depth-k;d++){
                                             
                                             submatrixd.at(s).at(d) = random.at(s).at(k+d); 
+                                            //std::cout<< random.at(s).at(k+d) <<"\n";
                                     } 
-                            }   
+                            }  
+                        
                         if(determinant(submatrixd, depth-k)!=1){ 
                             all_1 = false;
+                            //std::cout<< "at depth"<< depth-k <<"\n";
                             break;
                         }
                 }
             } 
             valid = det_bool && all_1;
         }
-    //
-    std::cout<< "one matrix done \n"<<nb_valid_matrices<<std::endl;
+     std::cout<< "got one done \n"<<std::endl;
+    //std::cout<< "upper: \n";
     result.at(nb_valid_matrices) = random;
     nb_valid_matrices++;
     }
