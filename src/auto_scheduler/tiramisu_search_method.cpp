@@ -262,23 +262,25 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
 std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcies(int nb_out_matrcies, int depth)
 {
     std::vector <std::vector <  std::vector<int> >>  result(nb_out_matrcies);
-    //result.at(0)= std::vector<int> (2); ERROR !!
-    int nb_out_matrices = 5;
     int nb_valid_matrices = 0;
     int max_depth = 5;
     bool valid = false;
-    while(nb_valid_matrices<nb_out_matrices)
+    while(nb_valid_matrices<nb_out_matrcies)
     {
+        std::vector <  std::vector<int> >  random(depth);
         while (!valid)
-        {
-            std::vector <  std::vector<int> >  random (depth);
+        {   
             int i, o;
             srand(time(NULL));
             for(o = 0; o<depth; o++){
-                random.at(o)= std::vector<int> (depth);
-                for(i = 0; i<depth; i++)
-                    random.at(o).at(i) = rand() % 14 - 7;;
+                random.at(o)= std::vector<int>(depth);
+                for(i = 0; i<depth; i++){
+                        //std::cout<< i << " and " << o << std::endl;
+                        random.at(o).at(i) = rand() % 14 - 7;;
+                } 
+                    
             }
+            valid=true;
             // Check determinant equals 1
             /*bool det_bool = determinant(random, depth)==1;
             // Check upper right determinants equal 1
@@ -304,8 +306,12 @@ std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcie
             }*/
             //valid = all_1;
         }
-        nb_valid_matrices++;
+    //std::cout<< "add to result " <<std::endl;
+    result.at(nb_valid_matrices) = random;
+    nb_valid_matrices++;
+    
     }
+    return result;
 }
 int determinant( std::vector <  std::vector<int> >  matrix, int n) {
    int det = 0;
@@ -389,7 +395,7 @@ void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::ma
     {
         int i, n;
         std::string p;
-        std::cout<<"---------------Args \n";
+        //std::cout<<"---------------Args \n";
         n = isl_ast_expr_get_op_n_arg(expr);
         if (n < 0) return "$";
         if (n == 0) return "$";
@@ -414,7 +420,7 @@ void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::ma
         isl_id *id;
         isl_val *v;
         std::string p;
-        std::cout<<"---------------\n";
+        //std::cout<<"---------------\n";
         if (!expr){return "!Expression";}
             
         else{
@@ -424,7 +430,7 @@ void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::ma
         case isl_ast_expr_error: return "$"; break;
             
         case isl_ast_expr_op:
-            std::cout<<"Entreing OP \n";
+            //std::cout<<"Entreing OP \n";
             op = isl_ast_expr_get_op_type(expr);
             if (op == isl_ast_op_error) return "$";
             p=p+op_str[op]+"(";
@@ -433,12 +439,13 @@ void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::ma
             break;
         case isl_ast_expr_id:
             
+             //std::cout<<"Entreing Id \n";
             id = isl_ast_expr_get_id(expr);
             p = isl_id_get_name(id);
              std::cout<<"Entreing Id \n"+p+"\n";
             break;
         case isl_ast_expr_int:
-           std::cout<<"Entreing Int \n";
+           //std::cout<<"Entreing Int \n";
             v = isl_ast_expr_get_val(expr);
             //p= isl_int_get_str(v->n);
             break;
@@ -472,6 +479,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         nb_explored_optims++;
         nb_optims_tried++;
     }
+
     // Stop if no more optimizations can be applied
     
     if (children.size() == 0)
@@ -489,9 +497,9 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
 
     std::vector<std::string> isl_ast;
     std::map <std::string,std::string>* corr_map= new std::map<std::string, std::string>();
-    //Get the iterator names from the ISL ast
+        //Get the iterator names from the ISL ast
         //Genrate isl ast
-        std::cout<< "\n######################### Corr map ###########################\n";
+        //std::cout<< "before gen isl ast" << std::flush;
         ast.fct->gen_isl_ast();
         isl_ast_node *ast_i=ast.fct->get_isl_ast(); 
         std::cout<< "\n######################### Corr map ###########################\n";
@@ -499,7 +507,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
        std::cout<<isl_ast_node_get_type(ast_i);
        while(stop!=1)
         {  
-            if ( isl_ast_node_get_type(ast_i)==isl_ast_node_for){
+            if(isl_ast_node_get_type(ast_i)==isl_ast_node_for){
                 if(isl_ast_node_for_get_init(isl_ast_node_for_get_body(ast_i))==NULL)stop=1;
                 iter_expr=isl_ast_node_for_get_iterator(ast_i);
                 isl_ast.push_back(get_name_ast_expr_isl(iter_expr));          
@@ -516,22 +524,24 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     
     while (iterator != children.end())
     {
-        int nb_matrices = 5;
+        int nb_matrices = 2;
         syntax_tree *child = *iterator;
         child->nb_explored_optims = nb_explored_optims;
         bool illegal = true;
         int shape = child->get_program_depth();
+        //std::cout << "Starting random matrix generation" << std::endl;
         matrices = get_random_matrcies(nb_matrices,shape);
-        std::cout << "Starting random matrix generation" << std::flush;
-        matrices = get_random_matrcies(nb_matrices,shape);
-        std::cout << "random matrix generation ended"<< std::flush;
+        //std::cout << "random matrix generation ended"<< std::flush;
         bool matrix = true;
 
         while(matrix && illegal && nb_matrices>0)
         {
             matrix = child->new_optims.back().type == MATRIX;
-            child->transform_ast_matrix(matrices[nb_matrices]);
+            
+            child->transform_ast_matrix(matrices[nb_matrices-1]);
+            std::cout << "after transform "<< matrix << std::flush;
             nb_matrices--;
+
             if (child->schedule_is_prunable()){
                 if (std::atoi(read_env_var("AS_VERBOSE"))==1){
                     // print deleted Ast
