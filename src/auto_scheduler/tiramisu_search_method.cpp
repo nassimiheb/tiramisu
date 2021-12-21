@@ -298,6 +298,7 @@ std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcie
         
         while (!valid)
         {   
+            //std::cout << "generating";
             int l, c;
             srand(time(NULL));
             std::vector <  std::vector<int> >  randomL(depth);
@@ -351,7 +352,7 @@ std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcie
             // Check upper right determinants equal 1
             bool all_1 = true;
             if (det_bool){
-                
+                //std::cout << depth;
                 int d=0,s=0;
                 
                 for (k=depth-1;k>1;k--){
@@ -374,7 +375,7 @@ std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcie
             valid = det_bool && all_1;
         }
     //
-    
+    std::cout<< "one matrix done \n"<<nb_valid_matrices<<std::endl;
     result.at(nb_valid_matrices) = random;
     nb_valid_matrices++;
     }
@@ -521,7 +522,6 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     }
 
     // Stop if no more optimizations can be applied
-    
     if (children.size() == 0)
         return ;
     
