@@ -22,29 +22,29 @@ int main(int argc, char **argv)
 
     // Declare computations
     input bias("bias", {fout}, p_int32);
-    input src("src", {n, fin, y_pad, x_pad}, p_int32);
-    input weights("weights", {n, fout, y, x}, p_int32);
+    input src("src", {n, y_pad, x_pad}, p_int32);
+    input weights("weights", {n, fout, y}, p_int32);
 
     //computation conv_init("conv_init", {n, fout, y, x}, bias(fout));
-    computation conv("conv", {n, fout, y, x, fin}, p_int32);
-    conv.set_expression(conv(n, fout, y, x, fin) + src(n, fin, y , x ) * weights(fout, fin, 0,0 ));
+    computation conv("conv", {n, fout, y}, p_int32);
+    conv.set_expression(conv(n, fout, y) + src(n, y , 0 ) * weights(fout, 0, 0 ));
 
     //conv_init.then(conv, x);
 
     // Declare buffers
 	
     buffer buf_bias("buf_bias", {2}, p_int32, a_input);
-    buffer buf_src("buf_src", {8, 3, 1026, 1026}, p_int32, a_input);
-    buffer buf_weights("buf_weights", {2, 3, 3, 3}, p_int32, a_input);
+    buffer buf_src("buf_src", {8, 1026, 1026}, p_int32, a_input);
+    buffer buf_weights("buf_weights", {2, 3, 3}, p_int32, a_input);
 
-    buffer buf_output("buf_output", {8, 2, 1024, 1024}, p_int32, a_output);
+    buffer buf_output("buf_output", {8, 2, 1024}, p_int32, a_output);
 
     bias.store_in(&buf_bias);
     src.store_in(&buf_src);
     weights.store_in(&buf_weights);
 
     //conv_init.store_in(&buf_output);
-    conv.store_in(&buf_output, {n, fout, y, x});
+    conv.store_in(&buf_output, {n, fout, y});
 
     // Generate a program with no schedule
     if (!perform_autoscheduling)
