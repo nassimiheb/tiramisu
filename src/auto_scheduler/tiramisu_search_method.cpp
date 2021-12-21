@@ -504,15 +504,16 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         isl_ast_node *ast_i=ast.fct->get_isl_ast(); 
         std::cout<< "\n######################### Corr map ###########################\n";
         //Fill a vector with the iterator names
-       std::cout<<isl_ast_node_get_type(ast_i);
+      
        while(stop!=1)
-        {  
+        {   //std::cout<<isl_ast_node_get_type(ast_i);
             if(isl_ast_node_get_type(ast_i)==isl_ast_node_for){
-                if(isl_ast_node_for_get_init(isl_ast_node_for_get_body(ast_i))==NULL)stop=1;
+                //if(isl_ast_node_for_get_init(isl_ast_node_for_get_body(ast_i))==NULL)stop=1;
                 iter_expr=isl_ast_node_for_get_iterator(ast_i);
                 isl_ast.push_back(get_name_ast_expr_isl(iter_expr));          
                 ast_i= isl_ast_node_for_get_body(ast_i); //n
             }
+            else{stop=1;}
         }
         //Get the names of iterators of the AST and create the map corr_map
         for (ast_node *root : ast.roots)
