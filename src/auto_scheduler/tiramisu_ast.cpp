@@ -9,6 +9,7 @@
 namespace tiramisu::auto_scheduler
 {
     std::string print_ast_expr_isl_M( isl_ast_expr *expr);
+    int get_value(isl_ast_expr *expr,std::map <int,  std::tuple<std::string , std::string,std::string> >isl_ast_map );
     computation_info::computation_info(tiramisu::computation *comp, syntax_tree *ast)
         : comp_ptr(comp), iters(dnn_iterator::get_iterators_from_computation(*comp)),
           accesses(comp, iters.size(), comp->get_function()), buffer_nb_dims(iters.size()),
