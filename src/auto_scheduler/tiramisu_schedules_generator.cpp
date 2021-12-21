@@ -31,7 +31,16 @@ std::vector<syntax_tree*> exhaustive_generator::generate_schedules(syntax_tree c
                 generate_unrollings(root, states, ast);
                     
             break;
-
+        case optimization_type::MATRIX:
+            {
+            syntax_tree* new_ast = new syntax_tree();
+            new_ast = ast.copy_ast();
+            optimization_info optim_info;
+            optim_info.type = optimization_type::MATRIX;
+            new_ast->new_optims.push_back(optim_info);
+            states.push_back(new_ast);
+            break;
+            }
         default:
             break;
     }

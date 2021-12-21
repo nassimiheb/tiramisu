@@ -298,6 +298,7 @@ std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcie
         
         while (!valid)
         {   
+            //std::cout << "generating";
             int l, c;
             srand(time(NULL));
             std::vector <  std::vector<int> >  randomL(depth);
@@ -351,7 +352,7 @@ std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcie
             // Check upper right determinants equal 1
             bool all_1 = true;
             if (det_bool){
-                
+                //std::cout << depth;
                 int d=0,s=0;
                 
                 for (k=depth-1;k>1;k--){
@@ -374,7 +375,7 @@ std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcie
             valid = det_bool && all_1;
         }
     //
-    
+    std::cout<< "one matrix done \n"<<nb_valid_matrices<<std::endl;
     result.at(nb_valid_matrices) = random;
     nb_valid_matrices++;
     }
@@ -521,7 +522,6 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     }
 
     // Stop if no more optimizations can be applied
-    
     if (children.size() == 0)
         return ;
     
@@ -546,10 +546,12 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         while(stop!=1)
         {  
             if(isl_ast_node_get_type(ast_i)==isl_ast_node_for){
-                if(isl_ast_node_for_get_init(isl_ast_node_for_get_body(ast_i))==NULL)stop=1;
+                //if(isl_ast_node_for_get_init(isl_ast_node_for_get_body(ast_i))==NULL)stop=1;
                 iter_expr=isl_ast_node_for_get_iterator(ast_i);
                 isl_ast.push_back(get_name_ast_expr_isl(iter_expr));          
                 ast_i= isl_ast_node_for_get_body(ast_i); //n
+            }else{
+                stop=1;
             }
         }
         //Get the names of iterators of the AST and create the map corr_map
