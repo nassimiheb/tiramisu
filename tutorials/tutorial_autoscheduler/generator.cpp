@@ -18,7 +18,7 @@ int main(int argc, char **argv)
     tiramisu::init("conv");
 
     var n("n", 0, 8), fout("fout", 0, 2), y("y", 0, 1024), x("x", 0, 1024), fin("fin", 0, 3) ,
-            k_y("k_y", 0, 3), k_x("k_x", 0, 3) , y_pad("y_pad", 0, 1026) , x_pad("x_pad", 0, 1026);
+            /*k_y("k_y", 0, 3), k_x("k_x", 0, 3) ,*/ y_pad("y_pad", 0, 1026) , x_pad("x_pad", 0, 1026);
 
     // Declare computations
     input bias("bias", {fout}, p_int32);
@@ -26,8 +26,8 @@ int main(int argc, char **argv)
     input weights("weights", {n, fout, y, x}, p_int32);
 
     //computation conv_init("conv_init", {n, fout, y, x}, bias(fout));
-    computation conv("conv", {n, fout, y, x, fin, k_y, k_x}, p_int32);
-    conv.set_expression(conv(n, fout, y, x, fin, k_y, k_x) + src(n, fin, y + k_y, x + k_x) * weights(fout, fin, k_y, k_x));
+    computation conv("conv", {n, fout, y, x, fin}, p_int32);
+    conv.set_expression(conv(n, fout, y, x, fin) + src(n, fin, y , x ) * weights(fout, fin, 0,0 ));
 
     //conv_init.then(conv, x);
 
