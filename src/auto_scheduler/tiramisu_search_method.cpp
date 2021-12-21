@@ -289,7 +289,9 @@ std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcie
 {
     std::vector <std::vector <  std::vector<int> >>  result(nb_out_matrcies);
     int nb_valid_matrices = 0;
-    int max_depth = 5;
+    int max_depth = 6;
+    if (depth>max_depth) std::cout << "WARNING: the depth of this program is too big. Matrix generation will take a long time \n"<< std::endl;
+    if 90
     bool valid = false;
     while(nb_valid_matrices<nb_out_matrcies)
     {
