@@ -1414,10 +1414,10 @@ static char *op_str[] = {
     {
         int i, n;
         std::string p;
-        std::cout<<"---------------Args \n";
+        //std::cout<<"---------------Args \n";
         n = isl_ast_expr_get_op_n_arg(expr);
-        if (n < 0) return "$";
-        if (n == 0) return "$";
+        if (n < 0) return "$\n";
+        if (n == 0) return "$\n";
 
         for (i = 0; i < n; ++i) {
             isl_ast_expr *arg;
@@ -1439,30 +1439,30 @@ static char *op_str[] = {
         isl_id *id;
         isl_val *v;
         std::string p;
-        std::cout<<"---------------\n";
-        if (!expr){return "!Expression";}
+        //std::cout<<"---------------\n";
+        if (!expr){return "!Expression\n";}
             
         else{
        
         type = isl_ast_expr_get_type(expr);
         switch (type) {
-        case isl_ast_expr_error: return "$"; break;
+        case isl_ast_expr_error: return "$\n"; break;
             
         case isl_ast_expr_op:
-            std::cout<<"Entreing OP \n";
+            //std::cout<<"Entreing OP \n";
             op = isl_ast_expr_get_op_type(expr);
-            if (op == isl_ast_op_error) return "$";
+            if (op == isl_ast_op_error) return "$\n";
             p=p+op_str[op]+"(";
             p=p+print_arguments_M(expr);
             p=p+")";
             break;
         case isl_ast_expr_id:
-             std::cout<<"Entreing Id \n";
+             //std::cout<<"Entreing Id \n";
             id = isl_ast_expr_get_id(expr);
             p = isl_id_get_name(id);
             break;
         case isl_ast_expr_int:
-           std::cout<<"Entreing Int \n";
+           //std::cout<<"Entreing Int \n";
             v = isl_ast_expr_get_val(expr);
             //p= isl_int_get_str(v->n);
             break;
@@ -1563,7 +1563,7 @@ static char *op_str[] = {
         //isl_val_get_num_isl_int(ast->u.f.init->u.v,integ);
     
         std::cout<<isl_ast_node_to_C_str(this->ast);
-        std::vector<std::pair<int , int>> vec;
+       /* std::vector<std::pair<int , int>> vec;
        
      
        
@@ -1575,28 +1575,40 @@ static char *op_str[] = {
         isl_ast_expr * iter_expr;
         int stop=0;
         int k=0;
-       
+       enum isl_ast_node_type {
+        isl_ast_node_error = -1,
+        isl_ast_node_for = 1,
+        isl_ast_node_if,
+        isl_ast_node_block,
+        isl_ast_node_mark,
+        isl_ast_node_user
+    };
         //Create a map of (level, <Upper bound, lower bound, iterator name>) from the ISL AST
         while(stop!=1)
         {   
-            std::cout<< "######################### WHILE ###########################\n";
-            if(isl_ast_node_for_get_init(isl_ast_node_for_get_body(ast_i))==NULL)stop=1;
-            init_expr=isl_ast_node_for_get_init(ast_i);
-            cond_expr=isl_ast_node_for_get_cond(ast_i);
-            iter_expr=isl_ast_node_for_get_iterator(ast_i);
-            p = std::make_tuple(print_ast_expr_isl_M(cond_expr),print_ast_expr_isl_M(init_expr),print_ast_expr_isl_M(iter_expr));
-            islastMap.insert(std::pair<int, std::tuple<std::string , std::string,std::string>>(k,p ));
-            k++;
-            std::cout<< "\n######################### Iterator ###########################\n";
-            std::cout<< print_ast_expr_isl_M(iter_expr);
-            std::cout<< "######################### Lower bound ###########################\n";
-            std::cout<< print_ast_expr_isl_M(init_expr);
-            std::cout<< "######################### upper bound ###########################\n";
-            std::cout<< print_ast_expr_isl_M(cond_expr);
+            if ( isl_ast_node_get_type(ast_i)==isl_ast_node_for){
 
-            ast_i= isl_ast_node_for_get_body(ast_i); //n
+                std::cout<< "\n######################### WHILE ###########################\n";
+                if(isl_ast_node_for_get_init(isl_ast_node_for_get_body(ast_i))==NULL)stop=1;
+                init_expr=isl_ast_node_for_get_init(ast_i);
+                cond_expr=isl_ast_node_for_get_cond(ast_i);
+                iter_expr=isl_ast_node_for_get_iterator(ast_i);
+                p = std::make_tuple(print_ast_expr_isl_M(cond_expr),print_ast_expr_isl_M(init_expr),print_ast_expr_isl_M(iter_expr));
+                islastMap.insert(std::pair<int, std::tuple<std::string , std::string,std::string>>(k,p ));
+                k++;
+                std::cout<< "\n######################### Iterator ###########################\n";
+                std::cout<< print_ast_expr_isl_M(iter_expr);
+                std::cout<< "######################### Lower bound ###########################\n";
+                std::cout<< print_ast_expr_isl_M(init_expr);
+                std::cout<< "######################### upper bound ###########################\n";
+                std::cout<< print_ast_expr_isl_M(cond_expr);
+
+                ast_i= isl_ast_node_for_get_body(ast_i); //n
+
+            }
+            
         }
-
+*/
         
         /*while(stop!=1)
         {   

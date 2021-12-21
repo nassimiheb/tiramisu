@@ -432,9 +432,10 @@ void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::ma
             p=p+")";
             break;
         case isl_ast_expr_id:
-             std::cout<<"Entreing Id \n";
+            
             id = isl_ast_expr_get_id(expr);
             p = isl_id_get_name(id);
+             std::cout<<"Entreing Id \n"+p+"\n";
             break;
         case isl_ast_expr_int:
            std::cout<<"Entreing Int \n";
@@ -490,15 +491,20 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     std::map <std::string,std::string>* corr_map= new std::map<std::string, std::string>();
     //Get the iterator names from the ISL ast
         //Genrate isl ast
+        std::cout<< "\n######################### Corr map ###########################\n";
         ast.fct->gen_isl_ast();
         isl_ast_node *ast_i=ast.fct->get_isl_ast(); 
+        std::cout<< "\n######################### Corr map ###########################\n";
         //Fill a vector with the iterator names
-        while(stop!=1)
+       std::cout<<isl_ast_node_get_type(ast_i);
+       while(stop!=1)
         {  
-            if(isl_ast_node_for_get_init(isl_ast_node_for_get_body(ast_i))==NULL)stop=1;
-            iter_expr=isl_ast_node_for_get_iterator(ast_i);
-            isl_ast.push_back(get_name_ast_expr_isl(iter_expr));          
-            ast_i= isl_ast_node_for_get_body(ast_i); //n
+            if ( isl_ast_node_get_type(ast_i)==isl_ast_node_for){
+                if(isl_ast_node_for_get_init(isl_ast_node_for_get_body(ast_i))==NULL)stop=1;
+                iter_expr=isl_ast_node_for_get_iterator(ast_i);
+                isl_ast.push_back(get_name_ast_expr_isl(iter_expr));          
+                ast_i= isl_ast_node_for_get_body(ast_i); //n
+            }
         }
         //Get the names of iterators of the AST and create the map corr_map
         for (ast_node *root : ast.roots)
@@ -507,7 +513,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
             }  
         // Add the corr_map to the ast structue
     ast.corr_map = corr_map;
-
+    
     while (iterator != children.end())
     {
         int nb_matrices = 5;
