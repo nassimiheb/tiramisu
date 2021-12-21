@@ -1580,7 +1580,8 @@ static char *op_str[] = {
         while(stop!=1)
         {   
             //std::cout<< "######################### WHILE ###########################\n";
-            if(isl_ast_node_for_get_init(isl_ast_node_for_get_body(ast_i))==NULL)stop=1;
+            if(isl_ast_node_get_type(ast_i)==isl_ast_node_for)
+            {//if(isl_ast_node_for_get_init(isl_ast_node_for_get_body(ast_i))==NULL)stop=1;
             init_expr=isl_ast_node_for_get_init(ast_i);
             cond_expr=isl_ast_node_for_get_cond(ast_i);
             iter_expr=isl_ast_node_for_get_iterator(ast_i);
@@ -1594,7 +1595,9 @@ static char *op_str[] = {
             //std::cout<< "######################### upper bound ###########################\n";
             //std::cout<< print_ast_expr_isl_M(cond_expr);
 
-            ast_i= isl_ast_node_for_get_body(ast_i); //n
+            ast_i= isl_ast_node_for_get_body(ast_i);
+            }
+            else{stop=1;} //n
         }
 
         

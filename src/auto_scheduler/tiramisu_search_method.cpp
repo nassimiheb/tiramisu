@@ -291,7 +291,6 @@ std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcie
     int nb_valid_matrices = 0;
     int max_depth = 6;
     if (depth>max_depth) std::cout << "WARNING: the depth of this program is too big. Matrix generation will take a long time \n"<< std::endl;
-    if 90
     bool valid = false;
     while(nb_valid_matrices<nb_out_matrcies)
     {
@@ -578,7 +577,6 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
             matrix = child->new_optims.back().type == MATRIX;
             
             child->transform_ast_matrix(matrices[nb_matrices-1]);
-            std::cout << "after transform "<< matrix << std::flush;
             nb_matrices--;
 
             if (child->schedule_is_prunable()){
