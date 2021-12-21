@@ -3,13 +3,11 @@
 #include <iostream>
 #include <string>
 #include <map>
-#include <iterator>
 //#include <tiramisu/3rdParty/isl/isl_ast_private.h> //TO-DO Fix path issues
 
 namespace tiramisu::auto_scheduler
 {
     std::string print_ast_expr_isl_M( isl_ast_expr *expr);
-    int get_value(isl_ast_expr *expr,std::map <int,  std::tuple<std::string , std::string,std::string> >isl_ast_map );
     computation_info::computation_info(tiramisu::computation *comp, syntax_tree *ast)
         : comp_ptr(comp), iters(dnn_iterator::get_iterators_from_computation(*comp)),
           accesses(comp, iters.size(), comp->get_function()), buffer_nb_dims(iters.size()),
@@ -393,7 +391,6 @@ namespace tiramisu::auto_scheduler
             break;
         }
     }
-    
 static char *op_str[] = {
 	[isl_ast_op_and] = "and",
 	[isl_ast_op_and_then] = "and_then",
@@ -422,30 +419,21 @@ static char *op_str[] = {
 	[isl_ast_op_member] = "member",
 	[isl_ast_op_address_of] = "address_of"
 };
-
-  int print_arguments_M(isl_ast_op_type prev_op,isl_ast_expr *expr,std::map <int,  std::tuple<std::string , std::string,std::string> >isl_ast_map={{0, {"0", "0","0" }} })
+  std::string print_arguments_M(isl_ast_expr *expr)
     {
         int i, n;
-        int p;
+        std::string p;
         //std::cout<<"---------------Args \n";
         n = isl_ast_expr_get_op_n_arg(expr);
-        if (n < 0) return 0;
-        if (n == 0) return 0;
+        if (n < 0) return "$";
+        if (n == 0) return "$";
 
         for (i = 0; i < n; ++i) {
             isl_ast_expr *arg;
 
             arg = isl_ast_expr_get_op_arg(expr, i);
-            switch(prev_op){
-                case isl_ast_op_add:{p=p+get_value(arg,isl_ast_map);break;}
-                case isl_ast_op_sub:{p=p-get_value(arg,isl_ast_map);break;}
-                case isl_ast_op_mul:{p=p*get_value(arg,isl_ast_map);break;}
-                case isl_ast_op_div:{if(get_value(arg,isl_ast_map)!=0)p=p/get_value(arg,isl_ast_map);break;}
-                case isl_ast_op_max:{p=p+get_value(arg,isl_ast_map);break;}
-                case isl_ast_op_min:{p=p+get_value(arg,isl_ast_map);break;}
-                default: p=get_value(arg,isl_ast_map);break;;
-            }
-            
+            if(i!=0)p=p+","+ print_ast_expr_isl_M(arg);
+            else p=p+ print_ast_expr_isl_M(arg);
             isl_ast_expr_free(arg);
          
         }
@@ -453,68 +441,7 @@ static char *op_str[] = {
 
         return p;
     }
-    //get the Upper bound of an id
-    int get_id_value(std::string id,std::map <int,  std::tuple<std::string , std::string,std::string> >isl_ast_map={{0, {"0", "0","0" }} }){
-
-       std::map <int,  std::tuple<std::string , std::string,std::string> >::iterator it;
-
-        for (it = isl_ast_map.begin(); it != isl_ast_map.end(); it++)
-        {
-            if(std::get<2>(it->second)==id){
-                return std::stoi(std::get<1>(it->second));
-            }
-        } 
-        return 0;
-    }
-
-    int get_value(isl_ast_expr *expr,std::map <int,  std::tuple<std::string , std::string,std::string> >isl_ast_map={{0, {"0", "0","0" }} }){
-            
-            enum isl_ast_expr_type type;
-            enum isl_ast_op_type op;
-            isl_id *id;
-            isl_val *v;
-            std::string p;
-            int val=0;
-        
-            if (!expr){return -1;}  
-            else{
-        
-                type = isl_ast_expr_get_type(expr);
-                switch (type) {
-                case isl_ast_expr_error: return 0; break;
-                    
-                case isl_ast_expr_op:
-                    op = isl_ast_expr_get_op_type(expr);
-                    if (op == isl_ast_op_error) return 0;
-                    switch(op){
-                        case isl_ast_op_add:{val=val+print_arguments_M(op,expr,isl_ast_map);break;}
-                        case isl_ast_op_sub:{val=val-print_arguments_M(op,expr,isl_ast_map);break;}
-                        case isl_ast_op_mul:{val=val*print_arguments_M(op,expr,isl_ast_map);break;}
-                        case isl_ast_op_div:{if(print_arguments_M(op,expr,isl_ast_map)!=0)val=val+print_arguments_M(op,expr,isl_ast_map);break;}
-                        case isl_ast_op_max:{val=val+print_arguments_M(op,expr,isl_ast_map);break;}
-                        case isl_ast_op_min:{val=val+print_arguments_M(op,expr,isl_ast_map);break;}
-
-                    }
-                    //val=val+print_arguments_M(prev_op,expr,isl_ast_map);
-                    break;
-                case isl_ast_expr_id:
-                
-                    id = isl_ast_expr_get_id(expr);
-                    p = isl_id_get_name(id);
-                    val = get_id_value(p,isl_ast_map);
-                    break;
-                case isl_ast_expr_int:
-                
-                    v = isl_ast_expr_get_val(expr);
-                    //val= std::stoi(isl_int_get_str(v->n));
-                    break;
-                default: return 0;
-                }
-            return val;
-            }
-        }
-        
-   std::string print_ast_expr_isl_M( isl_ast_expr *expr,std::map <int,  std::tuple<std::string , std::string,std::string> >isl_ast_map={{0, {"0", "0","0" }} })
+   std::string print_ast_expr_isl_M( isl_ast_expr *expr)
     {
         enum isl_ast_expr_type type;
         enum isl_ast_op_type op;
@@ -534,9 +461,9 @@ static char *op_str[] = {
             std::cout<<"Entreing OP \n";
             op = isl_ast_expr_get_op_type(expr);
             if (op == isl_ast_op_error) return "$";
-      
-            p=std::to_string(print_arguments_M(op,expr,isl_ast_map));
-  
+            p=p+op_str[op]+"(";
+            p=p+print_arguments_M(expr);
+            p=p+")";
             break;
         case isl_ast_expr_id:
              std::cout<<"Entreing Id \n";
@@ -550,8 +477,11 @@ static char *op_str[] = {
             break;
         default: return "%";
          }
+       
+
         return p;
-        }   
+        }
+       
     }
     void update_node(std::map <std::string,std::string> *corr_map,ast_node *node, std::map <int,  std::tuple<std::string , std::string,std::string> > islastMap){
         static int level=0;
@@ -559,13 +489,14 @@ static char *op_str[] = {
         
         node->low_bound=std::stoi(std::get<0>(islastMap[level]));
         node->up_bound=std::stoi(std::get<1>(islastMap[level]));
-        node->name=std::stoi((*corr_map).at(std::get<2>(islastMap[level])));
+        node->name=std::stoi((*corr_map).at(std::get<1>(islastMap[level])));
         level++;
         for (ast_node *child : node->children)
                {          
                  update_node(corr_map,child,islastMap);
                }
     }
+
 
     void syntax_tree::transform_ast_by_matrix(std::vector<std::vector<int>> matrix)
     {
@@ -613,7 +544,7 @@ static char *op_str[] = {
             init_expr=isl_ast_node_for_get_init(ast_i);
             cond_expr=isl_ast_node_for_get_cond(ast_i);
             iter_expr=isl_ast_node_for_get_iterator(ast_i);
-            p = std::make_tuple(print_ast_expr_isl_M(cond_expr,islastMap),print_ast_expr_isl_M(init_expr,islastMap),print_ast_expr_isl_M(iter_expr,islastMap));
+            p = std::make_tuple(print_ast_expr_isl_M(cond_expr),print_ast_expr_isl_M(init_expr),print_ast_expr_isl_M(iter_expr));
             islastMap.insert(std::pair<int, std::tuple<std::string , std::string,std::string>>(k,p ));
             k++;
 
