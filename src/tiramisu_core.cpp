@@ -3105,9 +3105,9 @@ namespace tiramisu
         // ------------------------------------------------------------
         // Create a map for the duplicate schedule.
         // ------------------------------------------------------------
-
+        
         std::string map = "{ " + this->get_name() + "[";
-
+     
         for (int i = 0; i < n_dims; i++)
         {
             if (i == 0)
@@ -3131,34 +3131,48 @@ namespace tiramisu
                 map = map + ",";
             }
         }
-
+        
         map = map + "] ->" + this->get_name() + "[";
+        
         std::vector<std::string> temp_vector;
         std::string vector_content;
-        
+        int t=1;
+      
         for (int i = 0; i < matrix.size(); i++) {
+        
             for (int j = 0; j < matrix[i].size(); j++){
                 if(j != matrix[i].size()-1){
-                    vector_content = vector_content + std::to_string(matrix[i][j])+dim_vector[j] + "+";
+                     if (matrix[i][j]!=0){vector_content = vector_content + std::to_string(matrix[i][j])+dim_vector[t] + "+";t+=2;}
                 }
                 else{
-                vector_content = vector_content + std::to_string(matrix[i][j])+dim_vector[j];
+                    if (matrix[i][j]!=0){vector_content = vector_content + std::to_string(matrix[i][j])+dim_vector[t];t+=2;}
                 }
             }
+            t=1;
             temp_vector.push_back(vector_content);
             vector_content.clear();     
         }
-
+        for (int i = 0; i < temp_vector.size(); i++)std::cout << temp_vector[i] << "\n";
+        
+        t=0;
         for (int i = 0; i < n_dims; i++)
         {
             if (i == 0)
             {
                 int duplicate_ID = isl_map_get_static_dim(schedule, 0);
                 map = map + std::to_string(duplicate_ID);
+                
+
             }
             else
             {
-                map = map + temp_vector[i];
+                if (i % 2 == 0){
+                    map = map + temp_vector[t];t++;
+                }else{
+                    map = map + isl_map_get_dim_name(schedule, isl_dim_out, i);
+                    dimensions.push_back(isl_map_get_dim_id(schedule, isl_dim_out, i));
+                }
+                
                 /*if ((i != inDim0) && (i != inDim1))
                 {
                     map = map + isl_map_get_dim_name(schedule, isl_dim_out, i);
@@ -3185,7 +3199,7 @@ namespace tiramisu
         }
 
         map = map + "]}";
-
+        std::cout<<map<<"\n";
         DEBUG(3, tiramisu::str_dump("A map that transforms the duplicate"));
         DEBUG(3, tiramisu::str_dump(map.c_str()));
 
