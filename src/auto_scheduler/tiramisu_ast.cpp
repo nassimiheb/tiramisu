@@ -505,8 +505,8 @@ static char *op_str[] = {
                     break;
                 case isl_ast_expr_int:
                 
-                    v = isl_ast_expr_get_val(expr);
-                    //val= std::stoi(isl_int_get_str(v->n));
+                    v = isl_ast_expr_get_val(expr);val=1;
+                    val= isl_val_get_num_si(v);
                     break;
                 default: return 0;
                 }
@@ -531,8 +531,9 @@ static char *op_str[] = {
         case isl_ast_expr_error: return "$"; break;
             
         case isl_ast_expr_op:
-            std::cout<<"Entreing OP \n";
+            
             op = isl_ast_expr_get_op_type(expr);
+            std::cout<<"Entreing OP \n";
             if (op == isl_ast_op_error) return "$";
       
             p=std::to_string(print_arguments_M(op,expr,isl_ast_map));
@@ -545,7 +546,9 @@ static char *op_str[] = {
             break;
         case isl_ast_expr_int:
            std::cout<<"Entreing Int \n";
+           
             v = isl_ast_expr_get_val(expr);
+            p = std::to_string(isl_val_get_num_si(v));
             //p= isl_int_get_str(v->n);
             break;
         default: return "%";
@@ -615,14 +618,20 @@ static char *op_str[] = {
             init_expr=isl_ast_node_for_get_init(ast_i);
             cond_expr=isl_ast_node_for_get_cond(ast_i);
             iter_expr=isl_ast_node_for_get_iterator(ast_i);
-            p = std::make_tuple(print_ast_expr_isl_M(cond_expr,islastMap),print_ast_expr_isl_M(init_expr,islastMap),print_ast_expr_isl_M(iter_expr,islastMap));
+            p = std::make_tuple(print_ast_expr_isl_M(init_expr,islastMap),print_ast_expr_isl_M(cond_expr,islastMap),print_ast_expr_isl_M(iter_expr,islastMap));
             islastMap.insert(std::pair<int, std::tuple<std::string , std::string,std::string>>(k,p ));
             k++;
 
             ast_i= isl_ast_node_for_get_body(ast_i);}
             else{stop=1;} //n
         }
-
+        /*std::map<int, std::tuple<std::string , std::string,std::string>>::iterator itr;
+        std::cout << "\nThe map gquiz1 is : \n";
+        std::cout << "\tKEY\tELEMENT\n";
+        for (itr = islastMap.begin(); itr !=  islastMap.end(); ++itr) {
+            std::cout << '\t' << itr->first
+                << '\t' << std::get<0>(itr->second)<< '\t' << std::get<1>(itr->second)<< '\t' << std::get<2>(itr->second) << '\n';
+        }*/
 
         //Update the ast nodes according to the ordre of the ISL AST 
         for (ast_node *root : roots)
