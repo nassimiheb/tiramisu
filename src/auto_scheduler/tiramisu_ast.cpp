@@ -556,16 +556,19 @@ static char *op_str[] = {
         return p;
         }   
     }
-    void update_node(std::map <std::string,std::string> *corr_map,ast_node *node, std::map <int,  std::tuple<std::string , std::string,std::string> > islastMap){
+    void update_node(std::map <std::string,std::string>* corr_map,ast_node *node, std::map <int,  std::tuple<std::string , std::string,std::string> > islastMap){
         static int level=0;
         // Updating the node using islastMap
-        
+        std::cout<<"U\n"<< std::flush;
         node->low_bound=std::stoi(std::get<0>(islastMap[level]));
         node->up_bound=std::stoi(std::get<1>(islastMap[level]));
-        node->name=std::stoi((*corr_map).at(std::get<2>(islastMap[level])));
+        node->name=(*corr_map).at(std::get<2>(islastMap[level]));
         level++;
+    
+        
         for (ast_node *child : node->children)
-               {          
+               {   
+                     
                  update_node(corr_map,child,islastMap);
                }
     }
@@ -625,19 +628,28 @@ static char *op_str[] = {
             ast_i= isl_ast_node_for_get_body(ast_i);}
             else{stop=1;} //n
         }
-        /*std::map<int, std::tuple<std::string , std::string,std::string>>::iterator itr;
-        std::cout << "\nThe map gquiz1 is : \n";
+        std::map<int, std::tuple<std::string , std::string,std::string>>::iterator itr;
+        std::cout << "\nThe map isl ast map is : \n";
         std::cout << "\tKEY\tELEMENT\n";
         for (itr = islastMap.begin(); itr !=  islastMap.end(); ++itr) {
             std::cout << '\t' << itr->first
                 << '\t' << std::get<0>(itr->second)<< '\t' << std::get<1>(itr->second)<< '\t' << std::get<2>(itr->second) << '\n';
-        }*/
-
+        }
+        std::map<std::string,std::string>::iterator itr1;
+        std::cout << "\nThe map c is : \n";
+        std::cout << "\tKEY\tELEMENT\n"<<this->corr_map->size();
+        for (itr1 = this->corr_map->begin(); itr1 !=  this->corr_map->end(); ++itr1) {
+            std::cout << '\t' << itr1->first
+                << '\t' << itr1->second << '\n'<< std::flush;
+        }
+     
         //Update the ast nodes according to the ordre of the ISL AST 
         for (ast_node *root : roots)
         {
+            std::cout<<"U\n";
             update_node(this->corr_map,root,islastMap);
         }
+
       
         recover_isl_states();
     }

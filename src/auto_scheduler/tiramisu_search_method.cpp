@@ -435,10 +435,10 @@ static char *op_str[] = {
 void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::map <std::string,std::string>* corr_map){
     //static std::map <std::string,std::string> corr_map;
     static int k=0;
+    (*corr_map).insert(std::pair<std::string,std::string> (isl_ast[k],node->name));k++;
+    std::cout<<"INSERT\n";
      for (ast_node *child : node->children)
         {
-            (*corr_map).insert(std::pair<std::string,std::string> (isl_ast[k],node->name));
-            k++;
             get_save_name_node(child,isl_ast,corr_map);
         }
    
@@ -574,13 +574,14 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
             {
                 get_save_name_node(root,isl_ast,corr_map);
             }  
-        // Add the corr_map to the ast structue
+    // Add the corr_map to the ast structue
     ast.corr_map = corr_map;
 
     while (iterator != children.end())
     {
         int nb_matrices = 2;
         syntax_tree *child = *iterator;
+        child->corr_map=corr_map;
         child->nb_explored_optims = nb_explored_optims;
         bool illegal = true;
         int shape = child->get_program_depth();
@@ -595,8 +596,12 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
             
             child->transform_ast_matrix(matrices[nb_matrices-1]);
             nb_matrices--;
-
+            bool tt=child->ast_is_legal();
+           printf("printf true : %d\n", tt);
+           tt=child->schedule_is_prunable();
+            printf("printf false: %d\n", tt);
             if (child->schedule_is_prunable()){
+                std::cout<<"\n passed prunable\n";
                 if (std::atoi(read_env_var("AS_VERBOSE"))==1){
                     // print deleted Ast
                     child->print_previous_optims();
@@ -608,8 +613,8 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                 delete child;
                 iterator = children.erase(iterator);
             }
-
             else if (!child->ast_is_legal()) {
+                std::cout<<"\n passed legal\n";
                 if (std::atoi(read_env_var("AS_VERBOSE"))==1){
                     // print deleted Ast
                     child->print_previous_optims();
@@ -624,6 +629,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                 iterator = children.erase(iterator);
             }
             else {
+                std::cout<<"\n passed illegal\n";
                 illegal = false;
                 // print and evaluate Ast
 
