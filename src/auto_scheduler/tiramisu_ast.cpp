@@ -587,7 +587,6 @@ static char *op_str[] = {
         for(computation* info:all_data)
         {
             std::vector<std::string> loop_names = info->get_loop_level_names();
-            
             info->matrix_transform(matrix);
             
             std::string f = "";
@@ -1754,7 +1753,9 @@ state_computation::state_computation(state_computation * reference)
             case optimization_type::FUSION:
                 schedule_str += "F(L" + std::to_string(optim.l0) + ",L" + std::to_string(optim.l1) + "),";
                 break;
-
+            case optimization_type::MATRIX:
+                schedule_str += "M()";
+                break;
             case optimization_type::UNFUSE:
                 schedule_str += "F(L" + std::to_string(optim.l0) + ",L" + std::to_string(optim.l1) + "),";
                 break;

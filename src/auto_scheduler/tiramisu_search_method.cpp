@@ -596,10 +596,6 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
             
             child->transform_ast_matrix(matrices[nb_matrices-1]);
             nb_matrices--;
-            bool tt=child->ast_is_legal();
-           printf("printf true : %d\n", tt);
-           tt=child->schedule_is_prunable();
-            printf("printf false: %d\n", tt);
             if (child->schedule_is_prunable()){
                 std::cout<<"\n passed prunable\n";
                 if (std::atoi(read_env_var("AS_VERBOSE"))==1){
@@ -629,7 +625,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                 iterator = children.erase(iterator);
             }
             else {
-                std::cout<<"\n passed illegal\n";
+                
                 illegal = false;
                 // print and evaluate Ast
 
@@ -642,15 +638,18 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                     std::cout << "\n<legal>\n";
                     child->print_computations_accesses();
                 }
-
                 std::vector<float> measurements;
+                std::cout<<"\n passed illegal\n";
                 if (child->can_set_default_evaluation()) { // if yes the child's evaluation is set to a default value
+                
                     measurements = {child->evaluation};
                 }
                 else{
+                    
                     measurements = exec_eval->get_measurements(*child, false, schedule_timeout);
                     child->evaluation = min_eval(measurements);
                 }
+                
 
                 parent_trace->add_child_path(child, schedules_annotations->size());
 
