@@ -583,7 +583,7 @@ static char *op_str[] = {
 
         std::vector<tiramisu::computation *> all_data;
 
-
+        all_data=this->computations_list;
         for(computation* info:all_data)
         {
             std::vector<std::string> loop_names = info->get_loop_level_names();
