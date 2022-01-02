@@ -306,7 +306,7 @@ std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcie
                 randomL.at(l)= std::vector<int>(depth);
                 for(c = 0; c<depth; c++){
                                 if (l>c){
-                                    randomL.at(l).at(c) = (rand() % 4) - 2;
+                                    randomL.at(l).at(c) = (rand() %10) - 5;
                                 }else{
                                     randomL.at(l).at(c) = 0;
                                 }
@@ -318,7 +318,7 @@ std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcie
                 randomU.at(l)= std::vector<int>(depth);
                 for(c = 0; c<depth; c++){
                             if (l<c){
-                                randomU.at(l).at(c) = (rand() % 4) - 2;
+                                randomU.at(l).at(c) = (rand() % 10) - 5;
                             }else{
                                 randomU.at(l).at(c) = 0;
                             }
@@ -353,9 +353,69 @@ std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcie
                         }
                     }
             }
+            // Reduce elements into [-7, 7] values
+            int mx = 7;
+            int m = -1000;
+            int x,y;
+            for(int i = 0; i < depth; i++){
+                        for(int j = 0; j< depth; j++){
+                            if(m < std::abs(random.at(i).at(j)))
+                            {
+                                m = random.at(i).at(j);
+                                x = i;
+                                y = j;
+                            }
+                        }
+            }
+            int mm=-8;
+            int useless = 0;
+            int steps = 0;
+            bool bad_case;
+            int f = -1;
+            // Check determinant equals 1
+            //std::cout<<"Before \n"<< determinant(random, depth)<<std::endl;
+            while(m>=mx && useless<= depth*depth){
+                    steps+=1;
+                    bad_case=0;
+                    for(int i = 0; i < depth; i++){
+                        if (i==x) continue;
+                        if(random.at(i).at(y)!=0)
+                            {
+                                f = i;
+                                break;
+                            }
+                        if(i==depth-1) bad_case=1;
+                    }
+                    //std::cout<<"First \n"<<std::endl;
+                    if(bad_case) break;
+                    int s =1;
+                    //std::cout<<f<<" Second \n"<<y<<std::endl;
+                    if (m*random.at(f).at(y)<0) s=s*-1;
+                    
+                    for(int j = 0; j < depth; j++){
+                            
+                            random.at(x).at(j) = random.at(x).at(j) - s * random.at(f).at(j);
+                    }
+                    //std::cout<<"Second \n"<<std::endl;
+                    mm=-10000;
+                    for(int i = 0; i < depth; i++){
+                        for(int j = 0; j< depth; j++){
+                            if(mm < std::abs(random.at(i).at(j)))
+                            {
+                                mm = random.at(i).at(j);
+                                x = i;
+                                y = j;
+                            }
+                        }
+                    }
+                    //std::cout<<"Third \n"<<std::endl;
+                    if(m>=mm) useless++;
+                    m=mm;
+            }
             // Check determinant equals 1
             int det = determinant(random, depth);
-            bool det_bool = det==1;
+            bool det_bool = det==1 && !bad_case && (useless <= depth*depth) ;
+            //std::cout<< "After \n"<<det_bool<<std::endl;
             // Check upper right determinants equal 1
             bool all_1 = true;
             if (det_bool){
@@ -390,7 +450,14 @@ std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcie
             valid = det_bool && all_1 ;
         }
     //std::cout<< "got one done \n"<<std::endl;
-    //std::cout<< "upper: \n";
+    std::cout<< "starts \n";
+    for(int i = 0; i < depth; i++){
+                        for(int j = 0; j< depth; j++){
+                                std::cout<<random.at(i).at(j)<<"\n"<<std::endl;
+                             
+                        }
+            }
+    std::cout<< "end \n";
     result.at(nb_valid_matrices) = random;
     nb_valid_matrices++;
     }
@@ -580,7 +647,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
 
     while (iterator != children.end())
     {
-        int nb_matrices = 2;
+        int nb_matrices = 145;
         syntax_tree *child = *iterator;
         child->corr_map=corr_map;
         child->nb_explored_optims = nb_explored_optims;
@@ -626,7 +693,6 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                 iterator = children.erase(iterator);
             }
             else {
-                
                 illegal = false;
                 // print and evaluate Ast
 
