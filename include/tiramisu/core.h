@@ -501,7 +501,7 @@ private:
       * identity schedule that does not have enough dimensions.
       */
     isl_union_map *get_aligned_identity_schedules() const;
-
+    isl_union_map *get_union_map_schedules() const;
     /**
      * A pass to rename computations.
      * Computation that are defined multiple times need to be renamed, because
@@ -1170,6 +1170,7 @@ public:
       * Generate an isl AST that represents the function.
       */
     void gen_isl_ast();
+    void gen_isl_ast_after_trans();
     /**
       * Return an ISL AST that represents this function.
       * This function itself does not generate the ISL AST, it just

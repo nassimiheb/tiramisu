@@ -441,8 +441,8 @@ static char *op_str[] = {
                 case isl_ast_op_sub:{p=p-get_value(arg,isl_ast_map);break;}
                 case isl_ast_op_mul:{p=p*get_value(arg,isl_ast_map);break;}
                 case isl_ast_op_div:{if(get_value(arg,isl_ast_map)!=0)p=p/get_value(arg,isl_ast_map);break;}
-                case isl_ast_op_max:{p=p+get_value(arg,isl_ast_map);break;}
-                case isl_ast_op_min:{p=p+get_value(arg,isl_ast_map);break;}
+                case isl_ast_op_max:{p = std::max(p,get_value(arg,isl_ast_map));break;}
+                case isl_ast_op_min:{p = std::min(p,get_value(arg,isl_ast_map));break;}
                 default: p=get_value(arg,isl_ast_map);break;;
             }
             
@@ -491,8 +491,8 @@ static char *op_str[] = {
                         case isl_ast_op_sub:{val=val-print_arguments_M(op,expr,isl_ast_map);break;}
                         case isl_ast_op_mul:{val=val*print_arguments_M(op,expr,isl_ast_map);break;}
                         case isl_ast_op_div:{if(print_arguments_M(op,expr,isl_ast_map)!=0)val=val+print_arguments_M(op,expr,isl_ast_map);break;}
-                        case isl_ast_op_max:{val=val+print_arguments_M(op,expr,isl_ast_map);break;}
-                        case isl_ast_op_min:{val=val+print_arguments_M(op,expr,isl_ast_map);break;}
+                        case isl_ast_op_max:{val=std::max(val,print_arguments_M(op,expr,isl_ast_map));break;}
+                        case isl_ast_op_min:{val=std::min(val,print_arguments_M(op,expr,isl_ast_map));break;}
 
                     }
                     //val=val+print_arguments_M(prev_op,expr,isl_ast_map);
@@ -534,6 +534,7 @@ static char *op_str[] = {
             
             op = isl_ast_expr_get_op_type(expr);
             std::cout<<"Entreing OP \n";
+           
             if (op == isl_ast_op_error) return "$";
       
             p=std::to_string(print_arguments_M(op,expr,isl_ast_map));
@@ -559,7 +560,7 @@ static char *op_str[] = {
     void update_node(std::map <std::string,std::string>* corr_map,ast_node *node, std::map <int,  std::tuple<std::string , std::string,std::string> > islastMap){
         static int level=0;
         // Updating the node using islastMap
-        std::cout<<"U\n"<< std::flush;
+        
         node->low_bound=std::stoi(std::get<0>(islastMap[level]));
         node->up_bound=std::stoi(std::get<1>(islastMap[level]));
         node->name=(*corr_map).at(std::get<2>(islastMap[level]));
@@ -597,11 +598,12 @@ static char *op_str[] = {
 
         }   
 
-
+        std::cout<<"\n Genrate NEW ISL AST\n";
+       
         //Genrate the ISL AST
-        this->fct->gen_isl_ast();
+        this->fct->gen_isl_ast_after_trans();
         isl_ast_node* ast =this->fct->ast;
-
+        
         std::map <int,  std::tuple<std::string , std::string,std::string> > islastMap;
         std::tuple<std::string,std::string,std::string> p;
         isl_ast_expr * init_expr;
@@ -641,14 +643,14 @@ static char *op_str[] = {
             std::cout << '\t' << itr1->first
                 << '\t' << itr1->second << '\n'<< std::flush;
         }
-     
+        //print_ast();
         //Update the ast nodes according to the ordre of the ISL AST 
         for (ast_node *root : roots)
         {
-            std::cout<<"U\n";
+            std::cout<<"Uuuuu\n";
             update_node(this->corr_map,root,islastMap);
         }
-
+         print_ast();
       
         recover_isl_states();
     }

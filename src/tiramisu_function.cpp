@@ -1478,7 +1478,7 @@ static char *op_str[] = {
     {
         DEBUG_FCT_NAME(3);
         DEBUG_INDENT(4);
-
+        //std::cout<< isl_map_to_str(this->get_schedule());
         // Check that time_processor representation has already been computed,
         assert(this->get_trimmed_time_processor_domain() != NULL);
         assert(this->get_aligned_identity_schedules() != NULL);
@@ -1532,7 +1532,7 @@ static char *op_str[] = {
 
             ast_build = isl_ast_build_set_iterators(ast_build, iterators);
         }
-
+      
         // Intersect the iteration domain with the domain of the schedule.
         isl_union_map *umap =
             isl_union_map_intersect_domain(
@@ -1540,6 +1540,7 @@ static char *op_str[] = {
                 isl_union_set_copy(this->get_trimmed_time_processor_domain()));
 
         DEBUG(3, tiramisu::str_dump("Schedule:", isl_union_map_to_str(this->get_schedule())));
+        
         DEBUG(3, tiramisu::str_dump("Iteration domain:",
                                     isl_union_set_to_str(this->get_iteration_domain())));
         DEBUG(3, tiramisu::str_dump("Trimmed Time-Processor domain:",
@@ -1551,6 +1552,175 @@ static char *op_str[] = {
         DEBUG(3, tiramisu::str_dump("\n"));
 
         this->ast = isl_ast_build_node_from_schedule_map(ast_build, umap);
+        //std::cout<<"\nSchedule"<<isl_union_map_to_str(this->get_schedule())<<"\n"<<isl_union_map_to_str(umap);
+        std::cout<<"\nSchedule\n"<<isl_union_map_to_str(this->get_schedule());
+        //std::cout<<"\nSchedule Identy\n"<<isl_union_set_to_str(the_set);
+        std::cout<<"\nIteration domain:\n"<<isl_union_set_to_str(this->get_iteration_domain());
+        std::cout<<"\nTrimmed Time-Processor domain:\n"<<isl_union_set_to_str(this->get_trimmed_time_processor_domain());
+        std::cout<<"\nTrimmed Time-Processor aligned identity schedule:\n"<<isl_union_map_to_str(this->get_aligned_identity_schedules());
+        std::cout<<"\nIdentity schedule intersect trimmed Time-Processor domain:\n"<<isl_union_map_to_str(umap);
+        std::cout<<"\nprinting\n";
+        isl_ast_build_free(ast_build);
+
+       
+       
+        //isl_ast_node_list *children= (this->ast->u.b.children);
+        int i;
+       
+        //isl_int* integ;     
+        //isl_val_get_num_isl_int(ast->u.f.init->u.v,integ);
+        std::cout<<"printing before\n";
+        std::cout<<"\nSchedule"<<isl_union_map_to_str(this->get_schedule());
+        std::cout<<isl_ast_node_to_C_str(this->ast);
+        std::vector<std::pair<int , int>> vec;
+       
+     
+       
+        isl_ast_node *ast_i=this->ast;
+        std::map <int,  std::tuple<std::string , std::string,std::string> > islastMap;
+        std::tuple<std::string,std::string,std::string> p;
+        isl_ast_expr * init_expr;
+        isl_ast_expr * cond_expr;
+        isl_ast_expr * iter_expr;
+        int stop=0;
+        int k=0;
+       
+        //Create a map of (level, <Upper bound, lower bound, iterator name>) from the ISL AST
+        while(stop!=1)
+        {   
+            //std::cout<< "######################### WHILE ###########################\n";
+            if(isl_ast_node_get_type(ast_i)==isl_ast_node_for)
+            {//if(isl_ast_node_for_get_init(isl_ast_node_for_get_body(ast_i))==NULL)stop=1;
+            init_expr=isl_ast_node_for_get_init(ast_i);
+            cond_expr=isl_ast_node_for_get_cond(ast_i);
+            iter_expr=isl_ast_node_for_get_iterator(ast_i);
+            p = std::make_tuple(print_ast_expr_isl_M(cond_expr),print_ast_expr_isl_M(init_expr),print_ast_expr_isl_M(iter_expr));
+            islastMap.insert(std::pair<int, std::tuple<std::string , std::string,std::string>>(k,p ));
+            k++;
+            //std::cout<< "\n######################### Iterator ###########################\n";
+            //std::cout<< print_ast_expr_isl_M(iter_expr);
+            //std::cout<< "######################### Lower bound ###########################\n";
+            //std::cout<< print_ast_expr_isl_M(init_expr);
+            //std::cout<< "######################### upper bound ###########################\n";
+            //std::cout<< print_ast_expr_isl_M(cond_expr);
+
+            ast_i= isl_ast_node_for_get_body(ast_i);
+            }
+            else{stop=1;} //n
+        }
+
+        
+        /*while(stop!=1)
+        {   
+            std::cout<< "######################### WHILE ###########################\n";
+            //std::cout<< ast->type;
+            if(isl_ast_node_for_get_init(isl_ast_node_for_get_body(ast_i))==NULL)stop=1;
+            init_expr=isl_ast_node_for_get_init(ast_i);
+            cond_expr=isl_ast_node_for_get_cond(ast_i);
+            iter_expr=isl_ast_node_for_get_iterator(ast_i);
+            p = std::make_pair(print_ast_expr_isl_M(init_expr),print_ast_expr_isl_M(cond_expr));
+            islastMap.insert(std::pair<std::string, std::pair<std::string , std::string>>(print_ast_expr_isl_M(init_expr),p ));
+            std::cout<< islastMap[print_ast_expr_isl_M(init_expr)].first;
+            std::cout<< "\n######################### Iterator ###########################\n";
+            
+            std::cout<< print_ast_expr_isl_M(iter_expr);
+            std::cout<< "######################### Lower bound ###########################\n";
+            std::cout<< print_ast_expr_isl_M(init_expr);
+            std::cout<< "######################### upper bound ###########################\n";
+            std::cout<< print_ast_expr_isl_M(cond_expr);
+          
+            ast_i= isl_ast_node_for_get_body(ast_i); //next node present in ast->u.f.body
+        }*/
+         
+        DEBUG_INDENT(-4);
+    }
+    void function::gen_isl_ast_after_trans()
+    {
+        DEBUG_FCT_NAME(3);
+        DEBUG_INDENT(4);
+        //std::cout<< isl_map_to_str(this->get_schedule());
+        // Check that time_processor representation has already been computed,
+        assert(this->get_trimmed_time_processor_domain() != NULL);
+        assert(this->get_aligned_identity_schedules() != NULL);
+
+        isl_ctx *ctx = this->get_isl_ctx();
+        assert(ctx != NULL);
+        isl_ast_build *ast_build;
+
+        // Rename updates so that they have different names because
+        // the code generator expects each unique name to have
+        // an expression, different computations that have the same
+        // name cannot have different expressions.
+        this->rename_computations();
+
+        if (this->get_program_context() == NULL)
+        {
+            ast_build = isl_ast_build_alloc(ctx);
+        }
+        else
+        {
+            ast_build = isl_ast_build_from_context(isl_set_copy(this->get_program_context()));
+        }
+
+        isl_options_set_ast_build_atomic_upper_bound(ctx, 1);
+        isl_options_get_ast_build_exploit_nested_bounds(ctx);
+        isl_options_set_ast_build_group_coscheduled(ctx, 1);
+
+        ast_build = isl_ast_build_set_after_each_for(ast_build, &tiramisu::for_code_generator_after_for,
+                                                     NULL);
+        ast_build = isl_ast_build_set_at_each_domain(ast_build, &tiramisu::generator::stmt_code_generator,
+                                                     this);
+
+        // Set iterator names
+        isl_id_list *iterators = isl_id_list_alloc(ctx, this->get_iterator_names().size());
+        if (this->get_iterator_names().size() > 0)
+        {
+            std::string name = generate_new_variable_name();
+            isl_id *id = isl_id_alloc(ctx, name.c_str(), NULL);
+            iterators = isl_id_list_add(iterators, id);
+
+            for (int i = 0; i < this->get_iterator_names().size(); i++)
+            {
+                name = this->get_iterator_names()[i];
+                id = isl_id_alloc(ctx, name.c_str(), NULL);
+                iterators = isl_id_list_add(iterators, id);
+
+                name = generate_new_variable_name();
+                id = isl_id_alloc(ctx, name.c_str(), NULL);
+                iterators = isl_id_list_add(iterators, id);
+            }
+
+            ast_build = isl_ast_build_set_iterators(ast_build, iterators);
+        }
+        this->gen_time_space_domain();
+        //isl_union_set * the_set=;
+        // Intersect the iteration domain with the domain of the schedule.
+        isl_union_map *umap =
+            isl_union_map_intersect_domain(
+                isl_union_map_copy(this->get_aligned_identity_schedules()),
+                isl_union_set_copy(this->get_trimmed_time_processor_domain()));
+
+        DEBUG(3, tiramisu::str_dump("Schedule TRANSFORM:", isl_union_map_to_str(this->get_schedule())));
+        DEBUG(3, tiramisu::str_dump("Iteration domain:",
+                                    isl_union_set_to_str(this->get_iteration_domain())));
+        DEBUG(3, tiramisu::str_dump("Trimmed Time-Processor domain:",
+                                    isl_union_set_to_str(this->get_trimmed_time_processor_domain())));
+        DEBUG(3, tiramisu::str_dump("Trimmed Time-Processor aligned identity schedule:",
+                                    isl_union_map_to_str(this->get_aligned_identity_schedules())));
+        DEBUG(3, tiramisu::str_dump("Identity schedule intersect trimmed Time-Processor domain:",
+                                    isl_union_map_to_str(umap)));
+        DEBUG(3, tiramisu::str_dump("\n"));
+
+        this->ast = isl_ast_build_node_from_schedule_map(ast_build, umap);
+        std::cout<<"\nSchedule\n"<<isl_union_map_to_str(this->get_schedule());
+       // std::cout<<"\nSchedule Identy\n"<<isl_union_set_to_str(the_set);
+        std::cout<<"\nIteration domain:\n"<<isl_union_set_to_str(this->get_iteration_domain());
+        std::cout<<"\nTrimmed Time-Processor domain:\n"<<isl_union_set_to_str(this->get_trimmed_time_processor_domain());
+        std::cout<<"\nTrimmed Time-Processor aligned identity schedule:\n"<<isl_union_map_to_str(this->get_aligned_identity_schedules());
+        std::cout<<"\nIdentity schedule intersect trimmed Time-Processor domain:\n"<<isl_union_map_to_str(umap);
+        std::cout<<"\nprinting\n";
+
+        std::cout<<isl_ast_node_to_C_str(this->ast);
 
         isl_ast_build_free(ast_build);
 
@@ -1561,8 +1731,8 @@ static char *op_str[] = {
        
         //isl_int* integ;     
         //isl_val_get_num_isl_int(ast->u.f.init->u.v,integ);
-    
-        std::cout<<isl_ast_node_to_C_str(this->ast);
+        
+        
         std::vector<std::pair<int , int>> vec;
        
      
@@ -1933,6 +2103,7 @@ static char *op_str[] = {
             {
                 isl_map *sched = comp->gen_identity_schedule_for_time_space_domain();
                 DEBUG(3, tiramisu::str_dump("Identity schedule for time space domain: ", isl_map_to_str(sched)));
+                //std::cout<<"\nIdentity schedule for time space domain:\n"<<isl_map_to_str(sched);
                 assert((sched != NULL) && "Identity schedule could not be computed");
                 sched = isl_map_align_range_dims(sched, max_dim);
                 result = isl_union_map_union(result, isl_union_map_from_map(sched));
@@ -1944,7 +2115,46 @@ static char *op_str[] = {
 
         return result;
     }
+    isl_union_map *tiramisu::function::get_union_map_schedules() const
+    {
+        DEBUG_FCT_NAME(3);
+        DEBUG_INDENT(4);
 
+        isl_union_map *result;
+        isl_space *space;
+
+        if (this->body.empty() == false)
+        {
+            space = isl_map_get_space(this->body[0]->gen_identity_schedule_for_time_space_domain());
+        }
+        else
+        {
+            return NULL;
+        }
+        assert(space != NULL);
+        result = isl_union_map_empty(space);
+
+        int max_dim = this->get_max_identity_schedules_range_dim();
+
+        for (const auto &comp : this->get_computations())
+        {
+            if (comp->should_schedule_this_computation())
+            {
+                //isl_map *sched = comp->gen_identity_schedule_for_time_space_domain();
+                isl_map *sched = comp->get_schedule();
+                DEBUG(3, tiramisu::str_dump("Identity schedule for time space domain: ", isl_map_to_str(sched)));
+                std::cout<<"\nIdentity schedule for time space domain:\n"<<isl_map_to_str(sched);
+                assert((sched != NULL) && "Identity schedule could not be computed");
+                sched = isl_map_align_range_dims(sched, max_dim);
+                result = isl_union_map_union(result, isl_union_map_from_map(sched));
+            }
+        }
+
+        DEBUG_INDENT(-4);
+        DEBUG(3, tiramisu::str_dump("End of function"));
+
+        return result;
+    }
     void tiramisu::function::align_schedules()
     {
         DEBUG_FCT_NAME(3);

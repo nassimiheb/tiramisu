@@ -555,6 +555,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         //Get the iterator names from the ISL ast
         //Genrate isl ast
         //std::cout<< "before gen isl ast" << std::flush;
+       // ast.fct->gen_time_space_domain();
         ast.fct->gen_isl_ast();
         isl_ast_node *ast_i=ast.fct->get_isl_ast(); 
         //Fill a vector with the iterator names
@@ -610,7 +611,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                 iterator = children.erase(iterator);
             }
             else if (!child->ast_is_legal()) {
-                std::cout<<"\n passed legal\n";
+              
                 if (std::atoi(read_env_var("AS_VERBOSE"))==1){
                     // print deleted Ast
                     child->print_previous_optims();
@@ -639,7 +640,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                     child->print_computations_accesses();
                 }
                 std::vector<float> measurements;
-                std::cout<<"\n passed illegal\n";
+            
                 if (child->can_set_default_evaluation()) { // if yes the child's evaluation is set to a default value
                 
                     measurements = {child->evaluation};
