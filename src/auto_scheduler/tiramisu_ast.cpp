@@ -567,11 +567,18 @@ namespace tiramisu::auto_scheduler
     // Update the node of tiramisu AST 
     void update_node(std::map <std::string,std::string>* corr_map,ast_node *node, std::map <int,  std::tuple<std::string , std::string,std::string> > islastMap){
         static int level=0;
-        // Updating the node using islastMap     
-        node->low_bound=std::stoi(std::get<0>(islastMap[level]));
-        node->up_bound=std::stoi(std::get<1>(islastMap[level]));
-        node->name=(*corr_map).at(std::get<2>(islastMap[level]));
-        level++;     
+        if (level>=islastMap.size()){
+            if (node->children.size()!=0){node=node->children[0];}
+            else{node =nullptr;return;}      
+        }else{
+            // Updating the node using islastMap     
+            node->low_bound=std::stoi(std::get<0>(islastMap[level]));
+            node->up_bound=std::stoi(std::get<1>(islastMap[level]));
+            node->name=(*corr_map).at(std::get<2>(islastMap[level]));
+        }
+        
+        level++;    
+
         for (ast_node *child : node->children)
                 {         
                     update_node(corr_map,child,islastMap);
