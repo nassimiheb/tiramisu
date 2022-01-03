@@ -460,15 +460,11 @@ void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::ma
 
         for (i = 0; i < n; ++i) {
             isl_ast_expr *arg;
-
             arg = isl_ast_expr_get_op_arg(expr, i);
             if(i!=0)p=p+","+ get_name_ast_expr_isl(arg);
             else p=p+ get_name_ast_expr_isl(arg);
-            isl_ast_expr_free(arg);
-         
-        }
-      
-
+            isl_ast_expr_free(arg);     
+        }     
         return p;
     }
    std::string get_name_ast_expr_isl( isl_ast_expr *expr)
@@ -479,39 +475,33 @@ void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::ma
         isl_val *v;
         std::string p;
         //std::cout<<"---------------\n";
-        if (!expr){return "!Expression";}
-            
-        else{
-       
+        if (!expr){return "!Expression";}  
+        else{     
         type = isl_ast_expr_get_type(expr);
         switch (type) {
-        case isl_ast_expr_error: return "$"; break;
-            
-        case isl_ast_expr_op:
-            //std::cout<<"Entreing OP \n";
-            op = isl_ast_expr_get_op_type(expr);
-            if (op == isl_ast_op_error) return "$";
-            p=p+op_str[op]+"(";
-            p=p+get_name_arguments(expr);
-            p=p+")";
-            break;
-        case isl_ast_expr_id:
-             //std::cout<<"Entreing Id \n";
-            id = isl_ast_expr_get_id(expr);
-            p = isl_id_get_name(id);
-            break;
-        case isl_ast_expr_int:
-           //std::cout<<"Entreing Int \n";
-            v = isl_ast_expr_get_val(expr);
-            //p= isl_int_get_str(v->n);
-            break;
-        default: return "%";
+            case isl_ast_expr_error: return "$"; break;
+                
+            case isl_ast_expr_op:
+                //std::cout<<"Entreing OP \n";
+                op = isl_ast_expr_get_op_type(expr);
+                if (op == isl_ast_op_error) return "$";
+                p=p+op_str[op]+"(";
+                p=p+get_name_arguments(expr);
+                p=p+")";
+                break;
+            case isl_ast_expr_id:
+                //std::cout<<"Entreing Id \n";
+                id = isl_ast_expr_get_id(expr);
+                p = isl_id_get_name(id);
+                break;
+            case isl_ast_expr_int:
+                //std::cout<<"Entreing Int \n";
+                v = isl_ast_expr_get_val(expr);
+                break;
+            default: return "%";
          }
-       
-
         return p;
-        }
-       
+        }    
     }
 
 void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout)
@@ -554,15 +544,12 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     std::map <std::string,std::string>* corr_map= new std::map<std::string, std::string>();
         //Get the iterator names from the ISL ast
         //Genrate isl ast
-        //std::cout<< "before gen isl ast" << std::flush;
-       // ast.fct->gen_time_space_domain();
         ast.fct->gen_isl_ast();
         isl_ast_node *ast_i=ast.fct->get_isl_ast(); 
         //Fill a vector with the iterator names
         while(stop!=1)
         {  
-            if(isl_ast_node_get_type(ast_i)==isl_ast_node_for){
-                //if(isl_ast_node_for_get_init(isl_ast_node_for_get_body(ast_i))==NULL)stop=1;
+            if(isl_ast_node_get_type(ast_i)==isl_ast_node_for){   
                 iter_expr=isl_ast_node_for_get_iterator(ast_i);
                 isl_ast.push_back(get_name_ast_expr_isl(iter_expr));          
                 ast_i= isl_ast_node_for_get_body(ast_i); //n
@@ -586,15 +573,12 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         child->nb_explored_optims = nb_explored_optims;
         bool illegal = true;
         int shape = child->get_program_depth();
-        //std::cout << "Starting random matrix generation" << std::endl;
         matrices = get_random_matrcies(nb_matrices,shape);
-        //std::cout << "random matrix generation ended"<< std::flush;
         bool matrix = true;
 
         while(matrix && illegal && nb_matrices>0)
         {
             matrix = child->new_optims.back().type == MATRIX;
-            
             child->transform_ast_matrix(matrices[nb_matrices-1]);
             nb_matrices--;
             if (child->schedule_is_prunable()){
