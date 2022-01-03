@@ -37,6 +37,7 @@ std::vector<syntax_tree*> exhaustive_generator::generate_schedules(syntax_tree c
             new_ast = ast.copy_ast();
             optimization_info optim_info;
             optim_info.type = optimization_type::MATRIX;
+            optim_info.comps = new_ast->computations_list;
             new_ast->new_optims.push_back(optim_info);
             states.push_back(new_ast);
             break;
@@ -413,6 +414,7 @@ std::vector<syntax_tree*> ml_model_schedules_generator::generate_schedules(synta
             new_ast = ast.copy_ast();
             optimization_info optim_info;
             optim_info.type = optimization_type::MATRIX;
+            optim_info.comps = new_ast->computations_list;
             new_ast->new_optims.push_back(optim_info);
             states.push_back(new_ast);
             break;

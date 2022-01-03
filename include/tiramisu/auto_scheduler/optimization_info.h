@@ -35,7 +35,10 @@ struct optimization_info
      * The list of computations that this optimization will be applied to.
      */
     std::vector<tiramisu::computation*> comps;
-    
+    /**
+     * Transformation Matrix
+     */
+    std::vector < std::vector<int> > matrix;
     /**
      * This attribute is used when transforming the AST.
      * It indicates the node at which to start the transformation.

@@ -62,7 +62,10 @@ void apply_optimizations(optimization_info const& optim_info)
         case optimization_type::INTERCHANGE:
             block.interchange(optim_info.l0, optim_info.l1);
             break;
-                
+            
+        case optimization_type::MATRIX:
+            block.matrix_transform(optim_info.matrix);
+            break;
         case optimization_type::UNROLLING:
             // Apply unrolling on the level indicated by l0
             if (optim_info.l0 != -1)

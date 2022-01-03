@@ -450,14 +450,14 @@ std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcie
             valid = det_bool && all_1 ;
         }
     //std::cout<< "got one done \n"<<std::endl;
-    std::cout<< "starts \n";
+    /*std::cout<< "starts \n";
     for(int i = 0; i < depth; i++){
                         for(int j = 0; j< depth; j++){
                                 std::cout<<random.at(i).at(j)<<"\n"<<std::endl;
                              
                         }
             }
-    std::cout<< "end \n";
+    std::cout<< "end \n";*/
     result.at(nb_valid_matrices) = random;
     nb_valid_matrices++;
     }
@@ -646,6 +646,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         while(matrix && illegal && nb_matrices>0)
         {
             matrix = child->new_optims.back().type == MATRIX;
+            child->new_optims.back().matrix = matrices[nb_matrices-1];
             child->transform_ast_matrix(matrices[nb_matrices-1]);
             nb_matrices--;
             if (child->schedule_is_prunable()){
