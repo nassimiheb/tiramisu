@@ -502,10 +502,14 @@ static char *op_str[] = {
 void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::map <std::string,std::string>* corr_map, int &k){
     //static std::map <std::string,std::string> corr_map;
     //static int k=0;
-    
-    (*corr_map).insert(std::pair<std::string,std::string> (isl_ast[k],node->name));
-    k++;
-    std::cout<<"INSERT"<<k<<"\n";
+    if(k>=isl_ast.size()){
+
+    }
+    else{
+        (*corr_map).insert(std::pair<std::string,std::string> (isl_ast[k],node->name));
+        k++;
+        std::cout<<"INSERT"<<k<<"\n";
+    }
      for (ast_node *child : node->children)
         {
             get_save_name_node(child,isl_ast,corr_map,k);

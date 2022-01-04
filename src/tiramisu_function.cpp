@@ -1544,12 +1544,13 @@ namespace tiramisu
 
         this->ast = isl_ast_build_node_from_schedule_map(ast_build, umap);
         //std::cout<<"\nSchedule"<<isl_union_map_to_str(this->get_schedule())<<"\n"<<isl_union_map_to_str(umap);
-        std::cout<<"\nSchedule\n"<<isl_union_map_to_str(this->get_schedule());
+        std::cout<<"\nGEn Schedule\n"<<isl_union_map_to_str(this->get_schedule());
         //std::cout<<"\nSchedule Identy\n"<<isl_union_set_to_str(the_set);
         std::cout<<"\nIteration domain:\n"<<isl_union_set_to_str(this->get_iteration_domain());
         std::cout<<"\nTrimmed Time-Processor domain:\n"<<isl_union_set_to_str(this->get_trimmed_time_processor_domain());
         std::cout<<"\nTrimmed Time-Processor aligned identity schedule:\n"<<isl_union_map_to_str(this->get_aligned_identity_schedules());
-        std::cout<<"\nIdentity schedule intersect trimmed Time-Processor domain:\n"<<isl_union_map_to_str(umap);
+         std::cout<<"\nprinting\n";
+        //std::cout<<"\nIdentity schedule intersect trimmed Time-Processor domain:\n"<<isl_union_map_to_str(umap);
         std::cout<<"\nprinting\n";
         isl_ast_build_free(ast_build);
 
