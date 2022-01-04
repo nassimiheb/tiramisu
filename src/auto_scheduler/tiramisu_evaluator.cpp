@@ -328,6 +328,7 @@ std::string evaluate_by_learning_model::get_schedule_json(syntax_tree const& ast
     bool unrolled = false;
     bool skewed = false;
     bool parallelized = false;
+    bool transformed_by_matrix = false;
     
     int unfuse_l0 = -1;
     int int_l0, int_l1;
@@ -337,6 +338,7 @@ std::string evaluate_by_learning_model::get_schedule_json(syntax_tree const& ast
     int skewing_l0, skewing_l1;
     int skew_extent_l0, skew_extent_l1;
     int parallelized_level;
+    std::vector < std::vector<int> > matrix;
     
     // Get information about the schedule
     for (optimization_info const& optim_info : ast.new_optims)
@@ -372,7 +374,10 @@ std::string evaluate_by_learning_model::get_schedule_json(syntax_tree const& ast
                 int_l0 = optim_info.l0;
                 int_l1 = optim_info.l1;
                 break;
-                
+            case optimization_type::MATRIX:
+                transformed_by_matrix = true;
+                matrix = optim_info.matrix;
+                break;
             case optimization_type::UNROLLING:
                 unrolled = true;
                 unrolling_fact = optim_info.l0_fact;
@@ -421,9 +426,21 @@ std::string evaluate_by_learning_model::get_schedule_json(syntax_tree const& ast
             iterators_list[int_l0] = iterators_list[int_l1];
             iterators_list[int_l1] = dnn_it;
         }
+
+        
         
         comp_sched_json += "],";
+        // JSON for matrix
+        comp_sched_json += "\"TRansformation Matrix\" : [";
         
+        if (interchanged)
+        {
+            comp_sched_json += "\"" + iterators_list[int_l0].name + "\", \"" + iterators_list[int_l1].name + "\"";
+            
+            dnn_iterator dnn_it = iterators_list[int_l0];
+            iterators_list[int_l0] = iterators_list[int_l1];
+            iterators_list[int_l1] = dnn_it;
+        }
         // JSON for tiling
         comp_sched_json += "\"tiling\" : {";
         

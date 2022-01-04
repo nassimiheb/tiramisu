@@ -67,7 +67,7 @@ int main(int argc, char **argv)
     const int topk = 1;
 
     // An object used by search methods to generate schedules
-    auto_scheduler::schedules_generator *scheds_gen = new auto_scheduler::exhaustive_generator();
+    auto_scheduler::schedules_generator *scheds_gen = new auto_scheduler::ml_model_schedules_generator();
 
     // An evaluation function that measures execution time by compiling and executing the program
     auto_scheduler::evaluate_by_execution *exec_eval = new auto_scheduler::evaluate_by_execution({&buf_output, &buf_bias, &buf_src, &buf_weights},

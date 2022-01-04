@@ -499,14 +499,16 @@ static char *op_str[] = {
  * @param isl_ast 
  * @param corr_map 
  */
-void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::map <std::string,std::string>* corr_map){
+void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::map <std::string,std::string>* corr_map, int &k){
     //static std::map <std::string,std::string> corr_map;
-    static int k=0;
-    (*corr_map).insert(std::pair<std::string,std::string> (isl_ast[k],node->name));k++;
-    std::cout<<"INSERT\n";
+    //static int k=0;
+    
+    (*corr_map).insert(std::pair<std::string,std::string> (isl_ast[k],node->name));
+    k++;
+    std::cout<<"INSERT"<<k<<"\n";
      for (ast_node *child : node->children)
         {
-            get_save_name_node(child,isl_ast,corr_map);
+            get_save_name_node(child,isl_ast,corr_map,k);
         }
    
 }
@@ -573,6 +575,7 @@ void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::ma
 
 void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout)
 {
+    std::cout<<"******************STARTED SEARCH*****************\n"<<std::endl;
     std::default_random_engine rand_generator;
 
     if (ast.nb_explored_optims % NB_OPTIMIZATIONS_MATRIX == 0)
@@ -596,7 +599,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     // Stop if no more optimizations can be applied
     if (children.size() == 0)
         return ;
-    
+
     // Evaluate children and sort them from smallest to highest evaluation
     // evaluate while removing illegal versions
     auto iterator = children.begin();
@@ -625,13 +628,14 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
             }
         }
         //Get the names of iterators of the AST and create the map corr_map
+        int starting_k=0;
         for (ast_node *root : ast.roots)
             {
-                get_save_name_node(root,isl_ast,corr_map);
-            }  
+                get_save_name_node(root,isl_ast,corr_map,starting_k);
+            }
     // Add the corr_map to the ast structue
     ast.corr_map = corr_map;
-
+    
     while (iterator != children.end())
     {
         int nb_matrices = 145;
@@ -646,11 +650,10 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         while(matrix && illegal && nb_matrices>0)
         {
             matrix = child->new_optims.back().type == MATRIX;
-            child->new_optims.back().matrix = matrices[nb_matrices-1];
+            if(matrix) child->new_optims.back().matrix = matrices[nb_matrices-1];
             child->transform_ast_matrix(matrices[nb_matrices-1]);
             nb_matrices--;
             if (child->schedule_is_prunable()){
-                std::cout<<"\n passed prunable\n";
                 if (std::atoi(read_env_var("AS_VERBOSE"))==1){
                     // print deleted Ast
                     child->print_previous_optims();
@@ -663,7 +666,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                 iterator = children.erase(iterator);
             }
             else if (!child->ast_is_legal()) {
-              
+              std::cout << "\n<illegal>\n";
                 if (std::atoi(read_env_var("AS_VERBOSE"))==1){
                     // print deleted Ast
                     child->print_previous_optims();
@@ -680,7 +683,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
             else {
                 illegal = false;
                 // print and evaluate Ast
-
+                std::cout << "\n<legal>\n";
                 if (std::atoi(read_env_var("AS_VERBOSE"))==1){
                     child->print_previous_optims();
                     std::cout << "\n-----------" << std::endl;

@@ -197,6 +197,7 @@ void exhaustive_generator::generate_interchanges(ast_node *node, std::vector<syn
 
 void exhaustive_generator::generate_unrollings(ast_node *node, std::vector<syntax_tree*>& states, syntax_tree const& ast)
 {
+    std::cout<<"#######################################UNROLL############################\n"<<std::endl;
     if (!node->unrolled && node->get_extent() > 1)
     {
         for (int unrolling_factor : unrolling_factors_list)
