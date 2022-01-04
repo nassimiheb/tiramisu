@@ -96,7 +96,7 @@ int main(int argc, char **argv)
 
 
 
-    const int beam_size = 1;
+    const int beam_size = 10000;
     const int max_depth = 6;
 
 

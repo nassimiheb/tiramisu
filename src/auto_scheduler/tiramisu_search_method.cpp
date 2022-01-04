@@ -212,11 +212,13 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
             schedule_annot.pop_back();
 
             if (std::isfinite(child->evaluation)) // the evaluation is not finite mean that the schedule didn't run
+            {
                 schedule_annot += ", \n\"execution_times\" : " + measurements_to_str(measurements) + "\n}\n";
-            else
+                schedules_annotations->push_back(schedule_annot);
+            }
+            else // temp solution don't the annotation
                 schedule_annot += ", \n\"execution_times\" : null\n}\n";
 
-            schedules_annotations->push_back(schedule_annot);
 
             if (std::atoi(read_env_var("AS_VERBOSE"))==1){
                 std::cout << "Schedule number "<< schedules_annotations->size() << std::endl;

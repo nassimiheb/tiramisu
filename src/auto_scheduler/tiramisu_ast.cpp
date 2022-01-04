@@ -3,6 +3,34 @@
 
 namespace tiramisu::auto_scheduler
 {
+std::vector<std::string> target_schedules{"I(L3,L4)S(L0,L1,d+,d+)T3(L2,L3,L4,d+,d+,d+)",
+                                          "I(L3,L4)S(L0,L1,d+,d+)T2(L2,L3,d+,d+)",
+                                          "I(L0,L4)P(L1)T3(L2,L3,L4,d+,d+,d+)",
+                                          "I(L2,L3)P(L1)T2(L1,L2,d+,d+)U(L6,d+)",
+                                          "I(L0,L4)P(L1)T2(L3,L4,d+,d+)U(L6,d+)",
+                                          "I(L0,L4)P(L1)T2(L3,L4,d+,d+)",
+                                          "I(L2,L3)S(L1,L2,d+,d+)P(L2)T2(L1,L2,d+,d+)U(L6,d+)",
+                                          "I(L2,L3)T2(L1,L2,d+,d+)U(L6,d+)",
+                                          "I(L0,L4)P(L1)T2(L1,L2,d+,d+)U(L6,d+)",
+                                          "I(L0,L4)T2(L3,L4,d+,d+)U(L6,d+)",
+                                          "I(L2,L3)S(L1,L2,d+,d+)T2(L1,L2,d+,d+)U(L6,d+)",
+                                          "I(L0,L4)T2(L1,L2,d+,d+)U(L6,d+)",
+                                          "I(L0,L4)P(L1)T2(L1,L2,d+,d+)",
+                                          "I(L0,L4)P(L1)T3(L1,L2,L3,d+,d+,d+)",
+                                          "I(L1,L4)S(L0,L1,d+,d+)P(L1)T2(L1,L2,d+,d+)",
+                                          "I(L0,L4)P(L1)T3(L0,L1,L2,d+,d+,d+)",
+                                          "I(L2,L3)S(L1,L2,d+,d+)P(L0)T2(L1,L2,d+,d+)U(L6,d+)",
+                                          "I(L1,L2)S(L2,L3,d+,d+)T3(L1,L2,L3,d+,d+,d+)U(L7,d+)",
+                                          "I(L0,L3)P(L2)T2(L0,L1,d+,d+)U(L5,d+)",
+                                          "I(L2,L3)S(L1,L2,d+,d+)P(L2)T2(L3,L4,d+,d+)U(L6,d+)",
+                                          "I(L1,L2)S(L2,L3,d+,d+)T2(L2,L3,d+,d+)U(L6,d+)",
+                                          "I(L0,L2)P(L2)U(L4,d+)",
+                                          "I(L2,L3)S(L1,L2,d+,d+)P(L0)U(L4,d+)"
+};
+
+
+
+
 
 computation_info::computation_info(tiramisu::computation *comp, syntax_tree *ast)
     : comp_ptr(comp), iters(dnn_iterator::get_iterators_from_computation(*comp)),
@@ -1521,21 +1549,34 @@ bool syntax_tree::schedule_is_prunable()
 
     assert(computations_list.size()==1 && "current implementation of syntax_tree::schedule_is_prunable() supports only single computation programs");  // assuming the ast has only one computation
 
-    int original_ast_depth = computations_list[0]->get_loop_levels_number();
+//    int original_ast_depth = computations_list[0]->get_loop_levels_number();
     std::string schedule_str = get_schedule_str();
 
-    if (std::regex_search(schedule_str, std::regex(R"(P\(L2\)U\(L3,\d+\))")))
-        return true;
+    std::string masked_sched = std::regex_replace(schedule_str, std::regex(R"(,\d+)"), ",d+");
+    std::cout<<masked_sched<<std::endl;
+    for (const std::string& target_schedule:target_schedules){
+        if (target_schedule.rfind(masked_sched, 0) == 0)
+            return false;
+    }
 
-    if (original_ast_depth==2)
-        if (std::regex_search(schedule_str, std::regex(R"(P\(L1\)U)")))
-            return true;
+    return true;
 
-    if (original_ast_depth==3)
-        if (std::regex_search(schedule_str, std::regex(R"(P\(L2\)(?:U|T2\(L0,L1))")))
-            return true;
+//    if any of target_scheds starts with masked_sched:
+//        keep
+//    else drop
+//
+//    if (std::regex_search(schedule_str, std::regex(R"(P\(L2\)U\(L3,\d+\))")))
+//        return true;
+//
+//    if (original_ast_depth==2)
+//        if (std::regex_search(schedule_str, std::regex(R"(P\(L1\)U)")))
+//            return true;
+//
+//    if (original_ast_depth==3)
+//        if (std::regex_search(schedule_str, std::regex(R"(P\(L2\)(?:U|T2\(L0,L1))")))
+//            return true;
 
-    return false;
+//    return false;
 }
 
 bool syntax_tree::can_set_default_evaluation()
@@ -1544,25 +1585,41 @@ bool syntax_tree::can_set_default_evaluation()
     // The following filtering rules are selected after a statistical analysis of inefficient schedule patterns on single computation programs
     assert(computations_list.size()==1 && "current implementation of syntax_tree::schedule_is_prunable() supports only single computation programs");  // assuming the ast has only one computation
 
-    int original_ast_depth = computations_list[0]->get_loop_levels_number();
+//    int original_ast_depth = computations_list[0]->get_loop_levels_number();
     std::string schedule_str = get_schedule_str();
+//
+//    masked_sched = _
+//    if masked shced not in selected_scheds:
+//        set def_val
+//    else do not
 
-    //check if innermost loop is parallelized, if yes set the speedup to 0.001
-    if (original_ast_depth==2)
-        if (std::regex_search(schedule_str, std::regex(R"(P\(L1\)$)")))
-        {
-            evaluation =  std::atof(read_env_var("INIT_EXEC_TIME"))*1000;
-            return true;
-        }
+    std::string masked_sched = std::regex_replace(schedule_str, std::regex(R"(,\d+)"), ",d+");
+    if (std::find(target_schedules.begin(), target_schedules.end(), masked_sched) != target_schedules.end())
+        return false;
+    else{
+//        evaluation =  std::atof(read_env_var("INIT_EXEC_TIME"))*100000; //set the speedup to 0.00001
+//        evaluation =  std::numeric_limits<double>::infinity(); //set exec_time to inf
+        evaluation =  NAN; //set exec_time to inf
+        return true;
+    }
 
-    if (original_ast_depth==3)
-        if (std::regex_search(schedule_str, std::regex(R"(P\(L2\)$)")))
-        {
-            evaluation =  std::atof(read_env_var("INIT_EXEC_TIME"))*1000;
-            return true;
-        }
 
-    return false;
+//    //check if innermost loop is parallelized, if yes set the speedup to 0.001
+//    if (original_ast_depth==2)
+//        if (std::regex_search(schedule_str, std::regex(R"(P\(L1\)$)")))
+//        {
+//            evaluation =  std::atof(read_env_var("INIT_EXEC_TIME"))*1000;
+//            return true;
+//        }
+//
+//    if (original_ast_depth==3)
+//        if (std::regex_search(schedule_str, std::regex(R"(P\(L2\)$)")))
+//        {
+//            evaluation =  std::atof(read_env_var("INIT_EXEC_TIME"))*1000;
+//            return true;
+//        }
+//
+//    return false;
 }
 
     candidate_trace::candidate_trace(syntax_tree *ast, int candidate_id)
@@ -1587,10 +1644,13 @@ void candidate_trace::add_child_path(syntax_tree *ast, int candidate_id)
 
 std::string candidate_trace::get_exploration_trace_json()
 {
+    std::string eval_str = "null";
+    if (std::isfinite(this->evaluation))
+        eval_str = std::to_string(this->evaluation);
     std::string trace_json = "{ \"id\": "+std::to_string(this->candidate_id)+
             ", \"schedule\": \"" + this->schedule_str + "\"" +
             ", \"depth\": " + std::to_string(this->exploration_depth) +
-            ", \"evaluation\": " + std::to_string(this->evaluation) +
+            ", \"evaluation\": " + eval_str +
             ", \"children\": [";
 
     if (!this->child_candidates.empty())
