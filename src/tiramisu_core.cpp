@@ -3099,9 +3099,15 @@ namespace tiramisu
         int n_dims = isl_map_dim(schedule, isl_dim_out);
 
         std::vector<isl_id *> dimensions;
-
+    
         std::vector<std::string> dim_vector;
-       
+        std::cout<<"\n************************Matrix************************\n";
+        for (int i = 0; i < matrix.size(); i++) {
+        for (int j = 0; j < matrix[i].size(); j++)
+             std::cout << matrix[i][j] << " ";
+            std::cout <<  std::endl;
+        }
+
         // ------------------------------------------------------------
         // Create a map for the duplicate schedule.
         // ------------------------------------------------------------
@@ -3142,10 +3148,10 @@ namespace tiramisu
         
             for (int j = 0; j < matrix[i].size(); j++){
                 if(j != matrix[i].size()-1){
-                     if (matrix[i][j]!=0){vector_content = vector_content + std::to_string(matrix[i][j])+dim_vector[t] + "+";t+=2;}
+                    vector_content = vector_content + std::to_string(matrix[i][j])+dim_vector[t] + "+";t+=2;
                 }
                 else{
-                    if (matrix[i][j]!=0){vector_content = vector_content + std::to_string(matrix[i][j])+dim_vector[t];t+=2;}
+                    vector_content = vector_content + std::to_string(matrix[i][j])+dim_vector[t];t+=2;
                 }
             }
             t=1;
