@@ -678,7 +678,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                 delete child;
                 iterator = children.erase(iterator);
             }
-            else if (!child->ast_is_legal()) {
+            else if (!child->program_is_legal()) {
                 if (std::atoi(read_env_var("AS_VERBOSE"))==1){
                     // print deleted Ast
                     child->print_previous_optims();
