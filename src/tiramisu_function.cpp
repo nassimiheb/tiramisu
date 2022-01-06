@@ -1558,7 +1558,7 @@ namespace tiramisu
         std::cout<<"printing before\n";
         std::cout<<"\nSchedule"<<isl_union_map_to_str(this->get_schedule());
         std::cout<<isl_ast_node_to_C_str(this->ast);
-
+        
         std::vector<std::pair<int , int>> vec;
          
         isl_ast_node *ast_i=this->ast;
@@ -1594,6 +1594,8 @@ namespace tiramisu
             else{stop=1;} //n
         }     
         DEBUG_INDENT(-4);
+
+    
     }
     void function::gen_isl_ast_after_trans()
     {

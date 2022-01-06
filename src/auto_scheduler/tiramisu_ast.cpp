@@ -435,9 +435,9 @@ namespace tiramisu::auto_scheduler
         for (i = 0; i < n; ++i) {
             isl_ast_expr *arg;
             
-            std::cout<<"---------------Arg";
-            std::cout<<i;
-            std::cout<<"\n";
+            //std::cout<<"---------------Arg";
+            //std::cout<<i;
+            //std::cout<<"\n";
             arg = isl_ast_expr_get_op_arg(expr, i);
             if(i==0){
                 p=get_value(arg,isl_ast_map);
@@ -456,9 +456,9 @@ namespace tiramisu::auto_scheduler
                 }
             }
             
-            std::cout<<"---------------Arg resuult";
-            std::cout<<p;
-            std::cout<<"\n";
+            //std::cout<<"---------------Arg resuult";
+            //std::cout<<p;
+            //std::cout<<"\n";
             isl_ast_expr_free(arg);    
         }
         return p;
@@ -486,7 +486,7 @@ namespace tiramisu::auto_scheduler
         isl_val *v;
         std::string p;
         int val=0;
-        std::cout<<"------- Get value is ";
+        //std::cout<<"------- Get value is ";
         if (!expr){return -1;}  
         else{
 
@@ -496,9 +496,9 @@ namespace tiramisu::auto_scheduler
                 
             case isl_ast_expr_op:
                 op = isl_ast_expr_get_op_type(expr);
-                std::cout<<"Entreing OP : ";
-                std::cout<<op;
-                std::cout<<"\n";
+                //std::cout<<"Entreing OP : ";
+                //std::cout<<op;
+                //std::cout<<"\n";
                 if (op == isl_ast_op_error) return 0;             
                 val=val+print_arguments_M(op,expr,isl_ast_map);
                 break;
@@ -506,16 +506,16 @@ namespace tiramisu::auto_scheduler
                 id = isl_ast_expr_get_id(expr);
                 p = isl_id_get_name(id);
                 val = get_id_value(p,isl_ast_map);
-                std::cout<<"Entreing Id with";
-                std::cout<<val;
-                std::cout<<"\n";
+                //std::cout<<"Entreing Id with";
+                //std::cout<<val;
+                //std::cout<<"\n";
                 break;
             case isl_ast_expr_int:
                 v = isl_ast_expr_get_val(expr);val=1;
                 val= isl_val_get_num_si(v);
-                std::cout<<"Entreing Int with";
-                std::cout<<val;
-                std::cout<<"\n";
+                //std::cout<<"Entreing Int with";
+                //std::cout<<val;
+                //std::cout<<"\n";
                 break;
             default: return 0;
             }
@@ -530,7 +530,7 @@ namespace tiramisu::auto_scheduler
         isl_id *id;
         isl_val *v;
         std::string p;
-        std::cout<<"--------Calcule-------\n";
+        //std::cout<<"--------Calcule-------\n";
         if (!expr){return "!Expression";}    
         else{
             type = isl_ast_expr_get_type(expr);
@@ -539,25 +539,25 @@ namespace tiramisu::auto_scheduler
                 
             case isl_ast_expr_op:
                 op = isl_ast_expr_get_op_type(expr);
-                std::cout<<"Entreing OP with ";
-                std::cout<<op;
-                std::cout<<"\n";
+                //std::cout<<"Entreing OP with ";
+                //std::cout<<op;
+                //std::cout<<"\n";
                 if (op == isl_ast_op_error) return "$";          
                 p=std::to_string(print_arguments_M(op,expr,isl_ast_map));
                 break;
             case isl_ast_expr_id:             
                 id = isl_ast_expr_get_id(expr);
                 p = isl_id_get_name(id);
-                std::cout<<"Entreing Id with ";
-                std::cout<<p;
-                std::cout<<"\n";
+                //std::cout<<"Entreing Id with ";
+                //std::cout<<p;
+                //std::cout<<"\n";
                 break;
             case isl_ast_expr_int:
-                std::cout<<"Entreing Int with";       
+                //std::cout<<"Entreing Int with";       
                 v = isl_ast_expr_get_val(expr);
                 p = std::to_string(isl_val_get_num_si(v));
-                std::cout<<p;
-                std::cout<<"\n";
+                //std::cout<<p;
+                //std::cout<<"\n";
                 break;
             default: return "%";
             }
@@ -1762,7 +1762,7 @@ state_computation::state_computation(state_computation * reference)
                 schedule_str += "F(L" + std::to_string(optim.l0) + ",L" + std::to_string(optim.l1) + "),";
                 break;
             case optimization_type::MATRIX:
-                schedule_str += "M()";
+                schedule_str += "M(),";
                 break;
             case optimization_type::UNFUSE:
                 schedule_str += "F(L" + std::to_string(optim.l0) + ",L" + std::to_string(optim.l1) + "),";

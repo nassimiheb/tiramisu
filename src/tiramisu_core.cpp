@@ -3221,13 +3221,13 @@ namespace tiramisu
         }*/
 
         DEBUG(3, tiramisu::str_dump("Final transformation map : ", isl_map_to_str(transformation_map)));
-        std::cout<<"\nFinal transformation map"<<isl_map_to_str(transformation_map);
+        //std::cout<<"\nFinal transformation map"<<isl_map_to_str(transformation_map);
         schedule = isl_map_apply_range(isl_map_copy(schedule), isl_map_copy(transformation_map));
-         std::cout<<"\nSchedule after  transformation map"<<isl_map_to_str(schedule);
+        // std::cout<<"\nSchedule after  transformation map"<<isl_map_to_str(schedule);
         DEBUG(3, tiramisu::str_dump("Schedule after interchange: ", isl_map_to_str(schedule)));
 
         this->set_schedule(schedule);
-        std::cout<<"\nSchedule after  transformation map TT\n"<<isl_map_to_str(this->get_schedule());
+        //std::cout<<"\nSchedule after  transformation map TT\n"<<isl_map_to_str(this->get_schedule());
        
 
         DEBUG_INDENT(-4);
@@ -3352,13 +3352,13 @@ namespace tiramisu
         }
 
         DEBUG(3, tiramisu::str_dump("Final transformation map : ", isl_map_to_str(transformation_map)));
-        std::cout<<"\nFinal transformation map"<<isl_map_to_str(transformation_map);
+        //std::cout<<"\nFinal transformation map"<<isl_map_to_str(transformation_map);
         schedule = isl_map_apply_range(isl_map_copy(schedule), isl_map_copy(transformation_map));
-          std::cout<<"\nSchedule after  transformation map"<<isl_map_to_str(schedule);
+          //std::cout<<"\nSchedule after  transformation map"<<isl_map_to_str(schedule);
         DEBUG(3, tiramisu::str_dump("Schedule after interchange: ", isl_map_to_str(schedule)));
 
         this->set_schedule(schedule);
-          std::cout<<"\nSchedule after  transformation map TT\n"<<isl_map_to_str(this->get_schedule());
+         // std::cout<<"\nSchedule after  transformation map TT\n"<<isl_map_to_str(this->get_schedule());
         DEBUG_INDENT(-4);
     }
 

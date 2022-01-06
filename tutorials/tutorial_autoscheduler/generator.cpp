@@ -11,40 +11,39 @@ bool perform_autoscheduling = true;
 const std::string py_cmd_path = "/usr/bin/python";
 
 // Path to a script that executes the ML model (please give absolute path)
-const std::string py_interface_path = "/home/afif/tir/tiramisu/tutorials/tutorial_autoscheduler/model/main.py";
+const std::string py_interface_path = "/data/tiramisu/tutorials/tutorial_autoscheduler/model/main.py";
 
 int main(int argc, char **argv)
 {
     tiramisu::init("conv");
 
     var n("n", 0, 8), fout("fout", 0, 2), y("y", 0, 1024), x("x", 0, 1024), fin("fin", 0, 3) ,
-            /*k_y("k_y", 0, 3), k_x("k_x", 0, 3) ,*/ y_pad("y_pad", 0, 1026) , x_pad("x_pad", 0, 1026);
+            k_y("k_y", 0, 3), k_x("k_x", 0, 3) , y_pad("y_pad", 0, 1026) , x_pad("x_pad", 0, 1026);
 
     // Declare computations
     input bias("bias", {fout}, p_int32);
-    input src("src", {n, y_pad, x_pad}, p_int32);
-    input weights("weights", {n, fout, y}, p_int32);
+    input src("src", {n, fin, y_pad, x_pad}, p_int32);
+    input weights("weights", {n, fout, y, x}, p_int32);
 
     //computation conv_init("conv_init", {n, fout, y, x}, bias(fout));
-    computation conv("conv", {n, fout, y}, p_int32);
-    conv.set_expression(conv(n, fout, y) + src(n, y , 0 ) * weights(fout, 0, 0 ));
+    computation conv("conv", {n, fout, y, x, fin}, p_int32);
+    conv.set_expression(conv(n, fout, y, x, fin) + src(n, fin, y , x ) * weights(fout, fin, 0, 0));
 
     //conv_init.then(conv, x);
 
     // Declare buffers
-	
     buffer buf_bias("buf_bias", {2}, p_int32, a_input);
-    buffer buf_src("buf_src", {8, 1026, 1026}, p_int32, a_input);
-    buffer buf_weights("buf_weights", {2, 3, 3}, p_int32, a_input);
+    buffer buf_src("buf_src", {8, 3, 1026, 1026}, p_int32, a_input);
+    buffer buf_weights("buf_weights", {2, 3, 3, 3}, p_int32, a_input);
 
-    buffer buf_output("buf_output", {8, 2, 1024}, p_int32, a_output);
+    buffer buf_output("buf_output", {8, 2, 1024, 1024}, p_int32, a_output);
 
     bias.store_in(&buf_bias);
     src.store_in(&buf_src);
     weights.store_in(&buf_weights);
 
-    //conv_init.store_in(&buf_output);
-    conv.store_in(&buf_output, {n, fout, y});
+   // conv_init.store_in(&buf_output);
+    conv.store_in(&buf_output, {n, fout, y, x});
 
     // Generate a program with no schedule
     if (!perform_autoscheduling)
@@ -60,8 +59,8 @@ int main(int argc, char **argv)
     }
 
     // Some parameters for the search methods
-    const int beam_size = 2;
-    const int max_depth = 4;
+    const int beam_size = 10;
+    const int max_depth = 5;
 
     const int nb_samples = 5;
     const int topk = 1;
@@ -74,7 +73,7 @@ int main(int argc, char **argv)
                                                                                                  "function.o", "./wrapper");
 
     // An evaluation function that uses an ML model to estimate speedup
-    //auto_scheduler::evaluation_function *model_eval = new auto_scheduler::evaluate_by_learning_model(py_cmd_path, {py_interface_path});
+   // auto_scheduler::evaluation_function *model_eval = new auto_scheduler::evaluate_by_learning_model(py_cmd_path, {py_interface_path});
 
     // Two search methods : Beam Search and MCTS
     auto_scheduler::search_method *bs = new auto_scheduler::beam_search(beam_size, max_depth, exec_eval, scheds_gen);
@@ -90,6 +89,5 @@ int main(int argc, char **argv)
     delete exec_eval;
     delete bs;
     //delete mcts;
-	
     return 0;
 }

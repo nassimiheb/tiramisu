@@ -187,7 +187,7 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
                 measurements = {child->evaluation};
             }
             else{
-                measurements = exec_eval->get_measurements(*child, false, schedule_timeout);
+                measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
                 child->evaluation = min_eval(measurements);
             }
 
@@ -619,8 +619,11 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         //Get the iterator names from the ISL ast
         //Genrate isl ast
         ast.fct->gen_isl_ast();
+        
         isl_ast_node *ast_i=ast.fct->get_isl_ast(); 
+        
         //Fill a vector with the iterator names
+        
         while(stop!=1)
         {  
             if(isl_ast_node_get_type(ast_i)==isl_ast_node_for){   
@@ -631,6 +634,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                 stop=1;
             }
         }
+        
         //Get the names of iterators of the AST and create the map corr_map
         int starting_k=0;
         for (ast_node *root : ast.roots)
@@ -642,20 +646,25 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     
     while (iterator != children.end())
     {
-        int nb_matrices = 145;
+        //std::cout<<"Generating ISL AST\n"<<std::endl;
+        int nb_matrices = 2;
         syntax_tree *child = *iterator;
         child->corr_map=corr_map;
         child->nb_explored_optims = nb_explored_optims;
         bool illegal = true;
         int shape = child->get_program_depth();
-        matrices = get_random_matrcies(nb_matrices,shape);
-        bool matrix = true;
-
+        bool matrix = child->new_optims.back().type == MATRIX;
+        if (matrix){
+            std::cout<<"Generating Matricies\n"<<std::endl;
+            matrices=get_random_matrcies(nb_matrices, shape);
+            std::cout<<"Done Generating Matricies\n"<<std::endl;
+        }
+        //std::cout<<"Done Generating ISL AST\n"<<std::endl;
         while(matrix && illegal && nb_matrices>0)
         {
             matrix = child->new_optims.back().type == MATRIX;
-            if(matrix) child->new_optims.back().matrix = matrices[nb_matrices-1];
-            child->transform_ast_matrix(matrices[nb_matrices-1]);
+            if(matrix) child->new_optims.back().matrix = matrices.at(nb_matrices-1);
+            child->transform_ast_matrix(matrices.at(nb_matrices-1));
             nb_matrices--;
             if (child->schedule_is_prunable()){
                 if (std::atoi(read_env_var("AS_VERBOSE"))==1){
@@ -670,7 +679,6 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                 iterator = children.erase(iterator);
             }
             else if (!child->ast_is_legal()) {
-              std::cout << "\n<illegal>\n";
                 if (std::atoi(read_env_var("AS_VERBOSE"))==1){
                     // print deleted Ast
                     child->print_previous_optims();
@@ -680,14 +688,9 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                     child->print_isl_states();
                     std::cout << "\n<illegal>\n";
                 }
-
-                delete child;
-                iterator = children.erase(iterator);
             }
             else {
                 illegal = false;
-                // print and evaluate Ast
-                std::cout << "\n<legal>\n";
                 if (std::atoi(read_env_var("AS_VERBOSE"))==1){
                     child->print_previous_optims();
                     std::cout << "\n-----------" << std::endl;
@@ -705,7 +708,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                 }
                 else{
                     
-                    measurements = exec_eval->get_measurements(*child, false, schedule_timeout);
+                    measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
                     child->evaluation = min_eval(measurements);
                 }
                 
@@ -747,7 +750,12 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
 
             nb_explored_schedules++;
         }
-}
+        if (matrix && illegal){
+            delete child;
+            iterator = children.erase(iterator);
+        }
+    }
+    
 
     // Stop if we reached the maximum depth
     if (nb_explored_optims >= max_depth)
@@ -776,7 +784,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     for (syntax_tree *child : children)
     {
         child->search_depth = ast.search_depth + 1;
-        search_save_matrix(*child, schedules_annotations, parent_trace->child_mappings[child], schedule_timeout);
+        search_save(*child, schedules_annotations, parent_trace->child_mappings[child], schedule_timeout);
     }
 }
 void mcts::search(syntax_tree& ast)

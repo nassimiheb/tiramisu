@@ -41,8 +41,64 @@ void apply_optimizations(syntax_tree const& ast)
     // the tagged ast_nodes
     apply_parallelization(ast);
 }
+void apply_optimizations_matrix(syntax_tree const& ast)
+{
+    // Check ast.h for the difference between ast.previous_optims and ast.new_optims
+    for (optimization_info const& optim_info : ast.previous_optims)
+        apply_optimizations_matrix(optim_info);
+        
+    for (optimization_info const& optim_info : ast.new_optims)
+        apply_optimizations_matrix(optim_info);
 
+    // Fusion is a particular case, and we use apply_fusions() to apply it.
+    // apply_fusions() uses the structure of the AST to correctly order the computations.
+    apply_fusions(ast);
+
+    // Parallelization needs to be applied after the other transformations in order to have the accurate loop depth of
+    // the tagged ast_nodes
+    apply_parallelization(ast);
+}
 void apply_optimizations(optimization_info const& optim_info)
+{
+    // tiramisu::block can be used to apply the same optimization to a set of computations
+    tiramisu::block block(optim_info.comps);
+        
+    switch (optim_info.type)
+    {
+        case optimization_type::TILING:
+            if (optim_info.nb_l == 2)
+                block.tile(optim_info.l0, optim_info.l1, 
+                           optim_info.l0_fact, optim_info.l1_fact);
+                
+            else if (optim_info.nb_l == 3)
+                block.tile(optim_info.l0, optim_info.l1, optim_info.l2,
+                           optim_info.l0_fact, optim_info.l1_fact, optim_info.l2_fact);
+            break;
+                
+        case optimization_type::INTERCHANGE:
+            block.interchange(optim_info.l0, optim_info.l1);
+            break;
+            
+        case optimization_type::UNROLLING:
+            // Apply unrolling on the level indicated by l0
+            if (optim_info.l0 != -1)
+                block.unroll(optim_info.l0, optim_info.l0_fact);
+                
+            // Apply unrolling on all innermost levels
+            else
+                unroll_innermost_levels(optim_info.comps, optim_info.l0_fact);
+            break;
+
+        case optimization_type::SKEWING:
+            block.skew(optim_info.l0, optim_info.l1, optim_info.l0_fact, optim_info.l1_fact);
+            break;
+
+        default:
+            break;
+    }
+}
+
+void apply_optimizations_matrix(optimization_info const& optim_info)
 {
     // tiramisu::block can be used to apply the same optimization to a set of computations
     tiramisu::block block(optim_info.comps);

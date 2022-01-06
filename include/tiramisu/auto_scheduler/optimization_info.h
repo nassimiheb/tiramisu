@@ -91,7 +91,16 @@ void apply_optimizations(syntax_tree const& ast);
  * Apply the given optimization using the Tiramisu API.
  */
 void apply_optimizations(optimization_info const& optim_info);
+
+/**
+ * Apply the optimizations specified by the syntax tree using the Tiramisu API.
+ */
+void apply_optimizations_matrix(syntax_tree const& ast);
     
+/**
+ * Apply the given optimization using the Tiramisu API.
+ */
+void apply_optimizations_matrix(optimization_info const& optim_info);
 /**
  * Schedule the computations so as to be in the order specified by the AST.
  */

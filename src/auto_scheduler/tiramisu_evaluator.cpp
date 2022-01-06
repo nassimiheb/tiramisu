@@ -138,6 +138,75 @@ std::vector<float> evaluate_by_execution::get_measurements(syntax_tree& ast, boo
 
     return measurements;
 }
+std::vector<float> evaluate_by_execution::get_measurements_matrix(syntax_tree& ast, bool exit_on_timeout, float timeout)
+{
+    // Apply all the optimizations
+    apply_optimizations_matrix(ast);
+
+    // Compile the program to an object file
+    fct->lift_dist_comps();
+    fct->gen_time_space_domain();
+    fct->gen_isl_ast();
+    fct->gen_halide_stmt();
+
+    Halide::Module m = lower_halide_pipeline(fct->get_name(), halide_target, halide_arguments,
+                                             Halide::Internal::LoweredFunc::External,
+                                             fct->get_halide_stmt());
+
+    m.compile(Halide::Outputs().object(obj_filename));
+
+    // Turn the object file to a shared library
+    std::string gcc_cmd = "g++ -shared -o " + obj_filename + ".so " + obj_filename;
+    int status = system(gcc_cmd.c_str());
+
+    // define the execution command of the wrapper
+    std::string cmd = wrapper_cmd;
+
+    float cumulative_timeout;
+    if (timeout!=0) {// check if a timeout is defined for the execution time
+        int nb_exec = 30; //by default
+        if (std::getenv("MAX_RUNS")!=NULL)
+            nb_exec = std::stoi(std::getenv("MAX_RUNS"));
+        cumulative_timeout = timeout * nb_exec; // the timeout for the total number of executions
+        cmd = std::string("timeout ") + std::to_string(cumulative_timeout) + std::string(" ") + wrapper_cmd;
+    }
+
+
+    // execute the command
+    FILE *pipe = popen(cmd.c_str(), "r");
+
+    // read the output into a string
+    char buf[100];
+    std::string output;
+    while (fgets(buf, 100, pipe))
+        output += buf;
+
+    // close the pipe and check if the timeout has been reached
+    auto returnCode = pclose(pipe)/256;
+    if (exit_on_timeout && (timeout!=0) && (returnCode == 124)){ // a potential issue here is that the 124 exit code is returned by another error
+        std::cerr << "error: Execution time exceeded the defined timeout "<< timeout << "s *"<< std::getenv("MAX_RUNS") << "execution" << std::endl;
+        exit(1);
+    }
+
+    // parse the output into a vector of floats
+    std::vector<float> measurements;
+    std::istringstream iss(output);
+    std::copy(std::istream_iterator<float>(iss), std::istream_iterator<float>(), std::back_inserter(measurements));
+
+    if (measurements.empty() && (returnCode != 124)) // if there is no output and the cmd didn't timeout, this means that the execution failed
+        measurements.push_back(std::numeric_limits<float>::infinity());
+
+    else if (measurements.empty() && (returnCode == 124) && (timeout!=0)){  //if there is no output and the cmd timed out, this means that no execution finished before timeout
+        measurements.push_back(cumulative_timeout*1000); // converted to ms
+        std::cout<< "Execution timed out"<< std::endl;
+    }
+
+
+    // Remove all the optimizations
+    fct->reset_schedules();
+
+    return measurements;
+}
 
 evaluate_by_learning_model::evaluate_by_learning_model(std::string const& cmd_path, std::vector<std::string> const& cmd_args)
     : evaluation_function()
@@ -431,16 +500,18 @@ std::string evaluate_by_learning_model::get_schedule_json(syntax_tree const& ast
         
         comp_sched_json += "],";
         // JSON for matrix
-        comp_sched_json += "\"TRansformation Matrix\" : [";
+        comp_sched_json += "\"Transformation Matrix\" : [";
         
-        if (interchanged)
+        if (transformed_by_matrix)
         {
-            comp_sched_json += "\"" + iterators_list[int_l0].name + "\", \"" + iterators_list[int_l1].name + "\"";
+            for(int i = 0; i < matrix.size(); i++){
+                        for(int j = 0; j< matrix.size(); j++){
+                            comp_sched_json += "\"" + std::to_string(matrix.at(i).at(j)) + "\", \"";
+                        }
+            }
             
-            dnn_iterator dnn_it = iterators_list[int_l0];
-            iterators_list[int_l0] = iterators_list[int_l1];
-            iterators_list[int_l1] = dnn_it;
         }
+        comp_sched_json += "]" ;
         // JSON for tiling
         comp_sched_json += "\"tiling\" : {";
         

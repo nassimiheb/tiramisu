@@ -86,6 +86,8 @@ public:
      * If exit_on_timeout is set to true, it raises an error when the timeout is reached and terminates the program
      */
     std::vector<float> get_measurements(syntax_tree &ast,  bool exit_on_timeout = false, float timeout = 0);
+
+    std::vector<float> get_measurements_matrix(syntax_tree &ast,  bool exit_on_timeout = false, float timeout = 0);
 };
 
 /**
