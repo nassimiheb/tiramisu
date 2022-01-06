@@ -618,9 +618,10 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     std::map <std::string,std::string>* corr_map= new std::map<std::string, std::string>();
         //Get the iterator names from the ISL ast
         //Genrate isl ast
-        ast.fct->gen_isl_ast();
+        //ADD staging before gen
+    ast.fct->gen_isl_ast();
         
-        isl_ast_node *ast_i=ast.fct->get_isl_ast(); 
+    isl_ast_node *ast_i=ast.fct->get_isl_ast(); 
         
         //Fill a vector with the iterator names
         
@@ -659,9 +660,12 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
             matrices=get_random_matrcies(nb_matrices, shape);
             std::cout<<"Done Generating Matrcies\n"<<std::endl;
         }
+        
         //std::cout<<"Done Generating ISL AST\n"<<std::endl;
         while(matrix && illegal && nb_matrices>0)
         {
+            syntax_tree* new_ast = new syntax_tree();
+            new_ast = child->copy_ast();
             matrix = child->new_optims.back().type == MATRIX;
             if(matrix) child->new_optims.back().matrix = matrices.at(nb_matrices-1);
             child->transform_ast_matrix(matrices.at(nb_matrices-1));
@@ -688,6 +692,8 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                     child->print_isl_states();
                     std::cout << "\n<illegal>\n";
                 }
+                std::cout << "\n<illegal>\n";
+                child = new_ast;
             }
             else {
                 illegal = false;

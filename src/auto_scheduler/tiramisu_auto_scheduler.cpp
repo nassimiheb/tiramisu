@@ -136,7 +136,7 @@ void auto_scheduler::sample_search_space_random_matrix(std::string filename, boo
     candidate_trace exploration_trace_root = candidate_trace(&ast, 0);
 
     float schedule_timeout = 0;
-    float schedule_timeout_factor = 50;
+    float schedule_timeout_factor = 1000;
     if (std::getenv("SCHED_TIMEOUT_FACTOR")!=nullptr)
         schedule_timeout_factor = std::stof(std::getenv("SCHED_TIMEOUT_FACTOR"));
     if (timeout_schedules) {

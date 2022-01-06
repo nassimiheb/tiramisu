@@ -1134,6 +1134,7 @@ namespace tiramisu::auto_scheduler
 
         // Copy AST data
         new_ast.fct = fct;
+        new_ast.corr_map = corr_map;
         new_ast.computations_list = computations_list;
         new_ast.buffers_list = buffers_list;
         new_ast.buffers_mapping = buffers_mapping;
