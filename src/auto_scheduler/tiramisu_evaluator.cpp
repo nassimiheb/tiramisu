@@ -142,17 +142,18 @@ std::vector<float> evaluate_by_execution::get_measurements_matrix(syntax_tree& a
 {
     // Apply all the optimizations
     apply_optimizations_matrix(ast);
-
     // Compile the program to an object file
     fct->lift_dist_comps();
     fct->gen_time_space_domain();
+    std::cout<<"Started gen_isl\n"<<std::endl;
     fct->gen_isl_ast();
+    std::cout<<"Ended gen_isl_ast\n"<<std::endl;
     fct->gen_halide_stmt();
 
     Halide::Module m = lower_halide_pipeline(fct->get_name(), halide_target, halide_arguments,
                                              Halide::Internal::LoweredFunc::External,
                                              fct->get_halide_stmt());
-
+                                             
     m.compile(Halide::Outputs().object(obj_filename));
 
     // Turn the object file to a shared library
@@ -506,12 +507,13 @@ std::string evaluate_by_learning_model::get_schedule_json(syntax_tree const& ast
         {
             for(int i = 0; i < matrix.size(); i++){
                         for(int j = 0; j< matrix.size(); j++){
-                            comp_sched_json += "\"" + std::to_string(matrix.at(i).at(j)) + "\", \"";
+                            comp_sched_json += "\"" + std::to_string(matrix.at(i).at(j))+"\"";
+                            if(!(i==matrix.size()-1 && j==matrix.size()-1)) comp_sched_json += ", ";
                         }
             }
             
         }
-        comp_sched_json += "]" ;
+        comp_sched_json += "]," ;
         // JSON for tiling
         comp_sched_json += "\"tiling\" : {";
         

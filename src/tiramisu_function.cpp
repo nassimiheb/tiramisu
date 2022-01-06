@@ -1544,21 +1544,21 @@ namespace tiramisu
 
         this->ast = isl_ast_build_node_from_schedule_map(ast_build, umap);
         //std::cout<<"\nSchedule"<<isl_union_map_to_str(this->get_schedule())<<"\n"<<isl_union_map_to_str(umap);
-        std::cout<<"\nGEn Schedule\n"<<isl_union_map_to_str(this->get_schedule());
+        //std::cout<<"\nGEn Schedule\n"<<isl_union_map_to_str(this->get_schedule());
         //std::cout<<"\nSchedule Identy\n"<<isl_union_set_to_str(the_set);
-        std::cout<<"\nIteration domain:\n"<<isl_union_set_to_str(this->get_iteration_domain());
-        std::cout<<"\nTrimmed Time-Processor domain:\n"<<isl_union_set_to_str(this->get_trimmed_time_processor_domain());
-        std::cout<<"\nTrimmed Time-Processor aligned identity schedule:\n"<<isl_union_map_to_str(this->get_aligned_identity_schedules());
-         std::cout<<"\nprinting\n";
+        //std::cout<<"\nIteration domain:\n"<<isl_union_set_to_str(this->get_iteration_domain());
+        //std::cout<<"\nTrimmed Time-Processor domain:\n"<<isl_union_set_to_str(this->get_trimmed_time_processor_domain());
+        //std::cout<<"\nTrimmed Time-Processor aligned identity schedule:\n"<<isl_union_map_to_str(this->get_aligned_identity_schedules());
+        //std::cout<<"\nprinting\n";
         //std::cout<<"\nIdentity schedule intersect trimmed Time-Processor domain:\n"<<isl_union_map_to_str(umap);
-        std::cout<<"\nprinting\n";
+        //std::cout<<"\nprinting\n";
         isl_ast_build_free(ast_build);
 
         int i;
-        std::cout<<"printing before\n";
-        std::cout<<"\nSchedule"<<isl_union_map_to_str(this->get_schedule());
-        std::cout<<isl_ast_node_to_C_str(this->ast);
-        
+        //std::cout<<"printing before\n";
+        //std::cout<<"\nSchedule"<<isl_union_map_to_str(this->get_schedule());
+        //std::cout<<isl_ast_node_to_C_str(this->ast);
+        /*
         std::vector<std::pair<int , int>> vec;
          
         isl_ast_node *ast_i=this->ast;
@@ -1592,7 +1592,8 @@ namespace tiramisu
                 ast_i= isl_ast_node_for_get_body(ast_i);
             }
             else{stop=1;} //n
-        }     
+        } 
+        */    
         DEBUG_INDENT(-4);
 
     

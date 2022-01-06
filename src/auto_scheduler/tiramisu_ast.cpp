@@ -606,7 +606,7 @@ namespace tiramisu::auto_scheduler
             }
         }   
 
-        std::cout<<"\n Genrate NEW ISL AST\n";
+        //std::cout<<"\n Genrate NEW ISL AST\n";
         //Genrate the ISL AST
         this->fct->gen_isl_ast_after_trans();
         isl_ast_node* ast =this->fct->ast;
@@ -622,7 +622,7 @@ namespace tiramisu::auto_scheduler
         //Create a map of (level, <Upper bound, lower bound, iterator name>) from the ISL AST
         while(stop!=1)
         {   
-            std::cout<< "######################### WHILE ###########################\n";
+            //std::cout<< "######################### WHILE ###########################\n";
             if(isl_ast_node_get_type(ast_i)==isl_ast_node_for)
             {
                 init_expr=isl_ast_node_for_get_init(ast_i);
@@ -654,7 +654,7 @@ namespace tiramisu::auto_scheduler
         //Update the ast nodes according to the ordre of the ISL AST 
         for (ast_node *root : roots)
         {
-            std::cout<<"Uuuuu\n";
+            //std::cout<<"Uuuuu\n";
             update_node(this->corr_map,root,islastMap);
         }
          print_ast();

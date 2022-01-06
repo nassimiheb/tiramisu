@@ -508,7 +508,7 @@ void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::ma
     else{
         (*corr_map).insert(std::pair<std::string,std::string> (isl_ast[k],node->name));
         k++;
-        std::cout<<"INSERT"<<k<<"\n";
+        //std::cout<<"INSERT"<<k<<"\n";
     }
      for (ast_node *child : node->children)
         {
@@ -579,7 +579,7 @@ void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::ma
 
 void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout)
 {
-    std::cout<<"******************STARTED SEARCH*****************\n"<<std::endl;
+    //std::cout<<"******************STARTED SEARCH*****************\n"<<std::endl;
     std::default_random_engine rand_generator;
 
     if (ast.nb_explored_optims % NB_OPTIMIZATIONS_MATRIX == 0)
@@ -647,7 +647,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     while (iterator != children.end())
     {
         //std::cout<<"Generating ISL AST\n"<<std::endl;
-        int nb_matrices = 2;
+        int nb_matrices = 4;
         syntax_tree *child = *iterator;
         child->corr_map=corr_map;
         child->nb_explored_optims = nb_explored_optims;
@@ -655,9 +655,9 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         int shape = child->get_program_depth();
         bool matrix = child->new_optims.back().type == MATRIX;
         if (matrix){
-            std::cout<<"Generating Matricies\n"<<std::endl;
+            std::cout<<"Generating Matrcies\n"<<std::endl;
             matrices=get_random_matrcies(nb_matrices, shape);
-            std::cout<<"Done Generating Matricies\n"<<std::endl;
+            std::cout<<"Done Generating Matrcies\n"<<std::endl;
         }
         //std::cout<<"Done Generating ISL AST\n"<<std::endl;
         while(matrix && illegal && nb_matrices>0)
