@@ -1382,90 +1382,6 @@ namespace tiramisu
     /**
   * Generate an isl AST for the function.
   */
-    static char *op_str[] = {
-        [isl_ast_op_and] = "and",
-        [isl_ast_op_and_then] = "and_then",
-        [isl_ast_op_or] = "or",
-        [isl_ast_op_or_else] = "or_else",
-        [isl_ast_op_max] = "max",
-        [isl_ast_op_min] = "min",
-        [isl_ast_op_minus] = "minus",
-        [isl_ast_op_add] = "add",
-        [isl_ast_op_sub] = "sub",
-        [isl_ast_op_mul] = "mul",
-        [isl_ast_op_div] = "div",
-        [isl_ast_op_fdiv_q] = "fdiv_q",
-        [isl_ast_op_pdiv_q] = "pdiv_q",
-        [isl_ast_op_pdiv_r] = "pdiv_r",
-        [isl_ast_op_zdiv_r] = "zdiv_r",
-        [isl_ast_op_cond] = "cond",
-        [isl_ast_op_select] = "select",
-        [isl_ast_op_eq] = "eq",
-        [isl_ast_op_le] = "le",
-        [isl_ast_op_lt] = "lt",
-        [isl_ast_op_ge] = "ge",
-        [isl_ast_op_gt] = "gt",
-        [isl_ast_op_call] = "call",
-        [isl_ast_op_access] = "access",
-        [isl_ast_op_member] = "member",
-        [isl_ast_op_address_of] = "address_of"
-    };
-  std::string print_arguments_M(isl_ast_expr *expr)
-    {
-        int i, n;
-        std::string p;
-        n = isl_ast_expr_get_op_n_arg(expr);
-        if (n < 0) return "$";
-        if (n == 0) return "$";
-
-        for (i = 0; i < n; ++i) {
-            isl_ast_expr *arg;
-            arg = isl_ast_expr_get_op_arg(expr, i);
-            if(i!=0)p=p+","+ print_ast_expr_isl_M(arg);
-            else p=p+ print_ast_expr_isl_M(arg);
-            isl_ast_expr_free(arg);     
-        }
-        return p;
-    }
-   std::string print_ast_expr_isl_M( isl_ast_expr *expr)
-    {
-        enum isl_ast_expr_type type;
-        enum isl_ast_op_type op;
-        isl_id *id;
-        isl_val *v;
-        std::string p;
-        if (!expr){return "!Expression";}
-        else{
-       
-        type = isl_ast_expr_get_type(expr);
-        switch (type) {
-        case isl_ast_expr_error: return "$"; break;
-            
-        case isl_ast_expr_op:
-            //std::cout<<"Entreing OP \n";
-            op = isl_ast_expr_get_op_type(expr);
-            if (op == isl_ast_op_error) return "$";
-            p=p+op_str[op]+"(";
-            p=p+print_arguments_M(expr);
-            p=p+")";
-            break;
-        case isl_ast_expr_id:
-             //std::cout<<"Entreing Id \n";
-            id = isl_ast_expr_get_id(expr);
-            p = isl_id_get_name(id);
-            break;
-        case isl_ast_expr_int:
-            //std::cout<<"Entreing Int \n";
-            v = isl_ast_expr_get_val(expr);
-            break;
-        default: return "%";
-         }
-       
-
-        return p;
-        }
-       
-    }
     void function::gen_isl_ast()
     {
         DEBUG_FCT_NAME(3);
@@ -1553,56 +1469,18 @@ namespace tiramisu
         //std::cout<<"\nIdentity schedule intersect trimmed Time-Processor domain:\n"<<isl_union_map_to_str(umap);
         //std::cout<<"\nprinting\n";
         isl_ast_build_free(ast_build);
-
-        int i;
-        //std::cout<<"printing before\n";
-        //std::cout<<"\nSchedule"<<isl_union_map_to_str(this->get_schedule());
-        //std::cout<<isl_ast_node_to_C_str(this->ast);
-        /*
-        std::vector<std::pair<int , int>> vec;
-         
-        isl_ast_node *ast_i=this->ast;
-        std::map <int,  std::tuple<std::string , std::string,std::string> > islastMap;
-        std::tuple<std::string,std::string,std::string> p;
-        isl_ast_expr * init_expr;
-        isl_ast_expr * cond_expr;
-        isl_ast_expr * iter_expr;
-        int stop=0;
-        int k=0;
-       
-        //Create a map of (level, <Upper bound, lower bound, iterator name>) from the ISL AST
-        while(stop!=1)
-        {   
-            //std::cout<< "######################### WHILE ###########################\n";
-            if(isl_ast_node_get_type(ast_i)==isl_ast_node_for)
-            {   //if(isl_ast_node_for_get_init(isl_ast_node_for_get_body(ast_i))==NULL)stop=1;
-                init_expr=isl_ast_node_for_get_init(ast_i);
-                cond_expr=isl_ast_node_for_get_cond(ast_i);
-                iter_expr=isl_ast_node_for_get_iterator(ast_i);
-                p = std::make_tuple(print_ast_expr_isl_M(cond_expr),print_ast_expr_isl_M(init_expr),print_ast_expr_isl_M(iter_expr));
-                islastMap.insert(std::pair<int, std::tuple<std::string , std::string,std::string>>(k,p ));
-                k++;
-                //std::cout<< "\n######################### Iterator ###########################\n";
-                //std::cout<< print_ast_expr_isl_M(iter_expr);
-                //std::cout<< "######################### Lower bound ###########################\n";
-                //std::cout<< print_ast_expr_isl_M(init_expr);
-                //std::cout<< "######################### upper bound ###########################\n";
-                //std::cout<< print_ast_expr_isl_M(cond_expr);
-
-                ast_i= isl_ast_node_for_get_body(ast_i);
-            }
-            else{stop=1;} //n
-        } 
-        */    
+    
         DEBUG_INDENT(-4);
-
     
     }
+    /**
+     * Generate an isl AST for the function after transformation.
+     */
     void function::gen_isl_ast_after_trans()
     {
         DEBUG_FCT_NAME(3);
         DEBUG_INDENT(4);
-        //std::cout<< isl_map_to_str(this->get_schedule());
+       
         // Check that time_processor representation has already been computed,
         assert(this->get_trimmed_time_processor_domain() != NULL);
         assert(this->get_aligned_identity_schedules() != NULL);
@@ -1656,6 +1534,7 @@ namespace tiramisu
 
             ast_build = isl_ast_build_set_iterators(ast_build, iterators);
         }
+        //Differnce between normal and after transformation generation
         this->gen_time_space_domain();
      
         // Intersect the iteration domain with the domain of the schedule.
@@ -1676,52 +1555,19 @@ namespace tiramisu
         DEBUG(3, tiramisu::str_dump("\n"));
 
         this->ast = isl_ast_build_node_from_schedule_map(ast_build, umap);
+
+
         std::cout<<"\nSchedule\n"<<isl_union_map_to_str(this->get_schedule());
-       // std::cout<<"\nSchedule Identy\n"<<isl_union_set_to_str(the_set);
         std::cout<<"\nIteration domain:\n"<<isl_union_set_to_str(this->get_iteration_domain());
         std::cout<<"\nTrimmed Time-Processor domain:\n"<<isl_union_set_to_str(this->get_trimmed_time_processor_domain());
         std::cout<<"\nTrimmed Time-Processor aligned identity schedule:\n"<<isl_union_map_to_str(this->get_aligned_identity_schedules());
         std::cout<<"\nIdentity schedule intersect trimmed Time-Processor domain:\n"<<isl_union_map_to_str(umap);
         std::cout<<"\nprinting\n";
-
         std::cout<<isl_ast_node_to_C_str(this->ast);
+
+
         isl_ast_build_free(ast_build);
 
-        int i;     
-        std::vector<std::pair<int , int>> vec;
-       
-        isl_ast_node *ast_i=this->ast;
-        std::map <int,  std::tuple<std::string , std::string,std::string> > islastMap;
-        std::tuple<std::string,std::string,std::string> p;
-        isl_ast_expr * init_expr;
-        isl_ast_expr * cond_expr;
-        isl_ast_expr * iter_expr;
-        int stop=0;
-        int k=0;
-       
-        //Create a map of (level, <Upper bound, lower bound, iterator name>) from the ISL AST
-        while(stop!=1)
-        {   
-            //std::cout<< "######################### WHILE ###########################\n";
-            if(isl_ast_node_get_type(ast_i)==isl_ast_node_for)
-            {   //if(isl_ast_node_for_get_init(isl_ast_node_for_get_body(ast_i))==NULL)stop=1;
-                init_expr=isl_ast_node_for_get_init(ast_i);
-                cond_expr=isl_ast_node_for_get_cond(ast_i);
-                iter_expr=isl_ast_node_for_get_iterator(ast_i);
-                p = std::make_tuple(print_ast_expr_isl_M(cond_expr),print_ast_expr_isl_M(init_expr),print_ast_expr_isl_M(iter_expr));
-                islastMap.insert(std::pair<int, std::tuple<std::string , std::string,std::string>>(k,p ));
-                k++;
-                //std::cout<< "\n######################### Iterator ###########################\n";
-                //std::cout<< print_ast_expr_isl_M(iter_expr);
-                //std::cout<< "######################### Lower bound ###########################\n";
-                //std::cout<< print_ast_expr_isl_M(init_expr);
-                //std::cout<< "######################### upper bound ###########################\n";
-                //std::cout<< print_ast_expr_isl_M(cond_expr);
-
-                ast_i= isl_ast_node_for_get_body(ast_i);
-            }
-            else{stop=1;} //n
-        }
         DEBUG_INDENT(-4);
     }  
 

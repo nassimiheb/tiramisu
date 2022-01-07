@@ -261,7 +261,7 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
 }
 int determinant( std::vector <  std::vector<int> >  matrix, int n) {
    int det = 0;
-   int i, o;
+   int o;
    if(n==1) return matrix.at(0).at(0);
    std::vector <  std::vector<int> >  submatrix(n);
    for(o = 0; o<n; o++){
@@ -464,7 +464,7 @@ std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcie
     return result;
 }
 
-static char *op_str[] = {
+static const char *op_str[] = {
 	[isl_ast_op_and] = "and",
 	[isl_ast_op_and_then] = "and_then",
 	[isl_ast_op_or] = "or",
@@ -500,21 +500,16 @@ static char *op_str[] = {
  * @param corr_map 
  */
 void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::map <std::string,std::string>* corr_map, int &k){
-    //static std::map <std::string,std::string> corr_map;
-    //static int k=0;
-    if(k>=isl_ast.size()){
 
-    }
+    if(k>=isl_ast.size()){}
     else{
         (*corr_map).insert(std::pair<std::string,std::string> (isl_ast[k],node->name));
         k++;
-        //std::cout<<"INSERT"<<k<<"\n";
     }
-     for (ast_node *child : node->children)
-        {
-            get_save_name_node(child,isl_ast,corr_map,k);
-        }
-   
+    for (ast_node *child : node->children)
+    {
+        get_save_name_node(child,isl_ast,corr_map,k);
+    }
 }
 /**
  * @brief Get expression info from the ISL AST
@@ -526,16 +521,16 @@ void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::ma
     {
         int i, n;
         std::string p;
-        //std::cout<<"---------------Args \n";
         n = isl_ast_expr_get_op_n_arg(expr);
-        if (n < 0) return "$";
-        if (n == 0) return "$";
+
+        if (n < 0) return "$Error in getting corr map arguments";
+        if (n == 0) return "$Error in getting corr map arguments";
 
         for (i = 0; i < n; ++i) {
             isl_ast_expr *arg;
             arg = isl_ast_expr_get_op_arg(expr, i);
-            if(i!=0)p=p+","+ get_name_ast_expr_isl(arg);
-            else p=p+ get_name_ast_expr_isl(arg);
+            if(i!=0) p = p + "," + get_name_ast_expr_isl(arg);
+            else p = p + get_name_ast_expr_isl(arg);
             isl_ast_expr_free(arg);     
         }     
         return p;
@@ -545,38 +540,72 @@ void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::ma
         enum isl_ast_expr_type type;
         enum isl_ast_op_type op;
         isl_id *id;
-        isl_val *v;
         std::string p;
-        //std::cout<<"---------------\n";
+
         if (!expr){return "!Expression";}  
         else{     
         type = isl_ast_expr_get_type(expr);
         switch (type) {
-            case isl_ast_expr_error: return "$"; break;
+            case isl_ast_expr_error: return "$Error in the expression"; break;
                 
             case isl_ast_expr_op:
                 //std::cout<<"Entreing OP \n";
                 op = isl_ast_expr_get_op_type(expr);
-                if (op == isl_ast_op_error) return "$";
-                p=p+op_str[op]+"(";
-                p=p+get_name_arguments(expr);
-                p=p+")";
+                if (op == isl_ast_op_error) return "$Opertation in getting the type of the operation";
+                p = p + op_str[op] + "(";
+                p = p + get_name_arguments(expr);
+                p = p + ")";
                 break;
             case isl_ast_expr_id:
-                //std::cout<<"Entreing Id \n";
                 id = isl_ast_expr_get_id(expr);
                 p = isl_id_get_name(id);
                 break;
             case isl_ast_expr_int:
                 //std::cout<<"Entreing Int \n";
-                v = isl_ast_expr_get_val(expr);
+                //v = isl_ast_expr_get_val(expr);
                 break;
             default: return "%";
          }
         return p;
         }    
     }
-
+/**
+ * @brief Get the corr map from isl ast map
+ * 
+ * @param ast 
+ * @return ** std::map <std::string,std::string>* 
+ */
+std::map <std::string,std::string>* get_corr_map_from_isl(syntax_tree& ast){
+    //Create map between ISL iterator names and the AST iterator names
+    isl_ast_expr * iter_expr;
+    int stop=0;
+    std::map <std::string,std::string>* corr_map= new std::map<std::string, std::string>();
+    std::vector<std::string> isl_ast;  
+    //Genrate isl ast
+    ast.fct->gen_isl_ast();
+        
+    isl_ast_node *ast_i = ast.fct->get_isl_ast(); 
+        
+    //Get the iterator names from the ISL ast
+    //Fill a vector with the iterator names 
+    while(stop != 1)
+    {  
+        if(isl_ast_node_get_type(ast_i)==isl_ast_node_for){   
+            iter_expr=isl_ast_node_for_get_iterator(ast_i);
+            isl_ast.push_back(get_name_ast_expr_isl(iter_expr));          
+            ast_i= isl_ast_node_for_get_body(ast_i); //n
+        }else{
+            stop = 1;
+        }
+    }  
+    //Get the names of iterators of the AST and create the map corr_map
+    int starting_k = 0;
+    for (ast_node *root : ast.roots)
+        {
+            get_save_name_node(root,isl_ast,corr_map,starting_k);
+        }
+    return corr_map;
+}
 void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout)
 {
     //std::cout<<"******************STARTED SEARCH*****************\n"<<std::endl;
@@ -609,48 +638,16 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     auto iterator = children.begin();
     std::vector < std::vector < std::vector<int> > > matrices;
 
-    //Create map between ISL iterator names and the AST iterator names
-    
-    isl_ast_expr * iter_expr;
-    int stop=0;
-
-    std::vector<std::string> isl_ast;
-    std::map <std::string,std::string>* corr_map= new std::map<std::string, std::string>();
-        //Get the iterator names from the ISL ast
-        //Genrate isl ast
-        //ADD staging before gen
-    ast.fct->gen_isl_ast();
-        
-    isl_ast_node *ast_i=ast.fct->get_isl_ast(); 
-        
-        //Fill a vector with the iterator names
-        
-        while(stop!=1)
-        {  
-            if(isl_ast_node_get_type(ast_i)==isl_ast_node_for){   
-                iter_expr=isl_ast_node_for_get_iterator(ast_i);
-                isl_ast.push_back(get_name_ast_expr_isl(iter_expr));          
-                ast_i= isl_ast_node_for_get_body(ast_i); //n
-            }else{
-                stop=1;
-            }
-        }
-        
-        //Get the names of iterators of the AST and create the map corr_map
-        int starting_k=0;
-        for (ast_node *root : ast.roots)
-            {
-                get_save_name_node(root,isl_ast,corr_map,starting_k);
-            }
+    std::map <std::string,std::string>* corr_map;
     // Add the corr_map to the ast structue
-    ast.corr_map = corr_map;
+    corr_map = get_corr_map_from_isl(ast);
     
     while (iterator != children.end())
     {
         //std::cout<<"Generating ISL AST\n"<<std::endl;
         int nb_matrices = 4;
         syntax_tree *child = *iterator;
-        child->corr_map=corr_map;
+        child->corr_map = corr_map;
         child->nb_explored_optims = nb_explored_optims;
         bool illegal = true;
         int shape = child->get_program_depth();
@@ -661,7 +658,6 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
             std::cout<<"Done Generating Matrcies\n"<<std::endl;
         }
         
-        //std::cout<<"Done Generating ISL AST\n"<<std::endl;
         while(matrix && illegal && nb_matrices>0)
         {
             syntax_tree* new_ast = new syntax_tree();
@@ -718,7 +714,6 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                     child->evaluation = min_eval(measurements);
                 }
                 
-
                 parent_trace->add_child_path(child, schedules_annotations->size());
 
                 std::string schedule_annot = evaluate_by_learning_model::get_schedule_json(*child);
@@ -749,11 +744,8 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                     best_evaluation = child->evaluation;
                     best_ast = child;
                 }
-
                 ++iterator;
-
             }
-
             nb_explored_schedules++;
         }
         if (matrix && illegal){
