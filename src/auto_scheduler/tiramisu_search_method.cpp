@@ -40,7 +40,6 @@ void beam_search::search(syntax_tree& ast)
         (*iterator)->transform_ast();
         
         if ((*iterator)->ast_is_legal() == false) {
-            std::cout << "****if*************";
             // print deleted Ast 
             (*iterator)->print_previous_optims();
             std::cout << "\n-----------" << std::endl;
@@ -52,7 +51,6 @@ void beam_search::search(syntax_tree& ast)
             iterator = children.erase(iterator);
         }
         else {
-            std::cout << "*************else******";
             // evaluate and print Ast 
             (*iterator)->evaluation = eval_func->evaluate(*(*iterator));
 
@@ -158,6 +156,7 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
         else if (!child->ast_is_legal()) {
             if (std::atoi(read_env_var("AS_VERBOSE"))==1){
                 // print deleted Ast
+                std::cout << "\n-----------" << std::endl;
                 child->print_previous_optims();
                 std::cout << "\n-----------" << std::endl;
                 child->print_new_optims();
@@ -173,6 +172,7 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
             // print and evaluate Ast
 
             if (std::atoi(read_env_var("AS_VERBOSE"))==1){
+                std::cout << "\n-----------" << std::endl;
                 child->print_previous_optims();
                 std::cout << "\n-----------" << std::endl;
                 child->print_new_optims();
@@ -431,7 +431,6 @@ std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcie
                                     for (d=0;d<depth-k;d++){
                                             
                                             submatrixd.at(s).at(d) = random.at(s).at(k+d); 
-                                            //std::cout<< random.at(s).at(k+d) <<"\n";
                                     } 
                         }  
                         
@@ -619,7 +618,9 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     // Look for an optimization that can be applied
     int nb_optims_tried = 0;
     int nb_explored_optims = ast.nb_explored_optims;
-    
+    optimization_type optim_type = optimization_type::MATRIX;
+    children = scheds_gen->generate_schedules(ast, optim_type);
+    /*
     while (children.size() == 0 && nb_optims_tried < NB_OPTIMIZATIONS_MATRIX && nb_explored_optims < max_depth)
     {
         optimization_type optim_type = DEFAULT_OPTIMIZATIONS_ORDER_MATRIX[nb_explored_optims % NB_OPTIMIZATIONS_MATRIX];
@@ -628,23 +629,27 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         nb_explored_optims++;
         nb_optims_tried++;
     }
-
+    */
     // Stop if no more optimizations can be applied
+    //Add the current AST to the list of children
+    
     if (children.size() == 0)
         return ;
-
+    
     // Evaluate children and sort them from smallest to highest evaluation
     // evaluate while removing illegal versions
     auto iterator = children.begin();
     std::vector < std::vector < std::vector<int> > > matrices;
 
     std::map <std::string,std::string>* corr_map;
+
     // Add the corr_map to the ast structue
     corr_map = get_corr_map_from_isl(ast);
     
+    
     while (iterator != children.end())
     {
-        //std::cout<<"Generating ISL AST\n"<<std::endl;
+        std::cout<<"inside loop\n"<<std::endl;
         int nb_matrices = 4;
         syntax_tree *child = *iterator;
         child->corr_map = corr_map;
@@ -760,10 +765,10 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         return ;
 
     // Add the current AST to the list of children
-    syntax_tree *ast_copy = ast.copy_ast();
-    ast_copy->nb_explored_optims = nb_explored_optims;
-    children.push_back(ast_copy);
-    parent_trace->add_child_path(ast_copy, parent_trace->get_candidate_id()); // keeps the same id since it's just copy
+    //syntax_tree *ast_copy = ast.copy_ast();
+    //ast_copy->nb_explored_optims = nb_explored_optims;
+    //children.push_back(ast_copy);
+    //parent_trace->add_child_path(ast_copy, parent_trace->get_candidate_id()); // keeps the same id since it's just copy
 
     // Sort children from smallest evaluation to largest
 //    std::sort(children.begin(), children.end(), [](syntax_tree *a, syntax_tree *b) {
@@ -773,15 +778,16 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     std::shuffle(std::begin(children), std::end(children), rand_generator);
 
     // keep the top 'beam_size' children and delete the rest
-    for (int i = beam_size; i < children.size(); ++i)
-        delete children[i];
+    //for (int i = beam_size; i < children.size(); ++i)
+    //   delete children[i];
 
     children.resize(std::min(beam_size, (int)children.size()));
-
+    std::cout<<"Started search save with : "<<children.size()<<"\n";
     // Search recursively on the best children
     for (syntax_tree *child : children)
     {
         child->search_depth = ast.search_depth + 1;
+        
         search_save(*child, schedules_annotations, parent_trace->child_mappings[child], schedule_timeout);
     }
 }

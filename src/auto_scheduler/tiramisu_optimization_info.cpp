@@ -44,12 +44,13 @@ void apply_optimizations(syntax_tree const& ast)
 void apply_optimizations_matrix(syntax_tree const& ast)
 {
     // Check ast.h for the difference between ast.previous_optims and ast.new_optims
-    for (optimization_info const& optim_info : ast.previous_optims)
+    for (optimization_info const& optim_info : ast.previous_optims){
         apply_optimizations_matrix(optim_info);
+    }
         
-    for (optimization_info const& optim_info : ast.new_optims)
+    for (optimization_info const& optim_info : ast.new_optims){
         apply_optimizations_matrix(optim_info);
-
+    }
     // Fusion is a particular case, and we use apply_fusions() to apply it.
     // apply_fusions() uses the structure of the AST to correctly order the computations.
     apply_fusions(ast);

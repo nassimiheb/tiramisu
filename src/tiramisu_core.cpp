@@ -3091,7 +3091,6 @@ namespace tiramisu
         DEBUG_INDENT(4);
        
         isl_map *schedule = this->get_schedule();
-        std::cout<<"\n************************************************\n"<<isl_map_to_str(schedule)<<"\n************************************************\n"<<std::endl;
         DEBUG(3, tiramisu::str_dump("Original schedule: ", isl_map_to_str(schedule)));
         DEBUG(3, tiramisu::str_dump("Matrix_transformation the dimensions " + std::to_string(matrix.size())));
 

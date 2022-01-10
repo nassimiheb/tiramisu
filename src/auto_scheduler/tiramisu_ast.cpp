@@ -1720,15 +1720,16 @@ state_computation::state_computation(state_computation * reference)
 
     bool syntax_tree::ast_is_legal() const
     {
-
+        
         stage_isl_states();
 
         this->fct->prepare_schedules_for_legality_checks(false);
-
+        
+        //std::cout<<"Testing is legal\n"<<std::endl;
         bool result = this->fct->check_legality_for_function();
 
         recover_isl_states();
-
+        //std::cout<<"Done Testing is legal\n"<<std::endl;
         return result;
     }
 
@@ -1783,7 +1784,16 @@ state_computation::state_computation(state_computation * reference)
                 schedule_str += "F(L" + std::to_string(optim.l0) + ",L" + std::to_string(optim.l1) + "),";
                 break;
             case optimization_type::MATRIX:
-                schedule_str += "M(),";
+                
+                schedule_str += "M(";
+                for(int i = 0; i < optim.matrix.size(); i++){
+                        for(int j = 0; j< optim.matrix.size(); j++){
+                            schedule_str += std::to_string(optim.matrix.at(i).at(j));
+                            if(!(i==optim.matrix.size()-1 && j==optim.matrix.size()-1)) schedule_str += ", ";
+                        }
+            }
+
+                schedule_str += "),";
                 break;
             case optimization_type::UNFUSE:
                 schedule_str += "F(L" + std::to_string(optim.l0) + ",L" + std::to_string(optim.l1) + "),";

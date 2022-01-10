@@ -33,13 +33,15 @@ std::vector<syntax_tree*> exhaustive_generator::generate_schedules(syntax_tree c
             break;
         case optimization_type::MATRIX:
             {
-            syntax_tree* new_ast = new syntax_tree();
-            new_ast = ast.copy_ast();
-            optimization_info optim_info;
-            optim_info.type = optimization_type::MATRIX;
-            optim_info.comps = new_ast->computations_list;
-            new_ast->new_optims.push_back(optim_info);
-            states.push_back(new_ast);
+                for(int i=0;i<4;i++){
+                        syntax_tree* new_ast = new syntax_tree();
+                        new_ast = ast.copy_ast();
+                        optimization_info optim_info;
+                        optim_info.type = optimization_type::MATRIX;
+                        optim_info.comps = new_ast->computations_list;
+                        new_ast->new_optims.push_back(optim_info);
+                        states.push_back(new_ast);
+                }
             break;
             }
         default:
@@ -411,13 +413,15 @@ std::vector<syntax_tree*> ml_model_schedules_generator::generate_schedules(synta
             break;
         case optimization_type::MATRIX:
             {
-            syntax_tree* new_ast = new syntax_tree();
-            new_ast = ast.copy_ast();
-            optimization_info optim_info;
-            optim_info.type = optimization_type::MATRIX;
-            optim_info.comps = new_ast->computations_list;
-            new_ast->new_optims.push_back(optim_info);
-            states.push_back(new_ast);
+                for(int i=0;i<4;i++){
+                    syntax_tree* new_ast = new syntax_tree();
+                    new_ast = ast.copy_ast();
+                    optimization_info optim_info;
+                    optim_info.type = optimization_type::MATRIX;
+                    optim_info.comps = new_ast->computations_list;
+                    new_ast->new_optims.push_back(optim_info);
+                    states.push_back(new_ast);
+                }
             break;
             }
         case optimization_type::UNROLLING:
