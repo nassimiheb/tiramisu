@@ -174,7 +174,6 @@ namespace tiramisu
 
     void tiramisu::function::calculate_dep_flow()
     {
-        std::cout<<"Started dep flow\n"<<std::endl;
         DEBUG_FCT_NAME(3);
         DEBUG_INDENT(4);
 
@@ -314,7 +313,6 @@ namespace tiramisu
         flow = isl_union_access_info_compute_flow(info);
 
         isl_union_map *write_after_write_dep = isl_union_flow_get_full_must_dependence(flow);
-        std::cout<<"ended dep flow\n"<<std::endl;
         DEBUG(3, tiramisu::str_dump(" write after write dependencies are { last_previous_write -> new write stmt } : " + std::string(isl_union_map_to_str(write_after_write_dep))));
 
         isl_union_map *not_last_writes = isl_union_map_range_factor_range(isl_union_map_copy(write_after_write_dep));

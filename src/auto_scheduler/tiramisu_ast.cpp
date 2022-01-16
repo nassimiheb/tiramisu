@@ -604,8 +604,6 @@ namespace tiramisu::auto_scheduler
         {
             update_node(this->corr_map,root,isl_ast_map,starting_level);
         }
-        std::cout<<"Inside transform ast by matrix"<<std::endl;
-        print_ast();
       
         recover_isl_states();
     }

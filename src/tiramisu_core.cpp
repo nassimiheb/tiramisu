@@ -3100,12 +3100,14 @@ namespace tiramisu
     
         std::vector<std::string> dim_vector;
         
-        std::cout<<"\n************************Matrix************************\n";
+        /*
+        //print the matrix
         for (int i = 0; i < matrix.size(); i++) {
         for (int j = 0; j < matrix[i].size(); j++)
              std::cout << matrix[i][j] << " ";
             std::cout <<  std::endl;
         }
+        */
 
         // ------------------------------------------------------------
         // Create a map for the duplicate schedule.
@@ -3187,7 +3189,6 @@ namespace tiramisu
 
         map = map + "]}";
 
-        std::cout<<map<<"\n";
 
         DEBUG(3, tiramisu::str_dump("A map that transforms the duplicate"));
         DEBUG(3, tiramisu::str_dump(map.c_str()));

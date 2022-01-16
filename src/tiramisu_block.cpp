@@ -42,11 +42,9 @@ void block::interchange(var L0, var L1) {
 }
 
 void block::matrix_transform(std::vector< std::vector<int> > matrix) {
-    std::cout<<"Transforming block using matrix\n"<<std::endl;
     for (auto &child : this->children) {
         child->matrix_transform(matrix);
     }
-    std::cout<<"Transforming block using matrix\n"<<std::endl;
 }
 
 void block::interchange(int L0, int L1) {

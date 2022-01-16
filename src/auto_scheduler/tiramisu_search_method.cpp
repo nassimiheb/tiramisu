@@ -109,8 +109,8 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
 {
     std::default_random_engine rand_generator;
 
-    if (ast.nb_explored_optims % NB_OPTIMIZATIONS == 0)
-        ast.clear_new_optimizations();
+    //if (ast.nb_explored_optims % NB_OPTIMIZATIONS == 0)
+    //    ast.clear_new_optimizations();
 
     std::vector<syntax_tree*> children;
 
@@ -126,7 +126,6 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
         nb_explored_optims++;
         nb_optims_tried++;
     }
-
     // Stop if no more optimizations can be applied
     if (children.size() == 0)
         return ;
@@ -156,7 +155,6 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
         else if (!child->ast_is_legal()) {
             if (std::atoi(read_env_var("AS_VERBOSE"))==1){
                 // print deleted Ast
-                std::cout << "\n-----------" << std::endl;
                 child->print_previous_optims();
                 std::cout << "\n-----------" << std::endl;
                 child->print_new_optims();
@@ -172,7 +170,6 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
             // print and evaluate Ast
 
             if (std::atoi(read_env_var("AS_VERBOSE"))==1){
-                std::cout << "\n-----------" << std::endl;
                 child->print_previous_optims();
                 std::cout << "\n-----------" << std::endl;
                 child->print_new_optims();
@@ -286,8 +283,14 @@ int determinant( std::vector <  std::vector<int> >  matrix, int n) {
    }
    return det;
 }
-std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcies(int nb_out_matrcies, int depth)
+/*
+Generate one random matrix that verifies the conditions of: 1- determinant is one 2- all of the upper left determinants are 1
+*/
+  std::vector < std::vector<int> >  beam_search::get_random_matrcies(int depth)
 {
+    //This method could easily be changed to generate multiple random matrices
+    //To do that change nb_out_matrices and add random into results and return results instead of random
+    int nb_out_matrcies =1;
     std::vector <std::vector <  std::vector<int> >>  result(nb_out_matrcies);
     int nb_valid_matrices = 0;
     int max_depth = 6;
@@ -457,10 +460,11 @@ std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcie
                         }
             }
     std::cout<< "end \n";*/
+    return random;
     result.at(nb_valid_matrices) = random;
     nb_valid_matrices++;
     }
-    return result;
+    
 }
 
 static const char *op_str[] = {
@@ -609,8 +613,6 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
 {
     std::default_random_engine rand_generator;
 
-    if (ast.nb_explored_optims % NB_OPTIMIZATIONS_MATRIX == 0)
-        ast.clear_new_optimizations();
 
     std::vector<syntax_tree*> children;
 
@@ -643,115 +645,98 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     
     while (iterator != children.end())
     {
-        std::cout<<"inside loop\n"<<std::endl;
-        //Generate nb_matricies matrices in case some don't pass legality check. 4 is enough in our tests.
-        int nb_matrices = 4; 
+
+
         syntax_tree *child = *iterator;
 
         // Add the corr_map to the ast structue
         child->corr_map = corr_map;
         child->nb_explored_optims = nb_explored_optims;
         
-        bool illegal = true;
         int shape = child->get_program_depth();
-        //Generate the random matrices 
-        matrices=get_random_matrcies(nb_matrices, shape);
-        
-        //While we still didn't find a legal matrix and we still have matrices to explore 
-        while(illegal && nb_matrices>0)
-        {
-            //save an AST in case the matrix is illegal
-            syntax_tree* new_ast = new syntax_tree();
-            new_ast = child->copy_ast();
+        //save an AST in case the matrix is illegal
+        syntax_tree* new_ast = new syntax_tree();
+        new_ast = child->copy_ast();
 
-            //add the matrix to optim.info
-            child->new_optims.back().matrix = matrices.at(nb_matrices-1);
-            child->transform_ast();
-            nb_matrices--;
-            if (child->schedule_is_prunable()){
-                if (std::atoi(read_env_var("AS_VERBOSE"))==1){
-                    // print deleted Ast
-                    child->print_previous_optims();
-                    std::cout << "\n-----------" << std::endl;
-                    child->print_new_optims();
-                    child->print_ast();
-                    std::cout << "\n<Schedule pruned>\n";
-                }
-                delete child;
-                iterator = children.erase(iterator);
+        //add the matrix to optim.info
+        child->new_optims.back().matrix = get_random_matrcies(shape);
+        child->transform_ast();
+
+        if (child->schedule_is_prunable()){
+            if (std::atoi(read_env_var("AS_VERBOSE"))==1){
+                // print deleted Ast
+                child->print_previous_optims();
+                std::cout << "\n-----------" << std::endl;
+                child->print_new_optims();
+                child->print_ast();
+                std::cout << "\n<Schedule pruned>\n";
             }
-            else if (!child->program_is_legal()) {
-                if (std::atoi(read_env_var("AS_VERBOSE"))==1){
-                    // print deleted Ast
-                    child->print_previous_optims();
-                    std::cout << "\n-----------" << std::endl;
-                    child->print_new_optims();
-                    child->print_ast();
-                    child->print_isl_states();
-                    std::cout << "\n<illegal>\n";
-                }
-                std::cout << "\n<illegal>\n";
-                child = new_ast;
-            }
-            else {
-                illegal = false;
-                if (std::atoi(read_env_var("AS_VERBOSE"))==1){
-                    child->print_previous_optims();
-                    std::cout << "\n-----------" << std::endl;
-                    child->print_new_optims();
-                    child->print_ast();
-                    child->print_isl_states();
-                    std::cout << "\n<legal>\n";
-                    child->print_computations_accesses();
-                }
-                std::vector<float> measurements;
-            
-                if (child->can_set_default_evaluation()) { // if yes the child's evaluation is set to a default value
-                
-                    measurements = {child->evaluation};
-                }
-                else{
-                    measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
-                    child->evaluation = min_eval(measurements);
-                }
-                
-                parent_trace->add_child_path(child, schedules_annotations->size());
-
-                std::string schedule_annot = evaluate_by_learning_model::get_schedule_json(*child);
-
-                //remove the last two characters }\n
-                schedule_annot.pop_back();
-                schedule_annot.pop_back();
-
-                if (std::isfinite(child->evaluation)) // the evaluation is not finite mean that the schedule didn't run
-                    schedule_annot += ", \n\"execution_times\" : " + measurements_to_str(measurements) + "\n}\n";
-                else
-                    schedule_annot += ", \n\"execution_times\" : null\n}\n";
-
-                schedules_annotations->push_back(schedule_annot);
-
-                if (std::atoi(read_env_var("AS_VERBOSE"))==1){
-                    std::cout << "Schedule number "<< schedules_annotations->size() << std::endl;
-                    std::cout << "Evaluation : " << child->evaluation << std::endl;
-                    std::cout << "Number of measurements : " << measurements.size() << std::endl;
-                    std::cout << "===================================" << std::endl << std::endl;
-                }
-
-                if (std::isinf(child->evaluation))
-                    std::cerr<< "Evaluation of schedule "<< schedules_annotations->size() <<" failed "<< std::endl;
-
-                if (child->evaluation < best_evaluation)
-                {
-                    best_evaluation = child->evaluation;
-                    best_ast = child;
-                }
-                ++iterator;
-            }
-            nb_explored_schedules++;
-        }
-        if (illegal){
             delete child;
             iterator = children.erase(iterator);
+        }
+        else if (!child->program_is_legal()) {
+            if (std::atoi(read_env_var("AS_VERBOSE"))==1){
+                // print deleted Ast
+                child->print_previous_optims();
+                std::cout << "\n-----------" << std::endl;
+                child->print_new_optims();
+                child->print_ast();
+                child->print_isl_states();
+                std::cout << "\n<illegal>\n";
+            }
+            child = new_ast;
+        }
+        else {
+            if (std::atoi(read_env_var("AS_VERBOSE"))==1){
+                child->print_previous_optims();
+                std::cout << "\n-----------" << std::endl;
+                child->print_new_optims();
+                child->print_ast();
+                child->print_isl_states();
+                std::cout << "\n<legal>\n";
+            }
+            std::vector<float> measurements;
+        
+            if (child->can_set_default_evaluation()) { // if yes the child's evaluation is set to a default value
+            
+                measurements = {child->evaluation};
+            }
+            else{
+                measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
+                child->evaluation = min_eval(measurements);
+            }
+            
+            parent_trace->add_child_path(child, schedules_annotations->size());
+
+            std::string schedule_annot = evaluate_by_learning_model::get_schedule_json(*child);
+
+            //remove the last two characters }\n
+            schedule_annot.pop_back();
+            schedule_annot.pop_back();
+
+            if (std::isfinite(child->evaluation)) // the evaluation is not finite mean that the schedule didn't run
+                schedule_annot += ", \n\"execution_times\" : " + measurements_to_str(measurements) + "\n}\n";
+            else
+                schedule_annot += ", \n\"execution_times\" : null\n}\n";
+
+            schedules_annotations->push_back(schedule_annot);
+
+            if (std::atoi(read_env_var("AS_VERBOSE"))==1){
+                std::cout << "Schedule number "<< schedules_annotations->size() << std::endl;
+                std::cout << "Evaluation : " << child->evaluation << std::endl;
+                std::cout << "Number of measurements : " << measurements.size() << std::endl;
+                std::cout << "===================================" << std::endl << std::endl;
+            }
+
+            if (std::isinf(child->evaluation))
+                std::cerr<< "Evaluation of schedule "<< schedules_annotations->size() <<" failed "<< std::endl;
+
+            if (child->evaluation < best_evaluation)
+            {
+                best_evaluation = child->evaluation;
+                best_ast = child;
+            }
+            ++iterator;
         }
     }
     
@@ -760,33 +745,30 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     if (nb_explored_optims >= max_depth)
         return ;
 
-    // Add the current AST to the list of children
-    //syntax_tree *ast_copy = ast.copy_ast();
-    //ast_copy->nb_explored_optims = nb_explored_optims;
-    //children.push_back(ast_copy);
-    //parent_trace->add_child_path(ast_copy, parent_trace->get_candidate_id()); // keeps the same id since it's just copy
 
     // Sort children from smallest evaluation to largest
-//    std::sort(children.begin(), children.end(), [](syntax_tree *a, syntax_tree *b) {
-//        return a->evaluation < b->evaluation;
-//    });
+    std::sort(children.begin(), children.end(), [](syntax_tree *a, syntax_tree *b) {
+        return a->evaluation < b->evaluation;
+    });
+
     // shuffle the children so that they are selected a random
-    //std::shuffle(std::begin(children), std::end(children), rand_generator);
+    std::shuffle(std::begin(children), std::end(children), rand_generator);
 
     // keep the top 'beam_size' children and delete the rest
-    //for (int i = beam_size; i < children.size(); ++i)
-    //   delete children[i];
+    for (int i = beam_size; i < children.size(); ++i)
+       delete children[i];
 
     children.resize(std::min(beam_size, (int)children.size()));
-    std::cout<<"Started search save with : "<<children.size()<<"\n";
+
     // Search recursively on the best children
     for (syntax_tree *child : children)
     {
         child->search_depth = ast.search_depth ;
         
-        search_save(*children[3], schedules_annotations, parent_trace->child_mappings[children[3]], schedule_timeout);
+        search_save(*child, schedules_annotations, parent_trace->child_mappings[child], schedule_timeout);
     }
 }
+
 void mcts::search(syntax_tree& ast)
 {
     std::default_random_engine rand_generator;

@@ -414,6 +414,7 @@ std::vector<syntax_tree*> ml_model_schedules_generator::generate_schedules(synta
             break;
         case optimization_type::MATRIX:
             {
+                //Generate 4 matrices to be explored
                 for(int i=0;i<4;i++){
                     syntax_tree* new_ast = new syntax_tree();
                     new_ast = ast.copy_ast();

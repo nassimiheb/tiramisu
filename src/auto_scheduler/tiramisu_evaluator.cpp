@@ -145,9 +145,7 @@ std::vector<float> evaluate_by_execution::get_measurements_matrix(syntax_tree& a
     // Compile the program to an object file
     fct->lift_dist_comps();
     fct->gen_time_space_domain();
-    std::cout<<"Started gen_isl\n"<<std::endl;
     fct->gen_isl_ast();
-    std::cout<<"Ended gen_isl_ast\n"<<std::endl;
     fct->gen_halide_stmt();
 
     Halide::Module m = lower_halide_pipeline(fct->get_name(), halide_target, halide_arguments,
