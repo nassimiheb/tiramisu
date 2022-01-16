@@ -199,7 +199,6 @@ void exhaustive_generator::generate_interchanges(ast_node *node, std::vector<syn
 
 void exhaustive_generator::generate_unrollings(ast_node *node, std::vector<syntax_tree*>& states, syntax_tree const& ast)
 {
-    std::cout<<"#######################################UNROLL############################\n"<<std::endl;
     if (!node->unrolled && node->get_extent() > 1)
     {
         for (int unrolling_factor : unrolling_factors_list)
@@ -335,8 +334,10 @@ std::vector<syntax_tree*> ml_model_schedules_generator::generate_schedules(synta
                                 {
                                     for (int tiling_size3 : tiling_factors_list)
                                     {
+                                        
                                         if (can_split_iterator_sup(node_iterator->children[0]->children[0]->get_node_loop_extent(), tiling_size3))
                                         {
+                                        
                                             // Copy the AST and add tiling with 3 dimensions to the list of optimizations
                                             syntax_tree* new_ast = new syntax_tree();
                                             ast_node *new_node = ast.copy_and_return_node(*new_ast, node_iterator);

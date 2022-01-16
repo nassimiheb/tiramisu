@@ -607,7 +607,6 @@ std::map <std::string,std::string>* get_corr_map_from_isl(syntax_tree& ast){
 }
 void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout)
 {
-    //std::cout<<"******************STARTED SEARCH*****************\n"<<std::endl;
     std::default_random_engine rand_generator;
 
     if (ast.nb_explored_optims % NB_OPTIMIZATIONS_MATRIX == 0)
@@ -618,27 +617,22 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     // Look for an optimization that can be applied
     int nb_optims_tried = 0;
     int nb_explored_optims = ast.nb_explored_optims;
+    
+    //Generate n matrice asts to be explored
+    //To change the number of matrices being explored go to: generate_schedules then the MATRIX case and change the length of the loop
     optimization_type optim_type = optimization_type::MATRIX;
     children = scheds_gen->generate_schedules(ast, optim_type);
-    /*
-    while (children.size() == 0 && nb_optims_tried < NB_OPTIMIZATIONS_MATRIX && nb_explored_optims < max_depth)
-    {
-        optimization_type optim_type = DEFAULT_OPTIMIZATIONS_ORDER_MATRIX[nb_explored_optims % NB_OPTIMIZATIONS_MATRIX];
-        children = scheds_gen->generate_schedules(ast, optim_type);
-
-        nb_explored_optims++;
-        nb_optims_tried++;
-    }
-    */
+    
+    
     // Stop if no more optimizations can be applied
     //Add the current AST to the list of children
-    
     if (children.size() == 0)
         return ;
     
     // Evaluate children and sort them from smallest to highest evaluation
     // evaluate while removing illegal versions
     auto iterator = children.begin();
+
     std::vector < std::vector < std::vector<int> > > matrices;
 
     std::map <std::string,std::string>* corr_map;
@@ -650,26 +644,29 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     while (iterator != children.end())
     {
         std::cout<<"inside loop\n"<<std::endl;
-        int nb_matrices = 4;
+        //Generate nb_matricies matrices in case some don't pass legality check. 4 is enough in our tests.
+        int nb_matrices = 4; 
         syntax_tree *child = *iterator;
+
+        // Add the corr_map to the ast structue
         child->corr_map = corr_map;
         child->nb_explored_optims = nb_explored_optims;
+        
         bool illegal = true;
         int shape = child->get_program_depth();
-        bool matrix = child->new_optims.back().type == MATRIX;
-        if (matrix){
-            std::cout<<"Generating Matrcies\n"<<std::endl;
-            matrices=get_random_matrcies(nb_matrices, shape);
-            std::cout<<"Done Generating Matrcies\n"<<std::endl;
-        }
+        //Generate the random matrices 
+        matrices=get_random_matrcies(nb_matrices, shape);
         
-        while(matrix && illegal && nb_matrices>0)
+        //While we still didn't find a legal matrix and we still have matrices to explore 
+        while(illegal && nb_matrices>0)
         {
+            //save an AST in case the matrix is illegal
             syntax_tree* new_ast = new syntax_tree();
             new_ast = child->copy_ast();
-            matrix = child->new_optims.back().type == MATRIX;
-            if(matrix) child->new_optims.back().matrix = matrices.at(nb_matrices-1);
-            child->transform_ast_matrix(matrices.at(nb_matrices-1));
+
+            //add the matrix to optim.info
+            child->new_optims.back().matrix = matrices.at(nb_matrices-1);
+            child->transform_ast();
             nb_matrices--;
             if (child->schedule_is_prunable()){
                 if (std::atoi(read_env_var("AS_VERBOSE"))==1){
@@ -714,7 +711,6 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                     measurements = {child->evaluation};
                 }
                 else{
-                    
                     measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
                     child->evaluation = min_eval(measurements);
                 }
@@ -753,7 +749,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
             }
             nb_explored_schedules++;
         }
-        if (matrix && illegal){
+        if (illegal){
             delete child;
             iterator = children.erase(iterator);
         }
@@ -775,7 +771,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
 //        return a->evaluation < b->evaluation;
 //    });
     // shuffle the children so that they are selected a random
-    std::shuffle(std::begin(children), std::end(children), rand_generator);
+    //std::shuffle(std::begin(children), std::end(children), rand_generator);
 
     // keep the top 'beam_size' children and delete the rest
     //for (int i = beam_size; i < children.size(); ++i)
@@ -786,9 +782,9 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     // Search recursively on the best children
     for (syntax_tree *child : children)
     {
-        child->search_depth = ast.search_depth + 1;
+        child->search_depth = ast.search_depth ;
         
-        search_save(*child, schedules_annotations, parent_trace->child_mappings[child], schedule_timeout);
+        search_save(*children[3], schedules_annotations, parent_trace->child_mappings[children[3]], schedule_timeout);
     }
 }
 void mcts::search(syntax_tree& ast)

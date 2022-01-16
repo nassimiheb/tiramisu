@@ -310,13 +310,6 @@ namespace tiramisu::auto_scheduler
         transform_ast(new_optims.back());
     }
 
-    void syntax_tree::transform_ast_matrix(std::vector<std::vector<int>> matrix)
-    {
-        if (new_optims.size() == 0)
-            return;
-
-        transform_ast_matrix(new_optims.back(), matrix);
-    }
     void syntax_tree::transform_ast(optimization_info const &opt)
     {
         switch (opt.type)
@@ -345,46 +338,9 @@ namespace tiramisu::auto_scheduler
             transform_ast_by_parallelism(opt);
             break;
 
-        case optimization_type::SKEWING:
-            transform_ast_by_skewing(opt);
-            break;
-
-        default:
-            break;
-        }
-    }
-    void syntax_tree::transform_ast_matrix(optimization_info const &opt, std::vector<std::vector<int>> matrix)
-    {
-        switch (opt.type)
-        {
-        case optimization_type::FUSION:
-            transform_ast_by_fusion(opt);
-            break;
-
-        case optimization_type::UNFUSE:
-            transform_ast_by_unfuse(opt);
-            break;
-
-        case optimization_type::TILING:
-            transform_ast_by_tiling(opt);
-            break;
-
-        case optimization_type::INTERCHANGE:
-            transform_ast_by_interchange(opt);
-            break;
-
-        case optimization_type::UNROLLING:
-            transform_ast_by_unrolling(opt);
-            break;
-
         case optimization_type::MATRIX:
-            transform_ast_by_matrix(matrix);
+            transform_ast_by_matrix(opt.matrix);
             break;
-
-        case optimization_type::PARALLELIZE:
-            transform_ast_by_parallelism(opt);
-            break;
-
         case optimization_type::SKEWING:
             transform_ast_by_skewing(opt);
             break;
@@ -556,9 +512,9 @@ namespace tiramisu::auto_scheduler
         }   
     }
     // Update the node of tiramisu AST 
-    void update_node(std::map <std::string,std::string>* corr_map,ast_node *node, std::map <int,  std::tuple<std::string , std::string,std::string> > isl_ast_map){
+    void update_node(std::map <std::string,std::string>* corr_map,ast_node *node, std::map <int,  std::tuple<std::string , std::string,std::string> > isl_ast_map, int& level){
         
-        static int level=0;
+       
         if (level >= isl_ast_map.size()){
             if (node->children.size() != 0){node = node->children[0];}
             else{node = nullptr; return;}      
@@ -574,7 +530,7 @@ namespace tiramisu::auto_scheduler
         // Updating nodes recursivly
         for (ast_node *child : node->children)
             {         
-                update_node(corr_map,child,isl_ast_map);
+                update_node(corr_map,child,isl_ast_map,level);
             }
     }
 
@@ -626,11 +582,11 @@ namespace tiramisu::auto_scheduler
             }
             else{stop=1;} 
         }
-
-        /*std::map<int, std::tuple<std::string , std::string,std::string>>::iterator itr;
+        /*
+        std::map<int, std::tuple<std::string , std::string,std::string>>::iterator itr;
         std::cout << "\nThe map isl ast map is : \n";
         std::cout << "\tKEY\tELEMENT\n";
-        for (itr = isl_ast_map.begin(); itr !=  isl_ast_map.end(); ++itr) {
+        for (auto itr = isl_ast_map.begin(); itr !=  isl_ast_map.end(); ++itr) {
             std::cout << '\t' << itr->first
                 << '\t' << std::get<0>(itr->second)<< '\t' << std::get<1>(itr->second)<< '\t' << std::get<2>(itr->second) << '\n';
         }
@@ -640,13 +596,15 @@ namespace tiramisu::auto_scheduler
         for (itr1 = this->corr_map->begin(); itr1 !=  this->corr_map->end(); ++itr1) {
             std::cout << '\t' << itr1->first
                 << '\t' << itr1->second << '\n'<< std::flush;
-        }*/
-
+        }
+        */
         //Update the ast nodes according to the ordre of the ISL AST 
+        int starting_level=0;
         for (ast_node *root : roots)
         {
-            update_node(this->corr_map,root,isl_ast_map);
+            update_node(this->corr_map,root,isl_ast_map,starting_level);
         }
+        std::cout<<"Inside transform ast by matrix"<<std::endl;
         print_ast();
       
         recover_isl_states();
