@@ -350,7 +350,7 @@ namespace tiramisu::auto_scheduler
         }
     }
     
-    static char *op_str[] = {
+    static const char *op_str[] = {
         [isl_ast_op_and] = "and",
         [isl_ast_op_and_then] = "and_then",
         [isl_ast_op_or] = "or",
@@ -554,7 +554,6 @@ namespace tiramisu::auto_scheduler
                 f+=str+" ";
             }
         }   
-        //std::cout<<"\n Genrate NEW ISL AST\n";
         //Genrate the ISL AST
         this->fct->gen_isl_ast_after_trans();
         
@@ -1571,8 +1570,6 @@ state_computation::state_computation(state_computation * reference)
 
         std::string transformation_map = "{[i,j]->[" + std::to_string(f_i) + "*i" + std::to_string(f_j) + "*j ," + std::to_string(gamma) + "*i" + std::to_string(sigma) + "*j]}";
 
-        std::cout << "\n transformation map:" << transformation_map;
-
         this->set_accesses_changes_with_skewing(this->depth, f_i, f_j, gamma, sigma);
     }
 
@@ -1681,11 +1678,9 @@ state_computation::state_computation(state_computation * reference)
 
         this->fct->prepare_schedules_for_legality_checks(false);
         
-        //std::cout<<"Testing is legal\n"<<std::endl;
         bool result = this->fct->check_legality_for_function();
 
         recover_isl_states();
-        //std::cout<<"Done Testing is legal\n"<<std::endl;
         return result;
     }
 

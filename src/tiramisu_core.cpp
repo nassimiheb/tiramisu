@@ -3100,14 +3100,6 @@ namespace tiramisu
     
         std::vector<std::string> dim_vector;
         
-        /*
-        //print the matrix
-        for (int i = 0; i < matrix.size(); i++) {
-        for (int j = 0; j < matrix[i].size(); j++)
-             std::cout << matrix[i][j] << " ";
-            std::cout <<  std::endl;
-        }
-        */
 
         // ------------------------------------------------------------
         // Create a map for the duplicate schedule.
@@ -3161,7 +3153,7 @@ namespace tiramisu
             temp_vector.push_back(vector_content);
             vector_content.clear();     
         }
-        for (int i = 0; i < temp_vector.size(); i++)std::cout << temp_vector[i] << "\n";
+        
         
         t = 0;
         for (int i = 0; i < n_dims; i++)
@@ -3330,13 +3322,10 @@ namespace tiramisu
         }
 
         DEBUG(3, tiramisu::str_dump("Final transformation map : ", isl_map_to_str(transformation_map)));
-        //std::cout<<"\nFinal transformation map"<<isl_map_to_str(transformation_map);
         schedule = isl_map_apply_range(isl_map_copy(schedule), isl_map_copy(transformation_map));
-          //std::cout<<"\nSchedule after  transformation map"<<isl_map_to_str(schedule);
         DEBUG(3, tiramisu::str_dump("Schedule after interchange: ", isl_map_to_str(schedule)));
 
         this->set_schedule(schedule);
-         // std::cout<<"\nSchedule after  transformation map TT\n"<<isl_map_to_str(this->get_schedule());
         DEBUG_INDENT(-4);
     }
 

@@ -1460,15 +1460,6 @@ namespace tiramisu
         DEBUG(3, tiramisu::str_dump("\n"));
 
         this->ast = isl_ast_build_node_from_schedule_map(ast_build, umap);
-        //std::cout<<"\nSchedule"<<isl_union_map_to_str(this->get_schedule())<<"\n"<<isl_union_map_to_str(umap);
-        //std::cout<<"\nGEn Schedule\n"<<isl_union_map_to_str(this->get_schedule());
-        //std::cout<<"\nSchedule Identy\n"<<isl_union_set_to_str(the_set);
-        //std::cout<<"\nIteration domain:\n"<<isl_union_set_to_str(this->get_iteration_domain());
-        //std::cout<<"\nTrimmed Time-Processor domain:\n"<<isl_union_set_to_str(this->get_trimmed_time_processor_domain());
-        //std::cout<<"\nTrimmed Time-Processor aligned identity schedule:\n"<<isl_union_map_to_str(this->get_aligned_identity_schedules());
-        //std::cout<<"\nprinting\n";
-        //std::cout<<"\nIdentity schedule intersect trimmed Time-Processor domain:\n"<<isl_union_map_to_str(umap);
-        //std::cout<<"\nprinting\n";
         isl_ast_build_free(ast_build);
     
         DEBUG_INDENT(-4);
@@ -1556,16 +1547,6 @@ namespace tiramisu
         DEBUG(3, tiramisu::str_dump("\n"));
 
         this->ast = isl_ast_build_node_from_schedule_map(ast_build, umap);
-
-
-        std::cout<<"\nSchedule\n"<<isl_union_map_to_str(this->get_schedule());
-        std::cout<<"\nIteration domain:\n"<<isl_union_set_to_str(this->get_iteration_domain());
-        std::cout<<"\nTrimmed Time-Processor domain:\n"<<isl_union_set_to_str(this->get_trimmed_time_processor_domain());
-        std::cout<<"\nTrimmed Time-Processor aligned identity schedule:\n"<<isl_union_map_to_str(this->get_aligned_identity_schedules());
-        std::cout<<"\nIdentity schedule intersect trimmed Time-Processor domain:\n"<<isl_union_map_to_str(umap);
-        std::cout<<"\nprinting\n";
-        std::cout<<isl_ast_node_to_C_str(this->ast);
-
 
         isl_ast_build_free(ast_build);
 
@@ -1878,7 +1859,6 @@ namespace tiramisu
             {
                 isl_map *sched = comp->gen_identity_schedule_for_time_space_domain();
                 DEBUG(3, tiramisu::str_dump("Identity schedule for time space domain: ", isl_map_to_str(sched)));
-                //std::cout<<"\nIdentity schedule for time space domain:\n"<<isl_map_to_str(sched);
                 assert((sched != NULL) && "Identity schedule could not be computed");
                 sched = isl_map_align_range_dims(sched, max_dim);
                 result = isl_union_map_union(result, isl_union_map_from_map(sched));
@@ -1918,7 +1898,6 @@ namespace tiramisu
                 //isl_map *sched = comp->gen_identity_schedule_for_time_space_domain();
                 isl_map *sched = comp->get_schedule();
                 DEBUG(3, tiramisu::str_dump("Identity schedule for time space domain: ", isl_map_to_str(sched)));
-                std::cout<<"\nIdentity schedule for time space domain:\n"<<isl_map_to_str(sched);
                 assert((sched != NULL) && "Identity schedule could not be computed");
                 sched = isl_map_align_range_dims(sched, max_dim);
                 result = isl_union_map_union(result, isl_union_map_from_map(sched));
