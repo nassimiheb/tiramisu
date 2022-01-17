@@ -216,6 +216,17 @@ void print_optim(optimization_info optim)
             std::cout << "Fusion" << " L" << optim.l0 << " " << " L" << optim.l1 << std::endl;
             break;
 
+        case optimization_type::MATRIX:
+            std::cout << "Matrix Transform " << std::to_string(optim.matrix.size()) << "x" << std::to_string(optim.matrix.size())<< " [";
+            for(int i = 0; i < optim.matrix.size(); i++){
+                for(int j = 0; j< optim.matrix.size(); j++){
+                    std::cout << std::to_string(optim.matrix.at(i).at(j));
+                    if(!(i==optim.matrix.size()-1 && j==optim.matrix.size()-1)) std::cout << ", ";
+                }
+            }
+            std::cout << "]" << std::endl;
+            break;
+
         case optimization_type::INTERCHANGE:
             std::cout << "Interchange" << " L" << optim.l0 << " " << " L" << optim.l1  << std::endl;
             break;
