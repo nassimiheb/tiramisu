@@ -1,5 +1,6 @@
 #include <tiramisu/auto_scheduler/search_method.h>
 #include <random>
+#include <functional>
 
 namespace tiramisu::auto_scheduler
 {
@@ -290,19 +291,19 @@ Generate one random matrix that verifies the conditions of: 1- determinant is on
 {
     //This method could easily be changed to generate multiple random matrices
     //To do that change nb_out_matrices and add random into results and return results instead of random
-    int nb_out_matrcies =1;
+    int nb_out_matrcies = 1;
     std::vector <std::vector <  std::vector<int> >>  result(nb_out_matrcies);
     int nb_valid_matrices = 0;
     int max_depth = 6;
     if (depth>max_depth) std::cout << "WARNING: the depth of this program is too big. Matrix generation will take a long time \n"<< std::endl;
-    srand((unsigned) time(0));
+    
     while(nb_valid_matrices<nb_out_matrcies)
     {
         std::vector <  std::vector<int> >  random(depth);
         bool valid = false;
         while (!valid)
         {   
-            //std::cout << "generating";
+            
             int l, c;
             std::vector <  std::vector<int> >  randomL(depth);
             for(l = 0; l<depth; l++){
@@ -452,14 +453,16 @@ Generate one random matrix that verifies the conditions of: 1- determinant is on
             valid = det_bool && all_1 ;
         }
     //std::cout<< "got one done \n"<<std::endl;
-    /*std::cout<< "starts \n";
+    /*
+    std::cout<< "starts \n";
     for(int i = 0; i < depth; i++){
                         for(int j = 0; j< depth; j++){
-                                std::cout<<random.at(i).at(j)<<"\n"<<std::endl;
+                                std::cout<<random.at(i).at(j)<<std::endl;
                              
                         }
             }
-    std::cout<< "end \n";*/
+    std::cout<< "end \n";
+    */
     return random;
     result.at(nb_valid_matrices) = random;
     nb_valid_matrices++;
@@ -641,7 +644,9 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
 
     // Add the corr_map to the ast structue
     corr_map = get_corr_map_from_isl(ast);
-    
+    std::hash<std::string> hasher;
+    auto hashed = hasher(evaluate_by_learning_model::get_program_json(ast));
+    srand(hashed);
     
     while (iterator != children.end())
     {
@@ -657,8 +662,10 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         //save an AST in case the matrix is illegal
         syntax_tree* new_ast = new syntax_tree();
         new_ast = child->copy_ast();
-
+        
+        
         //add the matrix to optim.info
+        
         child->new_optims.back().matrix = get_random_matrcies(shape);
         child->transform_ast();
 
