@@ -139,20 +139,7 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
         child->nb_explored_optims = nb_explored_optims;
         child->transform_ast();
 
-        if (child->schedule_is_prunable()){
-            if (std::atoi(read_env_var("AS_VERBOSE"))==1){
-                // print deleted Ast
-                child->print_previous_optims();
-                std::cout << "\n-----------" << std::endl;
-                child->print_new_optims();
-                child->print_ast();
-                std::cout << "\n<Schedule pruned>\n";
-            }
-            delete child;
-            iterator = children.erase(iterator);
-        }
-
-        else if (!child->ast_is_legal()) {
+        if (!child->ast_is_legal()) {
             if (std::atoi(read_env_var("AS_VERBOSE"))==1){
                 // print deleted Ast
                 child->print_previous_optims();
@@ -180,13 +167,8 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
             }
 
             std::vector<float> measurements;
-            if (child->can_set_default_evaluation()) { // if yes the child's evaluation is set to a default value
-                measurements = {child->evaluation};
-            }
-            else{
-                measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
-                child->evaluation = min_eval(measurements);
-            }
+            measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
+            child->evaluation = min_eval(measurements);
 
             parent_trace->add_child_path(child, schedules_annotations->size());
 
@@ -662,19 +644,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         child->new_optims.back().matrix = get_random_matrcies(shape);
         child->transform_ast();
 
-        if (child->schedule_is_prunable()){
-            if (std::atoi(read_env_var("AS_VERBOSE"))==1){
-                // print deleted Ast
-                child->print_previous_optims();
-                std::cout << "\n-----------" << std::endl;
-                child->print_new_optims();
-                child->print_ast();
-                std::cout << "\n<Schedule pruned>\n";
-            }
-            delete child;
-            iterator = children.erase(iterator);
-        }
-        else if (!child->program_is_legal()) {
+        if (!child->program_is_legal()) {
             if (std::atoi(read_env_var("AS_VERBOSE"))==1){
                 // print deleted Ast
                 child->print_previous_optims();
@@ -696,15 +666,9 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                 std::cout << "\n<legal>\n";
             }
             std::vector<float> measurements;
-        
-            if (child->can_set_default_evaluation()) { // if yes the child's evaluation is set to a default value
-            
-                measurements = {child->evaluation};
-            }
-            else{
-                measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
-                child->evaluation = min_eval(measurements);
-            }
+
+            measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
+            child->evaluation = min_eval(measurements);
             
             parent_trace->add_child_path(child, schedules_annotations->size());
 
