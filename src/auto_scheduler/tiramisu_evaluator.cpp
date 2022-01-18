@@ -499,7 +499,7 @@ std::string evaluate_by_learning_model::get_schedule_json(syntax_tree const& ast
         
         comp_sched_json += "],";
         // JSON for matrix
-        comp_sched_json += "\"Transformation Matrix\" : [";
+        comp_sched_json += "\"transformation_matrix\" : [";
         
         if (transformed_by_matrix)
         {
