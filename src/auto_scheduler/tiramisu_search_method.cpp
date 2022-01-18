@@ -220,11 +220,11 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
     parent_trace->add_child_path(ast_copy, parent_trace->get_candidate_id()); // keeps the same id since it's just copy
 
     // Sort children from smallest evaluation to largest
-//    std::sort(children.begin(), children.end(), [](syntax_tree *a, syntax_tree *b) {
-//        return a->evaluation < b->evaluation;
-//    });
+    std::sort(children.begin(), children.end(), [](syntax_tree *a, syntax_tree *b) {
+        return a->evaluation < b->evaluation;
+    });
     // shuffle the children so that they are selected a random
-    std::shuffle(std::begin(children), std::end(children), rand_generator);
+//    std::shuffle(std::begin(children), std::end(children), rand_generator);
 
     // keep the top 'beam_size' children and delete the rest
     for (int i = beam_size; i < children.size(); ++i)
@@ -752,7 +752,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     });
 
     // shuffle the children so that they are selected a random
-    std::shuffle(std::begin(children), std::end(children), rand_generator);
+//    std::shuffle(std::begin(children), std::end(children), rand_generator);
 
     // keep the top 'beam_size' children and delete the rest
     for (int i = beam_size; i < children.size(); ++i)
