@@ -308,26 +308,20 @@ bool check_if_repeated( std::vector < std::vector<int> >  matrix,std::vector < s
      
     return false;
 }
-/*
-Generate one random matrix that verifies the conditions of: 1- determinant is one 2- all of the upper left determinants are 1
-*/
-  std::vector < std::vector<int> >  beam_search::get_random_matrcies(int depth)
+std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcies(int nb_out_matrcies, int depth)
 {
-    //This method could easily be changed to generate multiple random matrices
-    //To do that change nb_out_matrices and add random into results and return results instead of random
-    int nb_out_matrcies = 1;
     std::vector <std::vector <  std::vector<int> >>  result(nb_out_matrcies);
     int nb_valid_matrices = 0;
     int max_depth = 6;
     if (depth>max_depth) std::cout << "WARNING: the depth of this program is too big. Matrix generation will take a long time \n"<< std::endl;
-    
+    srand((unsigned) time(0));
     while(nb_valid_matrices<nb_out_matrcies)
     {
         std::vector <  std::vector<int> >  random(depth);
         bool valid = false;
         while (!valid)
         {   
-            
+            //std::cout << "generating";
             int l, c;
             std::vector <  std::vector<int> >  randomL(depth);
             for(l = 0; l<depth; l++){
@@ -401,7 +395,7 @@ Generate one random matrix that verifies the conditions of: 1- determinant is on
             bool bad_case;
             int f = -1;
             // Check determinant equals 1
-            
+            //std::cout<<"Before \n"<< determinant(random, depth)<<std::endl;
             while(m>=mx && useless<= depth*depth){
                     steps+=1;
                     bad_case=0;
@@ -414,17 +408,17 @@ Generate one random matrix that verifies the conditions of: 1- determinant is on
                             }
                         if(i==depth-1) bad_case=1;
                     }
-                    
+                    //std::cout<<"First \n"<<std::endl;
                     if(bad_case) break;
                     int s =1;
-                    
+                    //std::cout<<f<<" Second \n"<<y<<std::endl;
                     if (m*random.at(f).at(y)<0) s=s*-1;
                     
                     for(int j = 0; j < depth; j++){
                             
                             random.at(x).at(j) = random.at(x).at(j) - s * random.at(f).at(j);
                     }
-                    
+                    //std::cout<<"Second \n"<<std::endl;
                     mm=-10000;
                     for(int i = 0; i < depth; i++){
                         for(int j = 0; j< depth; j++){
@@ -436,7 +430,7 @@ Generate one random matrix that verifies the conditions of: 1- determinant is on
                             }
                         }
                     }
-    
+                    //std::cout<<"Third \n"<<std::endl;
                     if(m>=mm) useless++;
                     m=mm;
             }
@@ -477,20 +471,175 @@ Generate one random matrix that verifies the conditions of: 1- determinant is on
             valid = det_bool && all_1 ;
         }
     //std::cout<< "got one done \n"<<std::endl;
-    /*
-    std::cout<< "starts \n";
+    /*std::cout<< "starts \n";
     for(int i = 0; i < depth; i++){
                         for(int j = 0; j< depth; j++){
-                                std::cout<<random.at(i).at(j)<<std::endl;
+                                std::cout<<random.at(i).at(j)<<"\n"<<std::endl;
                              
                         }
             }
-    std::cout<< "end \n";
-    */
-    return random;
+    std::cout<< "end \n";*/
     result.at(nb_valid_matrices) = random;
     nb_valid_matrices++;
     }
+    return result;
+}
+/*
+Generate one random matrix that verifies the conditions of: 1- determinant is one 2- all of the upper left determinants are 1
+*/
+  std::vector < std::vector<int> >  beam_search::get_random_matix(int depth)
+{
+    int max_depth = 6;
+    if (depth>max_depth) std::cout << "WARNING: the depth of this program is too big. Matrix generation will take a long time \n"<< std::endl;
+    std::vector <  std::vector<int> >  random(depth);
+    bool valid = false;
+    while (!valid)
+    {   
+        //generate a lower traiangular matrix 
+        int l, c;
+        std::vector <  std::vector<int> >  randomL(depth);
+        for(l = 0; l<depth; l++){
+            randomL.at(l)= std::vector<int>(depth);
+            for(c = 0; c<depth; c++){
+                            if (l>c){
+                                randomL.at(l).at(c) = (rand() %16) - 8;
+                            }else{
+                                randomL.at(l).at(c) = 0;
+                            }
+            }
+        }
+        ////generate an upper traiangular matrix
+        std::vector <  std::vector<int> >  randomU(depth);
+        for(l = 0; l<depth; l++){
+            randomU.at(l)= std::vector<int>(depth);
+            for(c = 0; c<depth; c++){
+                        if (l<c){
+                            randomU.at(l).at(c) = (rand() % 16) - 8;
+                        }else{
+                            randomU.at(l).at(c) = 0;
+                        }
+            }
+        }
+        
+        for(l = 0; l<depth; l++){
+            randomL.at(l).at(l) =1;
+            randomU.at(l).at(l) =1;
+            int sum=0,j=0;
+            if(l<depth-1){
+                sum=0;
+                for(j=0;j<l;j++){
+                    sum+= randomL.at(l).at(j) * randomU.at(j).at(depth-1);
+                }
+                randomU.at(l).at(depth-1) = (1-sum)/randomL.at(l).at(l);
+            }else{
+                sum=0;
+                for(j=1;j<l+1;j++){
+                    sum+= randomL.at(l).at(j) * randomU.at(j).at(depth-1);
+                }
+                randomL.at(depth-1).at(0) = (1-sum)/randomU.at(0).at(depth-1);
+            }
+        }
+        int k;
+        //multiply both matrices and put the result in a matrix random
+        for(l = 0; l < depth; ++l){
+            random.at(l)= std::vector<int>(depth);
+            for(c = 0; c < depth; ++c)
+                {
+                    for(k = 0; k < depth; ++k)
+                    {
+                        random.at(l).at(c)+= randomL.at(l).at(k) * randomU.at(k).at(c);
+                    }
+                }
+        }
+        // Reduce elements into [-7, 7] values
+        int mx = 7;
+        int m = -1000;
+        int x,y;
+        for(int i = 0; i < depth; i++){
+                    for(int j = 0; j< depth; j++){
+                        if(m < std::abs(random.at(i).at(j)))
+                        {
+                            m = random.at(i).at(j);
+                            x = i;
+                            y = j;
+                        }
+                    }
+        }
+        int mm=-8;
+        int useless = 0;
+        int steps = 0;
+        bool bad_case;
+        int f = -1;
+        while(m>=mx && useless<= depth*depth){
+                steps+=1;
+                bad_case=0;
+                for(int i = 0; i < depth; i++){
+                    if (i==x) continue;
+                    if(random.at(i).at(y)!=0)
+                        {
+                            f = i;
+                            break;
+                        }
+                    if(i==depth-1) bad_case=1;
+                }
+                
+                if(bad_case) break;
+                int s =1;
+                
+                if (m*random.at(f).at(y)<0) s=s*-1;
+                
+                for(int j = 0; j < depth; j++){
+                        
+                        random.at(x).at(j) = random.at(x).at(j) - s * random.at(f).at(j);
+                }
+                
+                mm=-10000;
+                for(int i = 0; i < depth; i++){
+                    for(int j = 0; j< depth; j++){
+                        if(mm < std::abs(random.at(i).at(j)))
+                        {
+                            mm = random.at(i).at(j);
+                            x = i;
+                            y = j;
+                        }
+                    }
+                }
+
+                if(m>=mm) useless++;
+                m=mm;
+        }
+        // Check determinant equals 1
+        int det = determinant(random, depth);
+        // if determinant is 1 and we were able to reduce the elements to the desired interval
+        bool det_bool = det==1 && !bad_case && (useless <= depth*depth) ;
+        
+        // Check upper right determinants equal 1
+        bool all_1 = true;
+        if (det_bool){
+            
+            int d=0,s=0;
+            
+            for (k=depth-1;k>0;k--){
+                    
+                    std::vector <  std::vector<int> >  submatrixd(depth-k);
+                    
+                    for (s=0;s<depth-k;s++){
+                                submatrixd.at(s) = std::vector<int> (depth-k);
+                                for (d=0;d<depth-k;d++){
+                                        
+                                        submatrixd.at(s).at(d) = random.at(s).at(k+d); 
+                                } 
+                    }  
+                    
+                    if(determinant(submatrixd, depth-k)!=1){ 
+                        all_1 = false;
+                        break;
+                    }
+            }
+        } 
+        valid = det_bool && all_1 ;
+    }
+    return random;
     
 }
 
@@ -673,10 +822,15 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     auto hashed = hasher(evaluate_by_learning_model::get_program_json(ast));
     srand(hashed);
     int nb_matrices =0;
+    int nb_steps = 0;
     
     while (iterator != children.end())
     {
 
+        //If we tried to find a new matrix too many times, we give up and explore the ones we found so far 
+        if (nb_steps++>MAX_NB_STEPS){
+            break;
+        } 
         syntax_tree *child = *iterator;
 
         // Add the corr_map to the ast structue
@@ -691,7 +845,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         
         //add the matrix to optim.info
         
-        child->new_optims.back().matrix = get_random_matrcies(shape);
+        child->new_optims.back().matrix = get_random_matix(shape);
         
         if(check_if_repeated(child->new_optims.back().matrix, matrices)) continue;
         
@@ -775,6 +929,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
             ++iterator;
         }
     }
+    children.resize(std::min(nb_matrices, (int)children.size()));
     
 
     // Stop if we reached the maximum depth

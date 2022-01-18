@@ -19,6 +19,7 @@ const int NB_OPTIMIZATIONS = DEFAULT_OPTIMIZATIONS_ORDER.size();
 const int NB_OPTIMIZATIONS_MATRIX = DEFAULT_OPTIMIZATIONS_ORDER_MATRIX.size();
 const int DEFAULT_MAX_DEPTH = INT_MAX;
 const int MAX_NB_MATRICES = 22;
+const int MAX_NB_STEPS = 1000;
 
 /**
   * An abstract class that represents a search method.
@@ -125,7 +126,8 @@ public:
      */
     virtual void search_save_matrix(syntax_tree &ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout=0);
     virtual void search_save(syntax_tree &ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout=0);
-    virtual std::vector < std::vector<int> >  get_random_matrcies( int depth);
+    virtual std::vector < std::vector<int> >  get_random_matix( int depth);
+    virtual std::vector < std::vector < std::vector<int> > >  get_random_matrcies( int nb_out_matrcies, int depth);
     
 };
 
