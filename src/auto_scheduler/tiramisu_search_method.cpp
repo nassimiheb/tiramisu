@@ -1,5 +1,6 @@
 #include <tiramisu/auto_scheduler/search_method.h>
 #include <random>
+#include <functional>
 
 namespace tiramisu::auto_scheduler
 {
@@ -265,6 +266,30 @@ int determinant( std::vector <  std::vector<int> >  matrix, int n) {
    }
    return det;
 }
+bool check_if_repeated( std::vector < std::vector<int> >  matrix,std::vector < std::vector < std::vector<int> > > matrices)
+{
+    //if there are no matrices to compare to then we return false
+    if(matrices.at(0).size()==0) return false;
+    
+    int depth = matrix.size();
+    int i=0;
+    while(i<MAX_NB_MATRICES && matrices.at(i).size()!=0){ 
+        //for each matrix that we already explored  
+        bool diffrent = false;
+        for (int s=0;s<depth;s++){
+                for (int d=0;d<depth;d++){
+                            // set diffrent to true if we find one element that is not the same
+                            if (matrix.at(s).at(d)!=matrices.at(i).at(s).at(d)) diffrent =true ;
+                    }
+        }
+        //if we found the same matrix return true
+        if (!diffrent) return true;
+    i++;
+    }
+
+     
+    return false;
+}
 /*
 Generate one random matrix that verifies the conditions of: 1- determinant is one 2- all of the upper left determinants are 1
 */
@@ -272,19 +297,19 @@ Generate one random matrix that verifies the conditions of: 1- determinant is on
 {
     //This method could easily be changed to generate multiple random matrices
     //To do that change nb_out_matrices and add random into results and return results instead of random
-    int nb_out_matrcies =1;
+    int nb_out_matrcies = 1;
     std::vector <std::vector <  std::vector<int> >>  result(nb_out_matrcies);
     int nb_valid_matrices = 0;
     int max_depth = 6;
     if (depth>max_depth) std::cout << "WARNING: the depth of this program is too big. Matrix generation will take a long time \n"<< std::endl;
-    srand((unsigned) time(0));
+    
     while(nb_valid_matrices<nb_out_matrcies)
     {
         std::vector <  std::vector<int> >  random(depth);
         bool valid = false;
         while (!valid)
         {   
-            //std::cout << "generating";
+            
             int l, c;
             std::vector <  std::vector<int> >  randomL(depth);
             for(l = 0; l<depth; l++){
@@ -358,7 +383,7 @@ Generate one random matrix that verifies the conditions of: 1- determinant is on
             bool bad_case;
             int f = -1;
             // Check determinant equals 1
-            //std::cout<<"Before \n"<< determinant(random, depth)<<std::endl;
+            
             while(m>=mx && useless<= depth*depth){
                     steps+=1;
                     bad_case=0;
@@ -371,17 +396,17 @@ Generate one random matrix that verifies the conditions of: 1- determinant is on
                             }
                         if(i==depth-1) bad_case=1;
                     }
-                    //std::cout<<"First \n"<<std::endl;
+                    
                     if(bad_case) break;
                     int s =1;
-                    //std::cout<<f<<" Second \n"<<y<<std::endl;
+                    
                     if (m*random.at(f).at(y)<0) s=s*-1;
                     
                     for(int j = 0; j < depth; j++){
                             
                             random.at(x).at(j) = random.at(x).at(j) - s * random.at(f).at(j);
                     }
-                    //std::cout<<"Second \n"<<std::endl;
+                    
                     mm=-10000;
                     for(int i = 0; i < depth; i++){
                         for(int j = 0; j< depth; j++){
@@ -393,7 +418,7 @@ Generate one random matrix that verifies the conditions of: 1- determinant is on
                             }
                         }
                     }
-                    //std::cout<<"Third \n"<<std::endl;
+    
                     if(m>=mm) useless++;
                     m=mm;
             }
@@ -434,14 +459,16 @@ Generate one random matrix that verifies the conditions of: 1- determinant is on
             valid = det_bool && all_1 ;
         }
     //std::cout<< "got one done \n"<<std::endl;
-    /*std::cout<< "starts \n";
+    /*
+    std::cout<< "starts \n";
     for(int i = 0; i < depth; i++){
                         for(int j = 0; j< depth; j++){
-                                std::cout<<random.at(i).at(j)<<"\n"<<std::endl;
+                                std::cout<<random.at(i).at(j)<<std::endl;
                              
                         }
             }
-    std::cout<< "end \n";*/
+    std::cout<< "end \n";
+    */
     return random;
     result.at(nb_valid_matrices) = random;
     nb_valid_matrices++;
@@ -616,18 +643,21 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     // Evaluate children and sort them from smallest to highest evaluation
     // evaluate while removing illegal versions
     auto iterator = children.begin();
-
-    std::vector < std::vector < std::vector<int> > > matrices;
+    std::vector < std::vector < std::vector<int> > > matrices(MAX_NB_MATRICES);
 
     std::map <std::string,std::string>* corr_map;
 
     // Add the corr_map to the ast structue
     corr_map = get_corr_map_from_isl(ast);
-    
+
+    //Hash the program string to get a unique seed for each program 
+    std::hash<std::string> hasher;
+    auto hashed = hasher(evaluate_by_learning_model::get_program_json(ast));
+    srand(hashed);
+    int nb_matrices =0;
     
     while (iterator != children.end())
     {
-
 
         syntax_tree *child = *iterator;
 
@@ -639,9 +669,15 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         //save an AST in case the matrix is illegal
         syntax_tree* new_ast = new syntax_tree();
         new_ast = child->copy_ast();
-
+        
+        
         //add the matrix to optim.info
+        
         child->new_optims.back().matrix = get_random_matrcies(shape);
+        
+        if(check_if_repeated(child->new_optims.back().matrix, matrices)) continue;
+        
+        matrices.at(nb_matrices++) = child->new_optims.back().matrix;
         child->transform_ast();
 
         if (!child->program_is_legal()) {
