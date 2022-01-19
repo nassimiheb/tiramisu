@@ -1,6 +1,8 @@
 #include <tiramisu/auto_scheduler/search_method.h>
 #include <random>
 #include <functional>
+#include <fstream>
+#include <iostream>
 
 namespace tiramisu::auto_scheduler
 {
@@ -203,8 +205,15 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
                 schedule_annot += ", \n\"execution_times\" : null\n}\n";
 
             schedules_annotations->push_back(schedule_annot);
-
+                
             if (std::atoi(read_env_var("AS_VERBOSE"))==1){
+                std::ofstream myfile;
+                myfile.open ("example.txt",std::ios_base::app);
+                myfile<<"Schedule: "<<schedule_annot<<std::endl;
+                myfile<<"Schedule number "<< schedules_annotations->size() << std::endl;
+                myfile<<"Evaluation : " << child->evaluation << std::endl;
+                myfile<<"Schedule number "<< schedules_annotations->size() << std::endl;
+                myfile.close();
                 std::cout << "Schedule number "<< schedules_annotations->size() << std::endl;
                 std::cout << "Evaluation : " << child->evaluation << std::endl;
                 std::cout << "Number of measurements : " << measurements.size() << std::endl;
@@ -917,6 +926,13 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
             schedules_annotations->push_back(schedule_annot);
 
             if (std::atoi(read_env_var("AS_VERBOSE"))==1){
+                std::ofstream myfile;
+                myfile.open ("example.txt",std::ios_base::app);
+                myfile<<"\n\n\n Schedule: "<<schedule_annot<<std::endl;
+                myfile<<"Schedule number "<< schedules_annotations->size() << std::endl;
+                myfile<<"Evaluation : " << child->evaluation << std::endl;
+                myfile<<"Schedule number "<< schedules_annotations->size() << std::endl;
+                myfile.close();
                 std::cout << "Schedule number "<< schedules_annotations->size() << std::endl;
                 std::cout << "Evaluation : " << child->evaluation << std::endl;
                 std::cout << "Number of measurements : " << measurements.size() << std::endl;

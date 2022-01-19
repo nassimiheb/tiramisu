@@ -34,11 +34,12 @@ int main(int, char **argv)
             function191919(buf00.raw_buffer(),buf01.raw_buffer());
            
          for (int y = 0; y < buf00.extent(1); y++) 
-             for (int x = 0; x < buf00.extent(0); x++) 
-                  myfile << buf00(x, y)<<",";
+             for (int x = 0; x < buf00.extent(0); x++)  myfile << buf00(x, y)<<",";
             auto end = std::chrono::high_resolution_clock::now(); 
 
-            std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(end-begin).count() / (double)1000000 << " " << std::flush; 
+            std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(end-begin).count() / (double)1000000 << " " << std::flush;
+            myfile.close();
+
         }
     }
     
@@ -62,6 +63,7 @@ int main(int, char **argv)
             duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end-begin).count() / (double)1000000;
             std::cout << duration << " "<< std::flush; 
             duration_vector.push_back(duration);
+            myfile.close();
         }
 
         int nb_exec_remaining = choose_nb_runs(duration_vector);
@@ -78,7 +80,7 @@ int main(int, char **argv)
             std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(end-begin).count() / (double)1000000 << " " << std::flush; 
         }
     }
-     myfile.close();
+     
     std::cout << std::endl;
 
 	return 0; 
