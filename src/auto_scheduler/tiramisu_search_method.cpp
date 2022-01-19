@@ -846,7 +846,12 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         //add the matrix to optim.info
         
         child->new_optims.back().matrix = get_random_matix(shape);
-        
+        std::cout<<"la matrice #################\n";
+        for (int i = 0; i < child->new_optims.back().matrix.size(); i++) {
+        for (int j = 0; j < child->new_optims.back().matrix[i].size(); j++)
+            std::cout << child->new_optims.back().matrix[i][j] << " ";
+        std::cout << std::endl;
+    }
         if(check_if_repeated(child->new_optims.back().matrix, matrices)) continue;
         
         matrices.at(nb_matrices++) = child->new_optims.back().matrix;
