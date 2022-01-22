@@ -800,6 +800,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
 
 
     std::vector<syntax_tree*> children;
+    std::vector<syntax_tree*> to_be_explored;
 
     // Look for an optimization that can be applied
     int nb_optims_tried = 0;
@@ -832,7 +833,9 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     srand(hashed);
     int nb_matrices =0;
     int nb_steps = 0;
-    
+    bool illegal = false;
+    bool first_time_illegal = true;
+    syntax_tree *child = *iterator;
     while (iterator != children.end())
     {
 
@@ -840,7 +843,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         if (nb_steps++>MAX_NB_STEPS){
             break;
         } 
-        syntax_tree *child = *iterator;
+        if (!illegal)  child = *iterator;
 
         // Add the corr_map to the ast structue
         child->corr_map = corr_map;
@@ -853,7 +856,6 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         
         
         //add the matrix to optim.info
-        
         child->new_optims.back().matrix = get_random_matix(shape);
         std::cout<<"la matrice #################\n";
         for (int i = 0; i < child->new_optims.back().matrix.size(); i++) {
@@ -879,6 +881,8 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
             iterator = children.erase(iterator);
         }
         else if (!child->program_is_legal()) {
+
+            illegal=true;
             if (std::atoi(read_env_var("AS_VERBOSE"))==1){
                 // print deleted Ast
                 child->print_previous_optims();
@@ -888,9 +892,19 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                 child->print_isl_states();
                 std::cout << "\n<illegal>\n";
             }
+            
+            if (first_time_illegal) {
+                iterator = children.erase(iterator);
+                delete child;
+                first_time_illegal=false;
+            }
+
             child = new_ast;
         }
         else {
+            if (!illegal) ++iterator;
+            first_time_illegal=true;
+            illegal = false;
             if (std::atoi(read_env_var("AS_VERBOSE"))==1){
                 child->print_previous_optims();
                 std::cout << "\n-----------" << std::endl;
@@ -947,10 +961,10 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                 best_evaluation = child->evaluation;
                 best_ast = child;
             }
-            ++iterator;
+            to_be_explored.push_back(child);
         }
     }
-    children.resize(std::min(nb_matrices, (int)children.size()));
+    to_be_explored.resize(std::min(nb_matrices, (int)to_be_explored.size()));
     
 
     // Stop if we reached the maximum depth
@@ -959,21 +973,21 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
 
 
     // Sort children from smallest evaluation to largest
-    std::sort(children.begin(), children.end(), [](syntax_tree *a, syntax_tree *b) {
+    std::sort(to_be_explored.begin(), to_be_explored.end(), [](syntax_tree *a, syntax_tree *b) {
         return a->evaluation < b->evaluation;
     });
 
     // shuffle the children so that they are selected a random
-    std::shuffle(std::begin(children), std::end(children), rand_generator);
+    std::shuffle(std::begin(to_be_explored), std::end(to_be_explored), rand_generator);
 
     // keep the top 'beam_size' children and delete the rest
-    for (int i = beam_size; i < children.size(); ++i)
-       delete children[i];
+    for (int i = beam_size; i < to_be_explored.size(); ++i)
+       delete to_be_explored[i];
 
-    children.resize(std::min(beam_size, (int)children.size()));
+    to_be_explored.resize(std::min(beam_size, (int)to_be_explored.size()));
 
     // Search recursively on the best children
-    for (syntax_tree *child : children)
+    for (syntax_tree *child : to_be_explored)
     {
         child->search_depth = ast.search_depth ;
         

@@ -2801,7 +2801,7 @@ namespace tiramisu
         DEBUG_FCT_NAME(3);
         DEBUG_INDENT(4);
 
-        this->perform_full_dependency_analysis();
+        //this->perform_full_dependency_analysis();
         assert(this->dep_read_after_write != NULL);
         
         isl_union_map *all_deps = isl_union_map_range_factor_domain(
