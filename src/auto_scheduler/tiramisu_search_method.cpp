@@ -560,6 +560,7 @@ Generate one random matrix that verifies the conditions of: 1- determinant is on
                     }
                 }
         }
+        if (true) return random;
         // Reduce elements into [-7, 7] values
         int mx = 7;
         int m = -1000;
@@ -826,7 +827,6 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
 
     // Add the corr_map to the ast structue
     corr_map = get_corr_map_from_isl(ast);
-
     //Hash the program string to get a unique seed for each program 
     std::hash<std::string> hasher;
     auto hashed = hasher(evaluate_by_learning_model::get_program_json(ast));

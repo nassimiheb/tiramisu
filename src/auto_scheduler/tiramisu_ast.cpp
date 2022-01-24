@@ -8,7 +8,7 @@
 
 namespace tiramisu::auto_scheduler
 {
-    std::string get_expr_isl_string( isl_ast_expr *expr);
+    std::string get_expr_isl_string( isl_ast_expr *expr, bool is_bound);
     int get_value(isl_ast_expr *expr,std::map <int,  std::tuple<std::string , std::string,std::string> >isl_ast_map );
     computation_info::computation_info(tiramisu::computation *comp, syntax_tree *ast)
         : comp_ptr(comp), iters(dnn_iterator::get_iterators_from_computation(*comp)),
@@ -471,7 +471,7 @@ namespace tiramisu::auto_scheduler
         }
     }
         
-    std::string get_expr_isl_string( isl_ast_expr *expr,std::map <int,  std::tuple<std::string , std::string,std::string> >isl_ast_map={{0, {"0", "0","0" }} })
+    std::string get_expr_isl_string( isl_ast_expr *expr,std::map <int,  std::tuple<std::string , std::string,std::string> >isl_ast_map,bool is_bound)
     {
         enum isl_ast_expr_type type;
         enum isl_ast_op_type op;
@@ -492,9 +492,17 @@ namespace tiramisu::auto_scheduler
                     //std::cout<<op;
                     //std::cout<<"\n";
                     break;
-                case isl_ast_expr_id:             
-                    id = isl_ast_expr_get_id(expr);
-                    p = isl_id_get_name(id);
+                case isl_ast_expr_id: 
+                    if(!is_bound){
+                        id = isl_ast_expr_get_id(expr);
+                        p = isl_id_get_name(id);
+                    }   
+                    else{
+                        id = isl_ast_expr_get_id(expr);
+                        p = isl_id_get_name(id);
+                        p=std::to_string(  get_id_value(isl_id_get_name(id),isl_ast_map));
+                    }         
+                    
                     //std::cout<<"Entreing Id with ";
                     //std::cout<<p;
                     //std::cout<<"\n";
@@ -520,7 +528,7 @@ namespace tiramisu::auto_scheduler
             else{node = nullptr; return;}      
         }
         else{
-            // Updating the node using isl_ast_map     
+            // Updating the node using isl_ast_map 
             node->low_bound = std::stoi(std::get<0>(isl_ast_map[level]));
             node->up_bound = std::stoi(std::get<1>(isl_ast_map[level]));
             node->name = (*corr_map).at(std::get<2>(isl_ast_map[level]));
@@ -568,12 +576,13 @@ namespace tiramisu::auto_scheduler
         //Create a map of (level, <lower bound, upper bound, iterator name>) from the ISL AST
         while(stop!=1)
         {   
+            
             if(isl_ast_node_get_type(ast_i) == isl_ast_node_for)
             {
                 init_expr=isl_ast_node_for_get_init(ast_i); //Lower bound
                 cond_expr=isl_ast_node_for_get_cond(ast_i); //Upper bound
                 iter_expr=isl_ast_node_for_get_iterator(ast_i); //Get the ID name 
-                p = std::make_tuple(get_expr_isl_string(init_expr,isl_ast_map),get_expr_isl_string(cond_expr,isl_ast_map),get_expr_isl_string(iter_expr,isl_ast_map));
+                p = std::make_tuple(get_expr_isl_string(init_expr,isl_ast_map,true),get_expr_isl_string(cond_expr,isl_ast_map,true),get_expr_isl_string(iter_expr,isl_ast_map,false));
                 isl_ast_map.insert(std::pair<int, std::tuple<std::string , std::string,std::string>>(loop_level,p ));
                 loop_level++;
 
@@ -581,15 +590,15 @@ namespace tiramisu::auto_scheduler
             }
             else{stop=1;} 
         }
-        /*
-        std::map<int, std::tuple<std::string , std::string,std::string>>::iterator itr;
+        
+       /* std::map<int, std::tuple<std::string , std::string,std::string>>::iterator itr;
         std::cout << "\nThe map isl ast map is : \n";
         std::cout << "\tKEY\tELEMENT\n";
         for (auto itr = isl_ast_map.begin(); itr !=  isl_ast_map.end(); ++itr) {
             std::cout << '\t' << itr->first
                 << '\t' << std::get<0>(itr->second)<< '\t' << std::get<1>(itr->second)<< '\t' << std::get<2>(itr->second) << '\n';
-        }
-        std::map<std::string,std::string>::iterator itr1;
+        }*/
+        /*std::map<std::string,std::string>::iterator itr1;
         std::cout << "\nThe map c is : \n";
         std::cout << "\tKEY\tELEMENT\n"<<this->corr_map->size();
         for (itr1 = this->corr_map->begin(); itr1 !=  this->corr_map->end(); ++itr1) {
