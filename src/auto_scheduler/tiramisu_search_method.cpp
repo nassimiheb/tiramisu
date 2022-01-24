@@ -864,8 +864,6 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         std::cout << std::endl;
     }
         if(check_if_repeated(child->new_optims.back().matrix, matrices)) continue;
-        
-        matrices.at(nb_matrices++) = child->new_optims.back().matrix;
         child->transform_ast();
 
         if (child->schedule_is_prunable()){
@@ -881,7 +879,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
             iterator = children.erase(iterator);
         }
         else if (!child->program_is_legal()) {
-
+            
             illegal=true;
             if (std::atoi(read_env_var("AS_VERBOSE"))==1){
                 // print deleted Ast
@@ -902,6 +900,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
             child = new_ast;
         }
         else {
+            matrices.at(nb_matrices++) = child->new_optims.back().matrix;
             if (!illegal) ++iterator;
             first_time_illegal=true;
             illegal = false;

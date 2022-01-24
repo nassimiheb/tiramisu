@@ -18,7 +18,7 @@ int main(int argc, char **argv){
 	input icomp00("icomp00", {i1,i2}, p_float64);
 	input input01("input01", {i0,i1,i2}, p_float64);
 	computation comp00("comp00", {i0,i1,i2},  p_float64);
-	comp00.set_expression(icomp00(i1, i2+1) + input01(i0, i1, i2));
+	comp00.set_expression(icomp00(i1, i2) + icomp00(i1+1, i2) + icomp00(i1-1, i2) + icomp00(i1, i2-1) + icomp00(i1, i2+1));
 	buffer buf00("buf00", {64,64}, p_float64, a_output);
 	buffer buf01("buf01", {320,64,64}, p_float64, a_input);
 	icomp00.store_in(&buf00);
