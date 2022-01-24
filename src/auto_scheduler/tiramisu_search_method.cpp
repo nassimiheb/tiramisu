@@ -296,11 +296,11 @@ int determinant( std::vector <  std::vector<int> >  matrix, int n) {
 bool check_if_repeated( std::vector < std::vector<int> >  matrix,std::vector < std::vector < std::vector<int> > > matrices)
 {
     //if there are no matrices to compare to then we return false
-    if(matrices.at(0).size()==0) return false;
+    if(matrices.size()==0) return false;
     
     int depth = matrix.size();
     int i=0;
-    while(i<MAX_NB_MATRICES && matrices.at(i).size()!=0){ 
+    while(i<matrices.size()){ 
         //for each matrix that we already explored  
         bool diffrent = false;
         for (int s=0;s<depth;s++){
@@ -560,9 +560,9 @@ Generate one random matrix that verifies the conditions of: 1- determinant is on
                     }
                 }
         }
-        if (true) return random;
+        
         // Reduce elements into [-7, 7] values
-        int mx = 7;
+        int mx = 10;
         int m = -1000;
         int x,y;
         for(int i = 0; i < depth; i++){
@@ -625,7 +625,7 @@ Generate one random matrix that verifies the conditions of: 1- determinant is on
         
         // Check upper right determinants equal 1
         bool all_1 = true;
-        if (det_bool){
+        if (false){
             
             int d=0,s=0;
             
@@ -821,7 +821,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     // Evaluate children and sort them from smallest to highest evaluation
     // evaluate while removing illegal versions
     auto iterator = children.begin();
-    std::vector < std::vector < std::vector<int> > > matrices(MAX_NB_MATRICES);
+    std::vector < std::vector < std::vector<int> > > matrices;
 
     std::map <std::string,std::string>* corr_map;
 
@@ -836,9 +836,10 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     bool illegal = false;
     bool first_time_illegal = true;
     syntax_tree *child = *iterator;
+    
     while (iterator != children.end())
     {
-
+            
         //If we tried to find a new matrix too many times, we give up and explore the ones we found so far 
         if (nb_steps++>MAX_NB_STEPS){
             break;
@@ -864,6 +865,10 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         std::cout << std::endl;
     }
         if(check_if_repeated(child->new_optims.back().matrix, matrices)) continue;
+        
+        matrices.push_back(child->new_optims.back().matrix);
+        nb_matrices++;
+        
         child->transform_ast();
 
         if (child->schedule_is_prunable()){
@@ -892,16 +897,19 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
             }
             
             if (first_time_illegal) {
-                iterator = children.erase(iterator);
                 delete child;
+                //iterator = children.erase(iterator);
+                //if(iterator == children.end()) iterator--;
                 first_time_illegal=false;
             }
 
             child = new_ast;
         }
         else {
-            matrices.at(nb_matrices++) = child->new_optims.back().matrix;
-            if (!illegal) ++iterator;
+
+            
+            ++iterator;
+            
             first_time_illegal=true;
             illegal = false;
             if (std::atoi(read_env_var("AS_VERBOSE"))==1){
@@ -963,6 +971,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
             to_be_explored.push_back(child);
         }
     }
+    
     to_be_explored.resize(std::min(nb_matrices, (int)to_be_explored.size()));
     
 
