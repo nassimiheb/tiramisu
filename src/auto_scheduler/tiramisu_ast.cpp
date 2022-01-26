@@ -563,7 +563,7 @@ namespace tiramisu::auto_scheduler
                 update_node(child,isl_ast_mat,level);
             }
     }
-    std::vector<std::vector<int>>  multiply(const std::vector<std::vector<int>> & m1, const std::vector<std::vector<int>> & m2)
+    /*std::vector<std::vector<int>>  multiply(const std::vector<std::vector<int>> & m1, const std::vector<std::vector<int>> & m2)
         {
         std::vector<std::vector<int>> result(m1.size(), std::vector<int>(m2.at(0).size()));
 
@@ -575,7 +575,7 @@ namespace tiramisu::auto_scheduler
                 }
             }
             return result;
-        }
+        }*/
 
     void syntax_tree::transform_ast_by_matrix(std::vector<std::vector<int>> matrix)
     {
@@ -599,7 +599,7 @@ namespace tiramisu::auto_scheduler
         }   
 
 
-        std::vector<std::vector<int>> final_bounds =multiply(matrix,intial_bounds_matrix);
+        //std::vector<std::vector<int>> final_bounds =multiply(matrix,intial_bounds_matrix);
         //Genrate the ISL AST
        
         //this->fct->gen_isl_ast_after_trans();
@@ -658,7 +658,7 @@ namespace tiramisu::auto_scheduler
         int starting_level=0;
         for (ast_node *root : roots)
         {
-            update_node(root,final_bounds,starting_level);
+            update_node(root,bounds_matrix,starting_level);
         }
         
         recover_isl_states();
@@ -1136,7 +1136,7 @@ namespace tiramisu::auto_scheduler
 
         // Copy AST data
         new_ast.fct = fct;
-        //new_ast.corr_map = corr_map;
+        new_ast.bounds_matrix = bounds_matrix;
         new_ast.computations_list = computations_list;
         new_ast.buffers_list = buffers_list;
         new_ast.buffers_mapping = buffers_mapping;

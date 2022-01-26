@@ -972,6 +972,19 @@ static const char *op_str[] = {
         
         return isl_ast_mat;
 }
+std::vector<std::vector<int>>  multiply(const std::vector<std::vector<int>> & m1, const std::vector<std::vector<int>> & m2)
+        {
+        std::vector<std::vector<int>> result(m1.size(), std::vector<int>(m2.at(0).size()));
+
+            for(std::size_t row = 0; row < result.size(); ++row) {
+                for(std::size_t col = 0; col < result.at(0).size(); ++col) {
+                    for(std::size_t inner = 0; inner < m2.size(); ++inner) {
+                        result.at(row).at(col) += m1.at(row).at(inner) * m2.at(inner).at(col);
+                    }
+                }
+            }
+            return result;
+        }
 
 void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout)
 {
@@ -1001,9 +1014,9 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     auto iterator = children.begin();
     std::vector < std::vector < std::vector<int> > > matrices;
 
-    std::map <std::string,std::string>* corr_map;
+    //std::map <std::string,std::string>* corr_map;
     std::vector<std::vector<int>> bounds_mat;
-    bounds_mat=get_ast_isl_bound_matrice(ast);
+    bounds_mat = get_ast_isl_bound_matrice(ast);
     // Add the corr_map to the ast structue
     //corr_map = get_corr_map_from_isl(ast);
     //Hash the program string to get a unique seed for each program 
@@ -1031,7 +1044,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
 
         // Add the corr_map to the ast structue
         //child->corr_map = corr_map;
-        child->intial_bounds_matrix=bounds_mat;
+        
         child->nb_explored_optims = nb_explored_optims;
         
         int shape = child->get_program_depth();
@@ -1047,7 +1060,10 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         for (int j = 0; j < child->new_optims.back().matrix[i].size(); j++)
             std::cout << child->new_optims.back().matrix[i][j] << " ";
         std::cout << std::endl;
-    }
+        }
+
+        child->bounds_matrix = multiply(child->new_optims.back().matrix,bounds_mat);
+
         if(check_if_repeated(child->new_optims.back().matrix, matrices)) continue;
         
         matrices.push_back(child->new_optims.back().matrix);
