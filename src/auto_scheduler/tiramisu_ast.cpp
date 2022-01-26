@@ -8,8 +8,8 @@
 
 namespace tiramisu::auto_scheduler
 {
-    std::string get_expr_isl_string( isl_ast_expr *expr, bool is_bound);
-    int get_value(isl_ast_expr *expr,std::map <int,  std::tuple<std::string , std::string,std::string> >isl_ast_map );
+    //std::string get_expr_isl_string( isl_ast_expr *expr, bool is_bound);
+    //int get_value(isl_ast_expr *expr,std::map <int,  std::tuple<std::string , std::string,std::string> >isl_ast_map );
     computation_info::computation_info(tiramisu::computation *comp, syntax_tree *ast)
         : comp_ptr(comp), iters(dnn_iterator::get_iterators_from_computation(*comp)),
           accesses(comp, iters.size(), comp->get_function()), buffer_nb_dims(iters.size()),
@@ -350,7 +350,7 @@ namespace tiramisu::auto_scheduler
         }
     }
     
-    static const char *op_str[] = {
+   /* static const char *op_str[] = {
         [isl_ast_op_and] = "and",
         [isl_ast_op_and_then] = "and_then",
         [isl_ast_op_or] = "or",
@@ -518,9 +518,9 @@ namespace tiramisu::auto_scheduler
             }
         return p;
         }   
-    }
+    }*/
     // Update the node of tiramisu AST 
-    void update_node(std::map <std::string,std::string>* corr_map,ast_node *node, std::map <int,  std::tuple<std::string , std::string,std::string> > isl_ast_map, int& level){
+    /*void update_node(std::map <std::string,std::string>* corr_map,ast_node *node, std::map <int,  std::tuple<std::string , std::string,std::string> > isl_ast_map, int& level){
         
        
         if (level >= isl_ast_map.size()){
@@ -540,7 +540,42 @@ namespace tiramisu::auto_scheduler
             {         
                 update_node(corr_map,child,isl_ast_map,level);
             }
+    }*/
+    //Update the node of tiramisu AST 
+    void update_node(ast_node *node, std::vector<std::vector<int>> isl_ast_mat, int& level){
+        
+       
+        if (level >= isl_ast_mat.size()){
+            if (node->children.size() != 0){node = node->children[0];}
+            else{node = nullptr; return;}      
+        }
+        else{
+            // Updating the node using isl_ast_map 
+            node->low_bound = isl_ast_mat[level][0];
+            node->up_bound = isl_ast_mat[level][1];
+        
+        }
+        
+        level++;    
+        // Updating nodes recursivly
+        for (ast_node *child : node->children)
+            {         
+                update_node(child,isl_ast_mat,level);
+            }
     }
+    std::vector<std::vector<int>>  multiply(const std::vector<std::vector<int>> & m1, const std::vector<std::vector<int>> & m2)
+        {
+        std::vector<std::vector<int>> result(m1.size(), std::vector<int>(m2.at(0).size()));
+
+            for(std::size_t row = 0; row < result.size(); ++row) {
+                for(std::size_t col = 0; col < result.at(0).size(); ++col) {
+                    for(std::size_t inner = 0; inner < m2.size(); ++inner) {
+                        result.at(row).at(col) += m1.at(row).at(inner) * m2.at(inner).at(col);
+                    }
+                }
+            }
+            return result;
+        }
 
     void syntax_tree::transform_ast_by_matrix(std::vector<std::vector<int>> matrix)
     {
@@ -562,17 +597,30 @@ namespace tiramisu::auto_scheduler
                 f+=str+" ";
             }
         }   
+
+
+        std::vector<std::vector<int>> final_bounds =multiply(matrix,intial_bounds_matrix);
         //Genrate the ISL AST
-        this->fct->gen_isl_ast_after_trans();
+       
+        //this->fct->gen_isl_ast_after_trans();
         
-        std::map <int,  std::tuple<std::string , std::string,std::string> > isl_ast_map;
+        /*std::map <int,  std::tuple<std::string , std::string,std::string> > isl_ast_map;
         std::tuple<std::string,std::string,std::string> p;
         isl_ast_expr * init_expr;
         isl_ast_expr * cond_expr;
         isl_ast_expr * iter_expr;
-        int stop = 0,loop_level = 0;
+        int stop = 0,loop_level = 0;*/
 
-        isl_ast_node *ast_i = this->fct->ast; 
+        
+        /*std::cout << "\nThe map isl ast map is before : \n";
+        std::cout << "\tKEY\tELEMENT\n";
+        for (int i = 0; i < final_bounds.size(); i++) {
+        for (int j = 0; j < final_bounds[i].size(); j++)
+            std::cout << final_bounds[i][j] << " ";
+        std::cout << std::endl;
+        }*/
+
+        /*isl_ast_node *ast_i = this->fct->ast; 
         //Create a map of (level, <lower bound, upper bound, iterator name>) from the ISL AST
         while(stop!=1)
         {   
@@ -591,7 +639,7 @@ namespace tiramisu::auto_scheduler
             else{stop=1;} 
         }
         
-       /* std::map<int, std::tuple<std::string , std::string,std::string>>::iterator itr;
+       std::map<int, std::tuple<std::string , std::string,std::string>>::iterator itr;
         std::cout << "\nThe map isl ast map is : \n";
         std::cout << "\tKEY\tELEMENT\n";
         for (auto itr = isl_ast_map.begin(); itr !=  isl_ast_map.end(); ++itr) {
@@ -610,9 +658,9 @@ namespace tiramisu::auto_scheduler
         int starting_level=0;
         for (ast_node *root : roots)
         {
-            update_node(this->corr_map,root,isl_ast_map,starting_level);
+            update_node(root,final_bounds,starting_level);
         }
-      
+        
         recover_isl_states();
     }
     
@@ -1088,7 +1136,7 @@ namespace tiramisu::auto_scheduler
 
         // Copy AST data
         new_ast.fct = fct;
-        new_ast.corr_map = corr_map;
+        //new_ast.corr_map = corr_map;
         new_ast.computations_list = computations_list;
         new_ast.buffers_list = buffers_list;
         new_ast.buffers_mapping = buffers_mapping;

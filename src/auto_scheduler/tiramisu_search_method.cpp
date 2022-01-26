@@ -7,6 +7,8 @@
 namespace tiramisu::auto_scheduler
 {
  std::string get_name_ast_expr_isl( isl_ast_expr *expr);
+  std::string get_expr_isl_string( isl_ast_expr *expr, bool is_bound);
+ int get_value(isl_ast_expr *expr,std::vector<std::vector<int>> isl_ast_map );
 void beam_search::search(syntax_tree& ast)
 {
     if (ast.nb_explored_optims % NB_OPTIMIZATIONS == 0)
@@ -688,7 +690,7 @@ static const char *op_str[] = {
  * @param isl_ast 
  * @param corr_map 
  */
-void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::map <std::string,std::string>* corr_map, int &k){
+/*void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::map <std::string,std::string>* corr_map, int &k){
 
     if(k>=isl_ast.size()){}
     else{
@@ -706,7 +708,7 @@ void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::ma
  * @param expr 
  * @return std::string 
  */
-    std::string get_name_arguments(isl_ast_expr *expr)
+   /* std::string get_name_arguments(isl_ast_expr *expr)
     {
         int i, n;
         std::string p;
@@ -723,8 +725,8 @@ void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::ma
             isl_ast_expr_free(arg);     
         }     
         return p;
-    }
-   std::string get_name_ast_expr_isl( isl_ast_expr *expr)
+    }*/
+   /*std::string get_name_ast_expr_isl( isl_ast_expr *expr)
     {
         enum isl_ast_expr_type type;
         enum isl_ast_op_type op;
@@ -757,14 +759,14 @@ void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::ma
          }
         return p;
         }    
-    }
-/**
+    }*/
+    /**
  * @brief Get the corr map from isl ast map
  * 
  * @param ast 
  * @return ** std::map <std::string,std::string>* 
  */
-std::map <std::string,std::string>* get_corr_map_from_isl(syntax_tree& ast){
+/*std::map <std::string,std::string>* get_corr_map_from_isl(syntax_tree& ast){
     //Create map between ISL iterator names and the AST iterator names
     isl_ast_expr * iter_expr;
     int stop=0;
@@ -794,7 +796,183 @@ std::map <std::string,std::string>* get_corr_map_from_isl(syntax_tree& ast){
             get_save_name_node(root,isl_ast,corr_map,starting_k);
         }
     return corr_map;
+}*/
+
+
+        // Gettig the values of the isl AST
+    int print_arguments_string(isl_ast_op_type prev_op,isl_ast_expr *expr,std::vector<std::vector<int>> isl_ast_map )
+    {
+        int i, n, p = 0;
+
+        n = isl_ast_expr_get_op_n_arg(expr);
+
+        if (n < 0) return 0;
+        if (n == 0) return 0;
+        p = 0;
+        for (i = 0; i < n; ++i) {
+            isl_ast_expr *arg;
+            //std::cout<<"---------------Arg";
+            //std::cout<<i;
+            //std::cout<<"\n";
+            arg = isl_ast_expr_get_op_arg(expr, i);
+            if(i==0){
+                p = get_value(arg,isl_ast_map);
+                if (prev_op == isl_ast_op_minus){p = -get_value(arg,isl_ast_map);break;}
+            }
+            else{
+                switch(prev_op){
+                    case isl_ast_op_add:{p = p+get_value(arg,isl_ast_map);break;}
+                    case isl_ast_op_sub:{p = p-get_value(arg,isl_ast_map);break;}
+                    case isl_ast_op_mul:{p = p*get_value(arg,isl_ast_map);break;}
+                    case isl_ast_op_div:{if(get_value(arg,isl_ast_map)!= 0)p = p / get_value(arg,isl_ast_map);break;}
+                    case isl_ast_op_max:{p = std::max(p,get_value(arg,isl_ast_map));break;}
+                    case isl_ast_op_min:{p = std::min(p,get_value(arg,isl_ast_map));break;}
+                    case isl_ast_op_minus:{p = -get_value(arg,isl_ast_map);break;}
+                    default: p = get_value(arg,isl_ast_map);break;;
+                }
+            }
+            isl_ast_expr_free(arg);    
+        }
+        return p;
+    }
+    //get the Upper bound of an id
+    int get_id_value(std::string id,std::vector<std::vector<int>>isl_ast_map)
+    {
+        std::map <int,  std::tuple<std::string , std::string,std::string> >::iterator it;
+
+        /*for (it = isl_ast_map.begin(); it != isl_ast_map.end(); it++)
+        {
+            if(std::get<2>(it->second) == id){
+                return (std::stoi(std::get<0>(it->second)) + std::stoi(std::get<1>(it->second))) / 2;
+            }
+        }*/
+        return 0;
+    }
+
+    int get_value(isl_ast_expr *expr,std::vector<std::vector<int>> isl_ast_map){
+        
+        enum isl_ast_expr_type type;
+        enum isl_ast_op_type op;
+        isl_id *id;
+        isl_val *v;
+        std::string p;
+        int val = 0;
+
+        if (!expr){return -1;}  
+        else{
+            type = isl_ast_expr_get_type(expr);
+            switch (type) {
+                case isl_ast_expr_error: return 0; break;
+                case isl_ast_expr_op:
+                    op = isl_ast_expr_get_op_type(expr);
+                    if (op == isl_ast_op_error) return 0;             
+                    val=val+print_arguments_string(op,expr,isl_ast_map);
+                    //std::cout<<"Entreing OP : ";
+                    //std::cout<<op;
+                    //std::cout<<"\n";
+                    break;
+                case isl_ast_expr_id:
+                    id = isl_ast_expr_get_id(expr);
+                    p = isl_id_get_name(id);
+                    val = get_id_value(p,isl_ast_map);
+                    //std::cout<<"Entreing Id with";
+                    //std::cout<<val;
+                    //std::cout<<"\n";
+                    break;
+                case isl_ast_expr_int:
+                    v = isl_ast_expr_get_val(expr);val=1;
+                    val= isl_val_get_num_si(v);
+                    //std::cout<<"Entreing Int with";
+                    //std::cout<<val;
+                    //std::cout<<"\n";
+                    break;
+                default: return 0;
+                }
+        return val;
+        }
+    }
+        
+    std::string get_expr_isl_string( isl_ast_expr *expr,std::vector<std::vector<int>> isl_ast_map,bool is_bound)
+    {
+        enum isl_ast_expr_type type;
+        enum isl_ast_op_type op;
+        isl_id *id;
+        isl_val *v;
+        std::string p;
+
+        if (!expr){return "!Expression";}    
+        else{
+            type = isl_ast_expr_get_type(expr);
+            switch (type) {
+                case isl_ast_expr_error: return "$Error in the expression"; break; 
+                case isl_ast_expr_op:
+                    op = isl_ast_expr_get_op_type(expr);
+                    if (op == isl_ast_op_error) return "$Error in the operation type";          
+                    p = std::to_string(print_arguments_string(op,expr,isl_ast_map));
+                    //std::cout<<"Entreing OP with ";
+                    //std::cout<<op;
+                    //std::cout<<"\n";
+                    break;
+                case isl_ast_expr_id: 
+                    if(!is_bound){
+                        id = isl_ast_expr_get_id(expr);
+                        p = isl_id_get_name(id);
+                    }   
+                    else{
+                        id = isl_ast_expr_get_id(expr);
+                        p = isl_id_get_name(id);
+                        p=std::to_string(  get_id_value(isl_id_get_name(id),isl_ast_map));
+                    }         
+                    
+                    //std::cout<<"Entreing Id with ";
+                    //std::cout<<p;
+                    //std::cout<<"\n";
+                    break;
+                case isl_ast_expr_int:   
+                    v = isl_ast_expr_get_val(expr);
+                    p = std::to_string(isl_val_get_num_si(v));
+                    //std::cout<<"Entreing Int with";    
+                    //std::cout<<p;
+                    //std::cout<<"\n";
+                    break;
+                default: return "%";
+            }
+        return p;
+        }   
+    }
+ std::vector<std::vector<int>> get_ast_isl_bound_matrice(syntax_tree& ast){
+
+        std::vector<std::vector<int>> isl_ast_mat;
+        std::vector<int>p1;
+        isl_ast_expr * init_expr;
+        isl_ast_expr * cond_expr;
+        isl_ast_expr * iter_expr;
+        int stop = 0;
+
+        ast.fct->gen_isl_ast();
+        
+        isl_ast_node *ast_i = ast.fct->get_isl_ast(); 
+        while(stop!=1)
+        {   
+            
+            if(isl_ast_node_get_type(ast_i) == isl_ast_node_for)
+            {
+                init_expr=isl_ast_node_for_get_init(ast_i); //Lower bound
+                cond_expr=isl_ast_node_for_get_cond(ast_i); //Upper bound
+                iter_expr=isl_ast_node_for_get_iterator(ast_i); //Get the ID name 
+               
+                p1.push_back(std::stoi(get_expr_isl_string(init_expr,isl_ast_mat,true)));
+                p1.push_back(std::stoi(get_expr_isl_string(cond_expr,isl_ast_mat,true)));
+                isl_ast_mat.push_back(p1);
+                p1.clear();
+                ast_i= isl_ast_node_for_get_body(ast_i);
+            }
+            else{stop=1;} 
+        }
+        
+        return isl_ast_mat;
 }
+
 void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout)
 {
     std::default_random_engine rand_generator;
@@ -806,7 +984,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     // Look for an optimization that can be applied
     int nb_optims_tried = 0;
     int nb_explored_optims = ast.nb_explored_optims;
-    
+    auto start = std::chrono::system_clock::now();
     //Generate n matrice asts to be explored
     //To change the number of matrices being explored go to: generate_schedules then the MATRIX case and change the length of the loop
     optimization_type optim_type = optimization_type::MATRIX;
@@ -824,9 +1002,10 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     std::vector < std::vector < std::vector<int> > > matrices;
 
     std::map <std::string,std::string>* corr_map;
-
+    std::vector<std::vector<int>> bounds_mat;
+    bounds_mat=get_ast_isl_bound_matrice(ast);
     // Add the corr_map to the ast structue
-    corr_map = get_corr_map_from_isl(ast);
+    //corr_map = get_corr_map_from_isl(ast);
     //Hash the program string to get a unique seed for each program 
     std::hash<std::string> hasher;
     auto hashed = hasher(evaluate_by_learning_model::get_program_json(ast));
@@ -842,12 +1021,17 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
             
         //If we tried to find a new matrix too many times, we give up and explore the ones we found so far 
         if (nb_steps++>MAX_NB_STEPS){
+            std::ofstream myfile;
+             myfile.open ("example.txt",std::ios_base::app);
+            myfile<<"\n\n\n Moving on ***********"<<std::endl;
+            myfile.close();
             break;
         } 
         if (!illegal)  child = *iterator;
 
         // Add the corr_map to the ast structue
-        child->corr_map = corr_map;
+        //child->corr_map = corr_map;
+        child->intial_bounds_matrix=bounds_mat;
         child->nb_explored_optims = nb_explored_optims;
         
         int shape = child->get_program_depth();
@@ -945,15 +1129,26 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                 schedule_annot += ", \n\"execution_times\" : null\n}\n";
 
             schedules_annotations->push_back(schedule_annot);
+            
+            if (schedules_annotations->size()%10==0){
+                auto end = std::chrono::system_clock::now();
+                std::chrono::duration<double> elapsed_seconds = end-start;
+                std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+                std::ofstream myfile;
+                myfile.open ("example.txt",std::ios_base::app);
+                myfile<<"\n\n\n Time recorded: "<<schedules_annotations->size()<<"\t"<<elapsed_seconds.count()<<"s"<<std::endl;
+                myfile.close();
+                                //auto start = std::chrono::system_clock::now();
+            }
 
             if (std::atoi(read_env_var("AS_VERBOSE"))==1){
                 std::ofstream myfile;
-                myfile.open ("example.txt",std::ios_base::app);
+                /*myfile.open ("example.txt",std::ios_base::app);
                 myfile<<"\n\n\n Schedule: "<<schedule_annot<<std::endl;
                 myfile<<"Schedule number "<< schedules_annotations->size() << std::endl;
                 myfile<<"Evaluation : " << child->evaluation << std::endl;
                 myfile<<"Schedule number "<< schedules_annotations->size() << std::endl;
-                myfile.close();
+                myfile.close();*/
                 std::cout << "Schedule number "<< schedules_annotations->size() << std::endl;
                 std::cout << "Evaluation : " << child->evaluation << std::endl;
                 std::cout << "Number of measurements : " << measurements.size() << std::endl;

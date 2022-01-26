@@ -14,7 +14,7 @@ const std::string py_cmd_path = "/usr/bin/python";
 const std::string py_interface_path = "/data/tiramisu/tutorials/tutorial_autoscheduler/model/main.py";
 int main(int argc, char **argv){                
 	tiramisu::init("function191919");
-	var i0("i0", 0, 320), i1("i1", 0, 64), i2("i2", 0, 64);
+	var i0("i0", 0, 320), i1("i1", 1, 63), i2("i2", 1, 60);
 	input icomp00("icomp00", {i1,i2}, p_float64);
 	input input01("input01", {i0,i1,i2}, p_float64);
 	computation comp00("comp00", {i0,i1,i2},  p_float64);
