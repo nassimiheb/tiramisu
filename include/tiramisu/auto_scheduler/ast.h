@@ -404,10 +404,15 @@ public:
      */
 
     tiramisu::function *fct;
+
      /**
      * The bounds of the original loops
      * **/
     std::vector<std::vector<int>> bounds_matrix;
+    /**
+     * The bounds of the original loops
+     * **/
+    std::vector<std::vector<int>> transformed_bounds_matrix;
     /**
      * @brief The map that correspand iterators names to isl iterator names
      * 

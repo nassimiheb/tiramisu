@@ -1062,7 +1062,8 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         std::cout << std::endl;
         }
 
-        child->bounds_matrix = multiply(child->new_optims.back().matrix,bounds_mat);
+        child->bounds_matrix = bounds_mat;
+        child->transformed_bounds_matrix = multiply(child->new_optims.back().matrix,bounds_mat);
 
         if(check_if_repeated(child->new_optims.back().matrix, matrices)) continue;
         
