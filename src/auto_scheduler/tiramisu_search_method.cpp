@@ -495,6 +495,19 @@ std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcie
     }
     return result;
 }
+std::vector<std::vector<int>>  multiply(const std::vector<std::vector<int>> & m1, const std::vector<std::vector<int>> & m2)
+        {
+        std::vector<std::vector<int>> result(m1.size(), std::vector<int>(m2.at(0).size()));
+
+            for(std::size_t row = 0; row < result.size(); ++row) {
+                for(std::size_t col = 0; col < result.at(0).size(); ++col) {
+                    for(std::size_t inner = 0; inner < m2.size(); ++inner) {
+                        result.at(row).at(col) += m1.at(row).at(inner) * m2.at(inner).at(col);
+                    }
+                }
+            }
+            return result;
+        }
 /*
 Generate one random matrix that verifies the conditions of: 1- determinant is one 2- all of the upper left determinants are 1
 */
@@ -506,31 +519,44 @@ Generate one random matrix that verifies the conditions of: 1- determinant is on
     bool valid = false;
     while (!valid)
     {   
+
         //generate a lower traiangular matrix 
         int l, c;
+        int choice = rand() %100;
         std::vector <  std::vector<int> >  randomL(depth);
         for(l = 0; l<depth; l++){
             randomL.at(l)= std::vector<int>(depth);
             for(c = 0; c<depth; c++){
                             if (l>c){
-                                randomL.at(l).at(c) = (rand() %16) - 8;
+                                randomL.at(l).at(c) = (rand() %14) - 7;
                             }else{
-                                randomL.at(l).at(c) = 0;
+                                if(l<c){
+                                    randomL.at(l).at(c) = 0;
+                                }else{
+                                    randomL.at(l).at(c)=1;
+                                }
                             }
             }
         }
+        if(choice>3 && choice< 5)  return randomL;
         ////generate an upper traiangular matrix
         std::vector <  std::vector<int> >  randomU(depth);
         for(l = 0; l<depth; l++){
             randomU.at(l)= std::vector<int>(depth);
             for(c = 0; c<depth; c++){
                         if (l<c){
-                            randomU.at(l).at(c) = (rand() % 16) - 8;
+                            randomU.at(l).at(c) = (rand() % 14) - 7;
                         }else{
-                            randomU.at(l).at(c) = 0;
+                            if(l>c){
+                                    randomU.at(l).at(c) = 0;
+                                }else{
+                                    randomU.at(l).at(c)=1;
+                                }
                         }
             }
         }
+        if(choice<3) return randomU;
+        if(choice>5)return multiply(randomL,randomU);
         
         for(l = 0; l<depth; l++){
             randomL.at(l).at(l) =1;
@@ -562,7 +588,6 @@ Generate one random matrix that verifies the conditions of: 1- determinant is on
                     }
                 }
         }
-        
         // Reduce elements into [-7, 7] values
         int mx = 10;
         int m = -1000;
@@ -972,19 +997,7 @@ static const char *op_str[] = {
         
         return isl_ast_mat;
 }
-std::vector<std::vector<int>>  multiply(const std::vector<std::vector<int>> & m1, const std::vector<std::vector<int>> & m2)
-        {
-        std::vector<std::vector<int>> result(m1.size(), std::vector<int>(m2.at(0).size()));
 
-            for(std::size_t row = 0; row < result.size(); ++row) {
-                for(std::size_t col = 0; col < result.at(0).size(); ++col) {
-                    for(std::size_t inner = 0; inner < m2.size(); ++inner) {
-                        result.at(row).at(col) += m1.at(row).at(inner) * m2.at(inner).at(col);
-                    }
-                }
-            }
-            return result;
-        }
 
 void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout)
 {
@@ -1034,10 +1047,10 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
             
         //If we tried to find a new matrix too many times, we give up and explore the ones we found so far 
         if (nb_steps++>MAX_NB_STEPS){
-            std::ofstream myfile;
+            /*std::ofstream myfile;
              myfile.open ("example.txt",std::ios_base::app);
             myfile<<"\n\n\n Moving on ***********"<<std::endl;
-            myfile.close();
+            myfile.close();*/
             break;
         } 
         if (!illegal)  child = *iterator;
@@ -1062,13 +1075,14 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         std::cout << std::endl;
         }
 
+        std::cout<<nb_matrices<<std::endl;
+        std::cout<<nb_steps<<std::endl;
         child->bounds_matrix = bounds_mat;
         child->transformed_bounds_matrix = multiply(child->new_optims.back().matrix,bounds_mat);
 
         if(check_if_repeated(child->new_optims.back().matrix, matrices)) continue;
         
-        matrices.push_back(child->new_optims.back().matrix);
-        nb_matrices++;
+        
         
         child->transform_ast();
 
@@ -1108,7 +1122,8 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         }
         else {
 
-            
+            matrices.push_back(child->new_optims.back().matrix);
+            nb_matrices++;
             ++iterator;
             
             first_time_illegal=true;

@@ -1315,6 +1315,7 @@ namespace tiramisu
 
     void tiramisu::computation::unroll(tiramisu::var L0_var, int v, tiramisu::var L0_outer, tiramisu::var L0_inner)
     {
+        
         DEBUG_FCT_NAME(3);
         DEBUG_INDENT(4);
 
@@ -1347,12 +1348,13 @@ namespace tiramisu
         }
 
         this->get_function()->align_schedules();
-
+        
         DEBUG_INDENT(-4);
     }
 
     void tiramisu::computation::unroll(int L0, int v)
     {
+        std::cout<<"started unrolling"<<std::endl;
         DEBUG_FCT_NAME(3);
         DEBUG_INDENT(4);
 
@@ -1370,7 +1372,8 @@ namespace tiramisu
         }
 
         this->get_function()->align_schedules();
-
+        
+std::cout<<"endted unrolling"<<std::endl;
         DEBUG_INDENT(-4);
     }
 
@@ -2778,9 +2781,10 @@ namespace tiramisu
     {
         DEBUG_FCT_NAME(3);
         DEBUG_INDENT(4);
-
+        
         isl_map *sched = this->get_schedule();
-
+        std::cout<<"Before"<<std::endl;
+        std::cout<<isl_map_to_str(sched)<<std::endl;
         assert(sched != NULL);
 
         for (int i = 0; i < this->get_loop_levels_number(); i++)
@@ -2789,8 +2793,11 @@ namespace tiramisu
                 sched = isl_map_set_dim_name(sched, isl_dim_out, loop_level_into_dynamic_dimension(i), generate_new_variable_name().c_str());
         }
 
-        this->set_schedule(sched);
 
+        this->set_schedule(sched);
+        
+        std::cout<<"after"<<std::endl;
+        std::cout<<isl_map_to_str(sched)<<std::endl;
         DEBUG_INDENT(-4);
     }
 
@@ -3180,7 +3187,7 @@ namespace tiramisu
         }
 
         map = map + "]}";
-
+        
 
         DEBUG(3, tiramisu::str_dump("A map that transforms the duplicate"));
         DEBUG(3, tiramisu::str_dump(map.c_str()));

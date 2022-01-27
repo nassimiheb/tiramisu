@@ -658,7 +658,7 @@ namespace tiramisu::auto_scheduler
         int starting_level=0;
         for (ast_node *root : roots)
         {
-            update_node(root,bounds_matrix,starting_level);
+            update_node(root,transformed_bounds_matrix,starting_level);
         }
         
         recover_isl_states();
@@ -1137,6 +1137,7 @@ namespace tiramisu::auto_scheduler
         // Copy AST data
         new_ast.fct = fct;
         new_ast.bounds_matrix = bounds_matrix;
+        new_ast.transformed_bounds_matrix = transformed_bounds_matrix;
         new_ast.computations_list = computations_list;
         new_ast.buffers_list = buffers_list;
         new_ast.buffers_mapping = buffers_mapping;
