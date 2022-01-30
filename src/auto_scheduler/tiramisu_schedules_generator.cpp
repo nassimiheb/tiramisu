@@ -416,7 +416,7 @@ std::vector<syntax_tree*> ml_model_schedules_generator::generate_schedules(synta
             {
                 //Generate 4 matrices to be explored
                 //Make sure that the number of generated matrices is under MAX_NB_MATRICES
-                for(int i=0;i<25;i++){
+                for(int i=0;i<100;i++){
                     syntax_tree* new_ast = new syntax_tree();
                     new_ast = ast.copy_ast();
                     optimization_info optim_info;
@@ -428,8 +428,6 @@ std::vector<syntax_tree*> ml_model_schedules_generator::generate_schedules(synta
             break;
             }
         case optimization_type::UNROLLING:
-            
-            
 
             ast.stage_isl_states();
             
@@ -445,11 +443,12 @@ std::vector<syntax_tree*> ml_model_schedules_generator::generate_schedules(synta
                 inner_most_node->get_innermost_computations(involved_computations);
 
                 std::vector<std::string> loop_names = involved_computations[0]->get_loop_level_names();
-            
+                
                 std::string loop_name = loop_names[inner_most_node->depth];
-
+                
                 bool result = ast.fct->loop_unrolling_is_legal(var(loop_name),involved_computations);
 
+                
 
                 if(result) // unrollable: test all possible values
                 {
@@ -491,7 +490,7 @@ std::vector<syntax_tree*> ml_model_schedules_generator::generate_schedules(synta
             break;
 
         case optimization_type::PARALLELIZE:
-
+            
             //ast.print_isl_states();
             //ast.print_ast();
             
@@ -514,12 +513,13 @@ std::vector<syntax_tree*> ml_model_schedules_generator::generate_schedules(synta
 
             for (ast_node* commun_node: shared_nodes)
             {
+                
                 std::vector<std::string> loop_names = involved_computations[0]->get_loop_level_names();
             
                 std::string loop_name = loop_names[commun_node->depth];
                 
                 bool result = ast.fct->loop_parallelization_is_legal(var(loop_name),involved_computations);
-
+                
                 if(result) // unrollable: test all possible values
                 {
                     ast.recover_isl_states();
@@ -555,7 +555,7 @@ std::vector<syntax_tree*> ml_model_schedules_generator::generate_schedules(synta
             }
 
             ast.recover_isl_states();
-
+            
             break;
 
         case optimization_type::SKEWING:

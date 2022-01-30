@@ -1354,7 +1354,7 @@ namespace tiramisu
 
     void tiramisu::computation::unroll(int L0, int v)
     {
-        std::cout<<"started unrolling"<<std::endl;
+        
         DEBUG_FCT_NAME(3);
         DEBUG_INDENT(4);
 
@@ -1373,7 +1373,7 @@ namespace tiramisu
 
         this->get_function()->align_schedules();
         
-std::cout<<"endted unrolling"<<std::endl;
+
         DEBUG_INDENT(-4);
     }
 
@@ -2783,8 +2783,7 @@ std::cout<<"endted unrolling"<<std::endl;
         DEBUG_INDENT(4);
         
         isl_map *sched = this->get_schedule();
-        std::cout<<"Before"<<std::endl;
-        std::cout<<isl_map_to_str(sched)<<std::endl;
+        
         assert(sched != NULL);
 
         for (int i = 0; i < this->get_loop_levels_number(); i++)
@@ -2796,8 +2795,7 @@ std::cout<<"endted unrolling"<<std::endl;
 
         this->set_schedule(sched);
         
-        std::cout<<"after"<<std::endl;
-        std::cout<<isl_map_to_str(sched)<<std::endl;
+        
         DEBUG_INDENT(-4);
     }
 
@@ -4906,13 +4904,13 @@ void computation::skew(int L0, int L1, int L2, int L3, int factor)
             reverse);
 
         DEBUG(10, tiramisu::str_dump(" to initial set  " + std::string(isl_set_to_str(reversed_set))));
-
+        
         isl_set *normal_set = isl_set_apply(reversed_set, normal_schedule);
 
         DEBUG(10, tiramisu::str_dump(" dimension number is : " + std::to_string(dimension_index)));
-
+        
         DEBUG(3, tiramisu::str_dump(" set with applied constraints : " + std::string(isl_set_to_str(normal_set))));
-
+        
         isl_pw_aff *max = isl_set_dim_max(isl_set_copy(normal_set), dimension_index);
         isl_pw_aff *min = isl_set_dim_min(isl_set_copy(normal_set), dimension_index);
 
@@ -4920,7 +4918,7 @@ void computation::skew(int L0, int L1, int L2, int L3, int factor)
 
         DEBUG(3, tiramisu::str_dump(" max is  : " + std::string(isl_pw_aff_to_str(max))));
         DEBUG(3, tiramisu::str_dump(" min is  : " + std::string(isl_pw_aff_to_str(min))));
-
+        
         int n_piece_max = isl_pw_aff_n_piece(max);
 
         int n_piece_min = isl_pw_aff_n_piece(min);
@@ -4937,7 +4935,7 @@ void computation::skew(int L0, int L1, int L2, int L3, int factor)
         DEBUG_INDENT(-4);
 
         isl_set_free(normal_set);
-
+        
         return ((n_piece_max == 1) && (n_piece_min == 1));
     }
 
@@ -6045,20 +6043,20 @@ void computation::skew(int L0, int L1, int L2, int L3, int factor)
         DEBUG_INDENT(4);
 
         DEBUG(3, tiramisu::str_dump("Applying separateAndSplit on loop level " + std::to_string(L0) + " with a split factor of " + std::to_string(v)));
-
+        
         this->gen_time_space_domain();
 
         // Compute the depth before any scheduling.
         int original_depth = this->compute_maximal_AST_depth();
 
         DEBUG(3, tiramisu::str_dump("Computing upper bound at loop level " + std::to_string(L0)));
-
+        
         tiramisu::expr loop_upper_bound =
             tiramisu::expr(o_cast, global::get_loop_iterator_data_type(),
                            tiramisu::utility::get_bound(this->get_trimmed_time_processor_domain(), L0, true));
 
         DEBUG(3, tiramisu::str_dump("Computing lower bound at loop level " + std::to_string(L0)));
-
+        
         tiramisu::expr loop_lower_bound =
             tiramisu::expr(o_cast, global::get_loop_iterator_data_type(),
                            tiramisu::utility::get_bound(this->get_trimmed_time_processor_domain(), L0, false));
@@ -6078,7 +6076,6 @@ void computation::skew(int L0, int L1, int L2, int L3, int factor)
         loop_bound = loop_bound.simplify();
 
         DEBUG(3, tiramisu::str_dump("Loop bound for the loop to be separated and split: "); loop_bound.dump(false));
-
         /*
      * Separate this computation. That is, create two identical computations
      * where we have the constraint
@@ -6103,6 +6100,8 @@ void computation::skew(int L0, int L1, int L2, int L3, int factor)
      * Split the full computation since the full computation will be vectorized.
      */
         //this->get_update(0).split(L0, v);
+        
+        
         this->get_update(0).split_with_lower_bound(L0, v, lower_without_cast);
 
         // Compute the depth after scheduling.
@@ -6443,19 +6442,19 @@ void computation::skew(int L0, int L1, int L2, int L3, int factor)
         /**
      * The main idea is to avoid a case when the iterations dont start from 0.
      * let assume it start from 1, in that case after splitting of \p i into \p i1 & \p i2 with factor 4, the result would be:
-     *  in first iteration of \p i1 would would compute \p i2 = [1,2,3,4] then [5,6,7,8]
+     *  in first iteration of \p i1 would compute \p i2 = [1,2,3,4] then [5,6,7,8]
      *  Whereas in the legacy version in first iteration of \p i1 would would compute \p i2 = [1,2,3]  then [4,5,6,7]
      * 
-    */
+        */
         inDim0_str = "(" + inDim0_str + " - " + lower_bound + ")";
 
         map = map + "] : " + dimensions_str[0] + " = " + std::to_string(duplicate_ID) + " and " +
               outDim0_str + " = floor(" + inDim0_str + "/" +
               std::to_string(sizeX) + ") and " + outDim1_str + " = (" +
               inDim0_str + " %" + std::to_string(sizeX) + ") and " + static_dim_str + " = 0}";
-
+        
         isl_map *transformation_map = isl_map_read_from_str(this->get_ctx(), map.c_str());
-
+        
         for (int i = 0; i < dimensions.size(); i++)
             transformation_map = isl_map_set_dim_id(
                 transformation_map, isl_dim_out, i, isl_id_copy(dimensions[i]));

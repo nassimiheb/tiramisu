@@ -32,7 +32,7 @@
   * (this will print detailed debugging information).
   */
 #ifndef DEBUG_LEVEL
-#define DEBUG_LEVEL 0
+#define DEBUG_LEVEL 3
 #endif // DEBUG_LEVEL
 
 namespace tiramisu
