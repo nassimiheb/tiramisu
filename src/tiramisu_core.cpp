@@ -2783,8 +2783,8 @@ std::cout<<"endted unrolling"<<std::endl;
         DEBUG_INDENT(4);
         
         isl_map *sched = this->get_schedule();
-        std::cout<<"Before"<<std::endl;
-        std::cout<<isl_map_to_str(sched)<<std::endl;
+        //std::cout<<"Before"<<std::endl;
+        //std::cout<<isl_map_to_str(sched)<<std::endl;
         assert(sched != NULL);
 
         for (int i = 0; i < this->get_loop_levels_number(); i++)
@@ -2796,8 +2796,8 @@ std::cout<<"endted unrolling"<<std::endl;
 
         this->set_schedule(sched);
         
-        std::cout<<"after"<<std::endl;
-        std::cout<<isl_map_to_str(sched)<<std::endl;
+        //std::cout<<"after"<<std::endl;
+        //std::cout<<isl_map_to_str(sched)<<std::endl;
         DEBUG_INDENT(-4);
     }
 
@@ -4833,7 +4833,12 @@ void computation::skew(int L0, int L1, int L2, int L3, int factor)
 
         return overall_corectness;
     }
-
+    bool is_number(const std::string& s)
+    {
+        std::string::const_iterator it = s.begin();
+        while (it != s.end() && std::isdigit(*it)) ++it;
+        return !s.empty() && it == s.end();
+    }
     bool computation::unrolling_is_legal(var l)
     {
         DEBUG_FCT_NAME(3);
@@ -4915,15 +4920,29 @@ void computation::skew(int L0, int L1, int L2, int L3, int factor)
 
         isl_pw_aff *max = isl_set_dim_max(isl_set_copy(normal_set), dimension_index);
         isl_pw_aff *min = isl_set_dim_min(isl_set_copy(normal_set), dimension_index);
-
+ 
         // count the number of element that forms the max & min for the specified var
 
         DEBUG(3, tiramisu::str_dump(" max is  : " + std::string(isl_pw_aff_to_str(max))));
         DEBUG(3, tiramisu::str_dump(" min is  : " + std::string(isl_pw_aff_to_str(min))));
 
+        std::string min_string=isl_pw_aff_to_str(min);
+        std::string max_string=isl_pw_aff_to_str(max);
+
+        std::string delimiter = "{ [(";
+        std::string min_expr = min_string.substr(min_string.find(delimiter)+4, min_string.size());
+        std::string delimiter1 = ")] :";
+        min_expr = min_expr.substr(0,min_expr.find(delimiter1));
+
+        delimiter = "{ [(";
+        std::string max_expr = max_string.substr(max_string.find(delimiter)+4, max_string.size());
+        delimiter1 = ")] :";
+        max_expr = max_expr.substr(0,max_expr.find(delimiter1));
+
         int n_piece_max = isl_pw_aff_n_piece(max);
 
         int n_piece_min = isl_pw_aff_n_piece(min);
+
 
         if ((n_piece_max == 1) && (n_piece_min == 1))
         {
@@ -4938,7 +4957,7 @@ void computation::skew(int L0, int L1, int L2, int L3, int factor)
 
         isl_set_free(normal_set);
 
-        return ((n_piece_max == 1) && (n_piece_min == 1));
+        return ((n_piece_max == 1) && (n_piece_min == 1) && (is_number(min_expr)) && (is_number(max_expr)) );
     }
 
     void computation::shift(tiramisu::var L0_var, int n)
@@ -6058,13 +6077,13 @@ void computation::skew(int L0, int L1, int L2, int L3, int factor)
         tiramisu::expr loop_upper_bound =
             tiramisu::expr(o_cast, global::get_loop_iterator_data_type(),
                            tiramisu::utility::get_bound(this->get_trimmed_time_processor_domain(), L0, true));
-std::cout<<"started  seprate 1\n";
+//std::cout<<"started  seprate 1\n";
         DEBUG(3, tiramisu::str_dump("Computing lower bound at loop level " + std::to_string(L0)));
 
         tiramisu::expr loop_lower_bound =
             tiramisu::expr(o_cast, global::get_loop_iterator_data_type(),
                            tiramisu::utility::get_bound(this->get_trimmed_time_processor_domain(), L0, false));
-std::cout<<"started  seprate 2\n";
+//std::cout<<"started  seprate 2\n";
         std::string lower_without_cast = loop_lower_bound.to_str();
         while (lower_without_cast.find("cast") != std::string::npos) // while there is a "cast" in the expression
         {
@@ -6078,10 +6097,12 @@ std::cout<<"started  seprate 2\n";
         tiramisu::expr loop_bound = loop_upper_bound - loop_lower_bound +
                                     tiramisu::expr(o_cast, global::get_loop_iterator_data_type(), tiramisu::expr((int32_t)1));
         loop_bound = loop_bound.simplify();
-std::cout<<"started  seprate 3\n";
+//std::cout<<"started  seprate 3\n";
         DEBUG(3, tiramisu::str_dump("Loop bound for the loop to be separated and split: "); loop_bound.dump(false));
+        //std::cout<<"Loop bound for the loop to be separated and split: \n";
+         //loop_bound.dump(false);
 
-       std::cout<<"started  seprate\n";
+       //std::cout<<"started  seprate\n";
         /*
      * Separate this computation. That is, create two identical computations
      * where we have the constraint
@@ -6097,16 +6118,17 @@ std::cout<<"started  seprate 3\n";
      * (the full or the separated domains) and schedule one after the other.
      */
         this->separate(L0, loop_bound, v, loop_lower_bound);
-        std::cout<<"finised seprate\n";
+        //std::cout<<"finised seprate\n";
         // Make a copy of the schedule before splitting so that we revert the
         // schedule if splitting did not have any effect (i.e., did not happen).
-        std::cout<<"Schdule : "<<isl_map_to_str(this->get_schedule())<<"\n";
+        //std::cout<<"Schdule : "<<isl_map_to_str(this->get_schedule())<<"\n";
         isl_map *sc = isl_map_copy(this->get_schedule());
         std::cout<<"Schdule after copy : "<<isl_map_to_str(sc)<<"\n";
         /**
      * Split the full computation since the full computation will be vectorized.
      */
         //this->get_update(0).split(L0, v);
+        //lower_without_cast="(0)";
         std::cout<<"L0 = "<<L0<<"\t v ="<<v<<"\t lower = "<<lower_without_cast<<"\n";
         this->get_update(0).split_with_lower_bound(L0, v, lower_without_cast);
 
