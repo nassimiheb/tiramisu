@@ -1014,8 +1014,9 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     //Generate n matrice asts to be explored
     //To change the number of matrices being explored go to: generate_schedules then the MATRIX case and change the length of the loop
     optimization_type optim_type = optimization_type::MATRIX;
+    std::cout<<"Starting genrate#################\n";
     children = scheds_gen->generate_schedules(ast, optim_type);
-    
+    std::cout<<"finsish genrate#################\n";
     
     // Stop if no more optimizations can be applied
     //Add the current AST to the list of children
@@ -1030,6 +1031,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     //std::map <std::string,std::string>* corr_map;
     std::vector<std::vector<int>> bounds_mat;
     bounds_mat = get_ast_isl_bound_matrice(ast);
+    std::cout<<"get ùatrice genrate#################\n";
     // Add the corr_map to the ast structue
     //corr_map = get_corr_map_from_isl(ast);
     //Hash the program string to get a unique seed for each program 
@@ -1066,9 +1068,10 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         new_ast = child->copy_ast();
         
         
-        //add the matrix to optim.info = {{1,0,0},{-6,1,0},{5,-5,1}};
+        //add the matrix to optim.info  {{1,0,0},{-6,1,0},{5,-5,1}};
         std::vector<std::vector<int>> vec {{1,0,0},{0,1,0},{0,0,1}};
-        child->new_optims.back().matrix = vec;
+        
+        child->new_optims.back().matrix = get_random_matix(shape);
         std::cout<<"la matrice #################\n";
         for (int i = 0; i < child->new_optims.back().matrix.size(); i++) {
         for (int j = 0; j < child->new_optims.back().matrix[i].size(); j++)

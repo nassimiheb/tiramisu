@@ -140,18 +140,6 @@ std::vector<float> evaluate_by_execution::get_measurements(syntax_tree& ast, boo
 }
 std::vector<float> evaluate_by_execution::get_measurements_matrix(syntax_tree& ast, bool exit_on_timeout, float timeout)
 {
-    // Apply all the optimizations
-    for (int i = 0; i < ast.transformed_bounds_matrix.size(); i++) {
-        for (int j = 0; j < ast.transformed_bounds_matrix[i].size(); j++)
-            std::cout << ast.transformed_bounds_matrix[i][j] << " ";
-         std::cout <<  std::endl;
-    }
-std::cout<<"bound\n";
-    for (int i = 0; i < ast.bounds_matrix.size(); i++) {
-        for (int j = 0; j < ast.bounds_matrix[i].size(); j++)
-            std::cout << ast.bounds_matrix[i][j] << " ";
-         std::cout <<  std::endl;
-    }
     
     apply_optimizations_matrix(ast);
     // Compile the program to an object file
