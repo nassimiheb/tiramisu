@@ -34,7 +34,7 @@ int main(int argc, char **argv){
 	perform_full_dependency_analysis();
 
 	const int beam_size = 10;
-	const int max_depth = 5;
+	const int max_depth = 3;
 	declare_memory_usage();
 
 	auto_scheduler::schedules_generator *scheds_gen = new auto_scheduler::ml_model_schedules_generator();

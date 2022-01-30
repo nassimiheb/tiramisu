@@ -116,7 +116,7 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
 
     //if (ast.nb_explored_optims % NB_OPTIMIZATIONS == 0)
     //    ast.clear_new_optimizations();
-
+    
     std::vector<syntax_tree*> children;
 
     // Look for an optimization that can be applied
@@ -126,20 +126,27 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
     while (children.size() == 0 && nb_optims_tried < NB_OPTIMIZATIONS && nb_explored_optims < max_depth)
     {
         optimization_type optim_type = DEFAULT_OPTIMIZATIONS_ORDER[nb_explored_optims % NB_OPTIMIZATIONS];
+        
         children = scheds_gen->generate_schedules(ast, optim_type);
-
+        
+        
         nb_explored_optims++;
         nb_optims_tried++;
     }
+    
+    
     // Stop if no more optimizations can be applied
     if (children.size() == 0)
         return ;
+
+        
 
     // Evaluate children and sort them from smallest to highest evaluation
     // evaluate while removing illegal versions
     auto iterator = children.begin();
     while (iterator != children.end())
     {
+        
         syntax_tree *child = *iterator;
         child->nb_explored_optims = nb_explored_optims;
         child->transform_ast();
@@ -557,7 +564,12 @@ Generate one random matrix that verifies the conditions of: 1- determinant is on
         }
         if(choice<3) return randomU;
         if(choice>5)return multiply(randomL,randomU);
-        
+        /*
+        randomU.at(0)= std::vector<int>(depth);randomU.at(0).at(0)=1;randomU.at(0).at(1)=0;randomU.at(0).at(2)=0;
+        randomU.at(1)= std::vector<int>(depth);randomU.at(1).at(0)=-6;randomU.at(1).at(1)=1;randomU.at(1).at(2)=0;
+        randomU.at(2)= std::vector<int>(depth);randomU.at(2).at(0)=5;randomU.at(2).at(1)=-5;randomU.at(2).at(2)=1;
+        return randomU;
+        */
         for(l = 0; l<depth; l++){
             randomL.at(l).at(l) =1;
             randomU.at(l).at(l) =1;
@@ -1072,20 +1084,13 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         std::vector<std::vector<int>> vec {{1,0,0},{0,1,0},{0,0,1}};
         
         child->new_optims.back().matrix = get_random_matix(shape);
-        std::cout<<"la matrice #################\n";
-        for (int i = 0; i < child->new_optims.back().matrix.size(); i++) {
-        for (int j = 0; j < child->new_optims.back().matrix[i].size(); j++)
-            std::cout << child->new_optims.back().matrix[i][j] << " ";
-        std::cout << std::endl;
-        }
 
-        std::cout<<nb_matrices<<std::endl;
-        std::cout<<nb_steps<<std::endl;
+        //std::cout<<nb_matrices<<std::endl;
+        //std::cout<<nb_steps<<std::endl;
         child->bounds_matrix = bounds_mat;
         child->transformed_bounds_matrix = multiply(child->new_optims.back().matrix,bounds_mat);
 
         if(check_if_repeated(child->new_optims.back().matrix, matrices)) continue;
-        
         
         
         child->transform_ast();
