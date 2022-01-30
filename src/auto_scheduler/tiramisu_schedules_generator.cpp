@@ -447,7 +447,6 @@ std::vector<syntax_tree*> ml_model_schedules_generator::generate_schedules(synta
                 std::string loop_name = loop_names[inner_most_node->depth];
                 
                 bool result = ast.fct->loop_unrolling_is_legal(var(loop_name),involved_computations);
-
                 
 
                 if(result) // unrollable: test all possible values

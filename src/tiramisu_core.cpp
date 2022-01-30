@@ -4832,10 +4832,15 @@ void computation::skew(int L0, int L1, int L2, int L3, int factor)
         return overall_corectness;
     }
     bool is_number(const std::string& s)
-    {
-        std::string::const_iterator it = s.begin();
-        while (it != s.end() && std::isdigit(*it)) ++it;
-        return !s.empty() && it == s.end();
+    {   
+        std::string delimiter = "{ [(";
+        std::string expr = s.substr(s.find(delimiter)+4, s.size());
+        std::string delimiter1 = ")] :";
+        expr = expr.substr(0,expr.find(delimiter1));
+
+        std::string::const_iterator it = expr.begin();
+        while (it != expr.end() && std::isdigit(*it)) ++it;
+        return !expr.empty() && it == expr.end();
     }
     bool computation::unrolling_is_legal(var l)
     {
@@ -4927,18 +4932,7 @@ void computation::skew(int L0, int L1, int L2, int L3, int factor)
         std::string min_string=isl_pw_aff_to_str(min);
         std::string max_string=isl_pw_aff_to_str(max);
 
-        std::string delimiter = "{ [(";
-        std::string min_expr = min_string.substr(min_string.find(delimiter)+4, min_string.size());
-        std::string delimiter1 = ")] :";
-        min_expr = min_expr.substr(0,min_expr.find(delimiter1));
-
-        delimiter = "{ [(";
-        std::string max_expr = max_string.substr(max_string.find(delimiter)+4, max_string.size());
-        delimiter1 = ")] :";
-        max_expr = max_expr.substr(0,max_expr.find(delimiter1));
-
         int n_piece_max = isl_pw_aff_n_piece(max);
-
         int n_piece_min = isl_pw_aff_n_piece(min);
 
 
@@ -4955,7 +4949,7 @@ void computation::skew(int L0, int L1, int L2, int L3, int factor)
 
         isl_set_free(normal_set);
 
-        return ((n_piece_max == 1) && (n_piece_min == 1) && (is_number(min_expr)) && (is_number(max_expr)) );
+        return ((n_piece_max == 1) && (n_piece_min == 1) && (is_number(min_string)) && (is_number(max_string)) );
     }
 
     void computation::shift(tiramisu::var L0_var, int n)
