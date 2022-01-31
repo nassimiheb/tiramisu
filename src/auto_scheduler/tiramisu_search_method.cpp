@@ -124,7 +124,8 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
     int nb_explored_optims = ast.nb_explored_optims;
 
     while (children.size() == 0 && nb_optims_tried < NB_OPTIMIZATIONS && nb_explored_optims < max_depth)
-    {
+    {       
+        
         optimization_type optim_type = DEFAULT_OPTIMIZATIONS_ORDER[nb_explored_optims % NB_OPTIMIZATIONS];
         
         children = scheds_gen->generate_schedules(ast, optim_type);
@@ -515,10 +516,28 @@ std::vector<std::vector<int>>  multiply(const std::vector<std::vector<int>> & m1
             }
             return result;
         }
+
 /*
 Generate one random matrix that verifies the conditions of: 1- determinant is one 2- all of the upper left determinants are 1
 */
-  std::vector < std::vector<int> >  beam_search::get_random_matix(int depth)
+bool is_identity(std::vector < std::vector<int> > matrix){
+    for(int l = 0; l<matrix.size(); l++){
+            for(int c = 0; c<matrix.size(); c++){
+                            if (l!=c && matrix.at(l).at(c)!=0){
+                                return false;
+                            }else{
+                                if(matrix.at(l).at(c)!=1){
+                                    return false;
+                                }
+                            }
+            }
+        }
+        return true;
+}
+/*
+Generate one random matrix that verifies the conditions of: 1- determinant is one 2- all of the upper left determinants are 1
+*/
+  std::vector < std::vector<int> >  beam_search::get_random_matrix(int depth)
 {
     int max_depth = 6;
     if (depth>max_depth) std::cout << "WARNING: the depth of this program is too big. Matrix generation will take a long time \n"<< std::endl;
@@ -545,7 +564,8 @@ Generate one random matrix that verifies the conditions of: 1- determinant is on
                             }
             }
         }
-        if(choice>3 && choice< 5)  return randomL;
+
+        if(choice>3 && choice< 5 && !is_identity(randomL))  return randomL;
         ////generate an upper traiangular matrix
         std::vector <  std::vector<int> >  randomU(depth);
         for(l = 0; l<depth; l++){
@@ -562,8 +582,10 @@ Generate one random matrix that verifies the conditions of: 1- determinant is on
                         }
             }
         }
-        if(choice<3) return randomU;
-        if(choice>5)return multiply(randomL,randomU);
+        if(choice<3 && !is_identity(randomU)) return randomU;
+        randomU = multiply(randomL,randomU);
+        if(choice>5 && !is_identity(randomU))return randomU;
+        if(!is_identity(randomU)) continue;
         /*
         randomU.at(0)= std::vector<int>(depth);randomU.at(0).at(0)=1;randomU.at(0).at(1)=0;randomU.at(0).at(2)=0;
         randomU.at(1)= std::vector<int>(depth);randomU.at(1).at(0)=-6;randomU.at(1).at(1)=1;randomU.at(1).at(2)=0;
@@ -1076,7 +1098,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         
         //std::vector<std::vector<int>> vec {{1,0,0},{0,1,0},{0,0,1}};
         //add the matrix to optim.info       
-        child->new_optims.back().matrix = get_random_matix(shape);
+        child->new_optims.back().matrix = get_random_matrix(shape);
 
         //std::cout<<nb_matrices<<std::endl;
         //std::cout<<nb_steps<<std::endl;
@@ -1218,10 +1240,10 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     std::shuffle(std::begin(to_be_explored), std::end(to_be_explored), rand_generator);
 
     // keep the top 'beam_size' children and delete the rest
-    for (int i = beam_size; i < to_be_explored.size(); ++i)
-       delete to_be_explored[i];
+    //for (int i = beam_size; i < to_be_explored.size(); ++i)
+    //   delete to_be_explored[i];
 
-    to_be_explored.resize(std::min(beam_size, (int)to_be_explored.size()));
+    //to_be_explored.resize(std::min(beam_size, (int)to_be_explored.size()));
 
     // Search recursively on the best children
     for (syntax_tree *child : to_be_explored)
