@@ -140,7 +140,7 @@ std::vector<float> evaluate_by_execution::get_measurements(syntax_tree& ast, boo
 }
 std::vector<float> evaluate_by_execution::get_measurements_matrix(syntax_tree& ast, bool exit_on_timeout, float timeout)
 {
-    
+    // Apply all the optimizations
     apply_optimizations_matrix(ast);
     // Compile the program to an object file
     fct->lift_dist_comps();
@@ -409,7 +409,7 @@ std::string evaluate_by_learning_model::get_schedule_json(syntax_tree const& ast
     std::vector < std::vector<int> > matrix;
     std::vector < std::vector<int> > init_bounds_matrix;
     std::vector < std::vector<int> > result_bounds_matrix;
-    
+
     // Get information about the schedule
     for (optimization_info const& optim_info : ast.new_optims)
     {
@@ -503,8 +503,8 @@ std::string evaluate_by_learning_model::get_schedule_json(syntax_tree const& ast
         
         comp_sched_json += "],";
         // JSON for initial constraint matrix
-        comp_sched_json += "\"initial constraint matrix\" : [";
-        
+        comp_sched_json += "\"initial_constraint_matrix\" : [";
+
         if (transformed_by_matrix)
         {
             for(int i = 0; i < init_bounds_matrix.size(); i++){
@@ -513,11 +513,11 @@ std::string evaluate_by_learning_model::get_schedule_json(syntax_tree const& ast
                             if(!(i==init_bounds_matrix.size()-1 && j==init_bounds_matrix.at(i).size()-1)) comp_sched_json += ", ";
                         }
             }
-            
+
         }
         comp_sched_json += "]," ;
         // JSON for matrix
-        comp_sched_json += "\"transformation matrix\" : [";
+        comp_sched_json += "\"transformation_matrix\" : [";
         
         if (transformed_by_matrix)
         {
@@ -530,10 +530,10 @@ std::string evaluate_by_learning_model::get_schedule_json(syntax_tree const& ast
             
         }
         comp_sched_json += "]," ;
-        
+
         // JSON for resulting constraint matrix
-        comp_sched_json += "\"resulting constraint matrix\" : [";
-        
+        comp_sched_json += "\"resulting_constraint_matrix\" : [";
+
         if (transformed_by_matrix)
         {
             for(int i = 0; i < result_bounds_matrix.size(); i++){
@@ -542,13 +542,13 @@ std::string evaluate_by_learning_model::get_schedule_json(syntax_tree const& ast
                             if(!(i==result_bounds_matrix.size()-1 && j==result_bounds_matrix.at(i).size()-1)) comp_sched_json += ", ";
                         }
             }
-            
+
         }
         comp_sched_json += "]," ;
         // JSON for tiling
         comp_sched_json += "\"tiling\" : {";
         
-        
+
         if (tiled)
         {
             if (tile_nb_l == 2)

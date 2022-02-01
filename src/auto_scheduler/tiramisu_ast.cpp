@@ -1798,7 +1798,7 @@ state_computation::state_computation(state_computation * reference)
                 for(int i = 0; i < optim.matrix.size(); i++){
                         for(int j = 0; j< optim.matrix.size(); j++){
                             schedule_str += std::to_string(optim.matrix.at(i).at(j));
-                            if(!(i==optim.matrix.size()-1 && j==optim.matrix.size()-1)) schedule_str += ", ";
+                            if(!(i==optim.matrix.size()-1 && j==optim.matrix.size()-1)) schedule_str += ",";
                         }
             }
 

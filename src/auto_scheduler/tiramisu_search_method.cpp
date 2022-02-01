@@ -1,8 +1,6 @@
 #include <tiramisu/auto_scheduler/search_method.h>
 #include <random>
 #include <functional>
-#include <fstream>
-#include <iostream>
 
 namespace tiramisu::auto_scheduler
 {
@@ -116,7 +114,7 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
 
     //if (ast.nb_explored_optims % NB_OPTIMIZATIONS == 0)
     //    ast.clear_new_optimizations();
-    
+
     std::vector<syntax_tree*> children;
 
     // Look for an optimization that can be applied
@@ -124,48 +122,35 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
     int nb_explored_optims = ast.nb_explored_optims;
 
     while (children.size() == 0 && nb_optims_tried < NB_OPTIMIZATIONS && nb_explored_optims < max_depth)
-    {       
-        
+    {
+
         optimization_type optim_type = DEFAULT_OPTIMIZATIONS_ORDER[nb_explored_optims % NB_OPTIMIZATIONS];
-        
+
         children = scheds_gen->generate_schedules(ast, optim_type);
-        
-        
+
+
         nb_explored_optims++;
         nb_optims_tried++;
     }
-    
-    
+
+
     // Stop if no more optimizations can be applied
     if (children.size() == 0)
         return ;
 
-        
+
 
     // Evaluate children and sort them from smallest to highest evaluation
     // evaluate while removing illegal versions
     auto iterator = children.begin();
     while (iterator != children.end())
     {
-        
+
         syntax_tree *child = *iterator;
         child->nb_explored_optims = nb_explored_optims;
         child->transform_ast();
 
-        if (child->schedule_is_prunable()){
-            if (std::atoi(read_env_var("AS_VERBOSE"))==1){
-                // print deleted Ast
-                child->print_previous_optims();
-                std::cout << "\n-----------" << std::endl;
-                child->print_new_optims();
-                child->print_ast();
-                std::cout << "\n<Schedule pruned>\n";
-            }
-            delete child;
-            iterator = children.erase(iterator);
-        }
-
-        else if (!child->ast_is_legal()) {
+        if (!child->ast_is_legal()) {
             if (std::atoi(read_env_var("AS_VERBOSE"))==1){
                 // print deleted Ast
                 child->print_previous_optims();
@@ -193,13 +178,8 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
             }
 
             std::vector<float> measurements;
-            if (child->can_set_default_evaluation()) { // if yes the child's evaluation is set to a default value
-                measurements = {child->evaluation};
-            }
-            else{
-                measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
-                child->evaluation = min_eval(measurements);
-            }
+            measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
+            child->evaluation = min_eval(measurements);
 
             parent_trace->add_child_path(child, schedules_annotations->size());
 
@@ -215,15 +195,8 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
                 schedule_annot += ", \n\"execution_times\" : null\n}\n";
 
             schedules_annotations->push_back(schedule_annot);
-                
+
             if (std::atoi(read_env_var("AS_VERBOSE"))==1){
-                std::ofstream myfile;
-                myfile.open ("example.txt",std::ios_base::app);
-                myfile<<"Schedule: "<<schedule_annot<<std::endl;
-                myfile<<"Schedule number "<< schedules_annotations->size() << std::endl;
-                myfile<<"Evaluation : " << child->evaluation << std::endl;
-                myfile<<"Schedule number "<< schedules_annotations->size() << std::endl;
-                myfile.close();
                 std::cout << "Schedule number "<< schedules_annotations->size() << std::endl;
                 std::cout << "Evaluation : " << child->evaluation << std::endl;
                 std::cout << "Number of measurements : " << measurements.size() << std::endl;
@@ -257,11 +230,11 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
     parent_trace->add_child_path(ast_copy, parent_trace->get_candidate_id()); // keeps the same id since it's just copy
 
     // Sort children from smallest evaluation to largest
-//    std::sort(children.begin(), children.end(), [](syntax_tree *a, syntax_tree *b) {
-//        return a->evaluation < b->evaluation;
-//    });
+    std::sort(children.begin(), children.end(), [](syntax_tree *a, syntax_tree *b) {
+        return a->evaluation < b->evaluation;
+    });
     // shuffle the children so that they are selected a random
-    std::shuffle(std::begin(children), std::end(children), rand_generator);
+//    std::shuffle(std::begin(children), std::end(children), rand_generator);
 
     // keep the top 'beam_size' children and delete the rest
     for (int i = beam_size; i < children.size(); ++i)
@@ -310,7 +283,7 @@ bool check_if_repeated( std::vector < std::vector<int> >  matrix,std::vector < s
     
     int depth = matrix.size();
     int i=0;
-    while(i<matrices.size()){ 
+    while(i<matrices.size()){
         //for each matrix that we already explored  
         bool diffrent = false;
         for (int s=0;s<depth;s++){
@@ -546,7 +519,7 @@ Generate one random matrix that verifies the conditions of: 1- determinant is on
     while (!valid)
     {   
 
-        //generate a lower traiangular matrix 
+        //generate a lower traiangular matrix
         int l, c;
         int choice = rand() %100;
         std::vector <  std::vector<int> >  randomL(depth);
@@ -890,7 +863,7 @@ static const char *op_str[] = {
                     default: p = get_value(arg,isl_ast_map);break;;
                 }
             }
-            isl_ast_expr_free(arg);    
+            isl_ast_expr_free(arg);
         }
         return p;
     }
@@ -909,7 +882,7 @@ static const char *op_str[] = {
     }
 
     int get_value(isl_ast_expr *expr,std::vector<std::vector<int>> isl_ast_map){
-        
+
         enum isl_ast_expr_type type;
         enum isl_ast_op_type op;
         isl_id *id;
@@ -917,14 +890,14 @@ static const char *op_str[] = {
         std::string p;
         int val = 0;
 
-        if (!expr){return -1;}  
+        if (!expr){return -1;}
         else{
             type = isl_ast_expr_get_type(expr);
             switch (type) {
                 case isl_ast_expr_error: return 0; break;
                 case isl_ast_expr_op:
                     op = isl_ast_expr_get_op_type(expr);
-                    if (op == isl_ast_op_error) return 0;             
+                    if (op == isl_ast_op_error) return 0;
                     val=val+print_arguments_string(op,expr,isl_ast_map);
                     //std::cout<<"Entreing OP : ";
                     //std::cout<<op;
@@ -950,7 +923,7 @@ static const char *op_str[] = {
         return val;
         }
     }
-        
+
     std::string get_expr_isl_string( isl_ast_expr *expr,std::vector<std::vector<int>> isl_ast_map,bool is_bound)
     {
         enum isl_ast_expr_type type;
@@ -959,45 +932,45 @@ static const char *op_str[] = {
         isl_val *v;
         std::string p;
 
-        if (!expr){return "!Expression";}    
+        if (!expr){return "!Expression";}
         else{
             type = isl_ast_expr_get_type(expr);
             switch (type) {
-                case isl_ast_expr_error: return "$Error in the expression"; break; 
+                case isl_ast_expr_error: return "$Error in the expression"; break;
                 case isl_ast_expr_op:
                     op = isl_ast_expr_get_op_type(expr);
-                    if (op == isl_ast_op_error) return "$Error in the operation type";          
+                    if (op == isl_ast_op_error) return "$Error in the operation type";
                     p = std::to_string(print_arguments_string(op,expr,isl_ast_map));
                     //std::cout<<"Entreing OP with ";
                     //std::cout<<op;
                     //std::cout<<"\n";
                     break;
-                case isl_ast_expr_id: 
+                case isl_ast_expr_id:
                     if(!is_bound){
                         id = isl_ast_expr_get_id(expr);
                         p = isl_id_get_name(id);
-                    }   
+                    }
                     else{
                         id = isl_ast_expr_get_id(expr);
                         p = isl_id_get_name(id);
                         p=std::to_string(  get_id_value(isl_id_get_name(id),isl_ast_map));
-                    }         
-                    
+                    }
+
                     //std::cout<<"Entreing Id with ";
                     //std::cout<<p;
                     //std::cout<<"\n";
                     break;
-                case isl_ast_expr_int:   
+                case isl_ast_expr_int:
                     v = isl_ast_expr_get_val(expr);
                     p = std::to_string(isl_val_get_num_si(v));
-                    //std::cout<<"Entreing Int with";    
+                    //std::cout<<"Entreing Int with";
                     //std::cout<<p;
                     //std::cout<<"\n";
                     break;
                 default: return "%";
             }
         return p;
-        }   
+        }
     }
  std::vector<std::vector<int>> get_ast_isl_bound_matrice(syntax_tree& ast){
 
@@ -1009,26 +982,26 @@ static const char *op_str[] = {
         int stop = 0;
 
         ast.fct->gen_isl_ast();
-        
-        isl_ast_node *ast_i = ast.fct->get_isl_ast(); 
+
+        isl_ast_node *ast_i = ast.fct->get_isl_ast();
         while(stop!=1)
-        {   
-            
+        {
+
             if(isl_ast_node_get_type(ast_i) == isl_ast_node_for)
             {
                 init_expr=isl_ast_node_for_get_init(ast_i); //Lower bound
                 cond_expr=isl_ast_node_for_get_cond(ast_i); //Upper bound
-                iter_expr=isl_ast_node_for_get_iterator(ast_i); //Get the ID name 
-               
+                iter_expr=isl_ast_node_for_get_iterator(ast_i); //Get the ID name
+
                 p1.push_back(std::stoi(get_expr_isl_string(init_expr,isl_ast_mat,true)));
                 p1.push_back(std::stoi(get_expr_isl_string(cond_expr,isl_ast_mat,true)));
                 isl_ast_mat.push_back(p1);
                 p1.clear();
                 ast_i= isl_ast_node_for_get_body(ast_i);
             }
-            else{stop=1;} 
+            else{stop=1;}
         }
-        
+
         return isl_ast_mat;
 }
 
@@ -1048,8 +1021,9 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     //Generate n matrice asts to be explored
     //To change the number of matrices being explored go to: generate_schedules then the MATRIX case and change the length of the loop
     optimization_type optim_type = optimization_type::MATRIX;
-    
+
     children = scheds_gen->generate_schedules(ast, optim_type);
+    
     
     // Stop if no more optimizations can be applied
     //Add the current AST to the list of children
@@ -1076,10 +1050,10 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     bool illegal = false;
     bool first_time_illegal = true;
     syntax_tree *child = *iterator;
-    
+
     while (iterator != children.end())
     {
-            
+
         //If we tried to find a new matrix too many times, we give up and explore the ones we found so far 
         if (nb_steps++>MAX_NB_STEPS){
             break;
@@ -1088,7 +1062,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
 
         // Add the corr_map to the ast structue
         //child->corr_map = corr_map;
-        
+
         child->nb_explored_optims = nb_explored_optims;
         
         int shape = child->get_program_depth();
@@ -1097,7 +1071,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         new_ast = child->copy_ast();
         
         //std::vector<std::vector<int>> vec {{1,0,0},{0,1,0},{0,0,1}};
-        //add the matrix to optim.info       
+        //add the matrix to optim.info
         child->new_optims.back().matrix = get_random_matrix(shape);
 
         //std::cout<<nb_matrices<<std::endl;
@@ -1107,23 +1081,10 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
 
         if(check_if_repeated(child->new_optims.back().matrix, matrices)) continue;
         
-        
+
         child->transform_ast();
 
-        if (child->schedule_is_prunable()){
-            if (std::atoi(read_env_var("AS_VERBOSE"))==1){
-                // print deleted Ast
-                child->print_previous_optims();
-                std::cout << "\n-----------" << std::endl;
-                child->print_new_optims();
-                child->print_ast();
-                std::cout << "\n<Schedule pruned>\n";
-            }
-            delete child;
-            iterator = children.erase(iterator);
-        }
-        else if (!child->program_is_legal()) {
-            
+        if (!child->program_is_legal()) {
             illegal=true;
             if (std::atoi(read_env_var("AS_VERBOSE"))==1){
                 // print deleted Ast
@@ -1134,7 +1095,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                 child->print_isl_states();
                 std::cout << "\n<illegal>\n";
             }
-            
+
             if (first_time_illegal) {
                 delete child;
                 //iterator = children.erase(iterator);
@@ -1149,7 +1110,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
             matrices.push_back(child->new_optims.back().matrix);
             nb_matrices++;
             ++iterator;
-            
+
             first_time_illegal=true;
             illegal = false;
             if (std::atoi(read_env_var("AS_VERBOSE"))==1){
@@ -1161,15 +1122,9 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                 std::cout << "\n<legal>\n";
             }
             std::vector<float> measurements;
-        
-            if (child->can_set_default_evaluation()) { // if yes the child's evaluation is set to a default value
-            
-                measurements = {child->evaluation};
-            }
-            else{
-                measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
-                child->evaluation = min_eval(measurements);
-            }
+
+            measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
+            child->evaluation = min_eval(measurements);
             
             parent_trace->add_child_path(child, schedules_annotations->size());
 
@@ -1185,26 +1140,8 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                 schedule_annot += ", \n\"execution_times\" : null\n}\n";
 
             schedules_annotations->push_back(schedule_annot);
-            
-            if (schedules_annotations->size()%10==0){
-                auto end = std::chrono::system_clock::now();
-                std::chrono::duration<double> elapsed_seconds = end-start;
-                std::time_t end_time = std::chrono::system_clock::to_time_t(end);
-                std::ofstream myfile;
-                myfile.open ("example.txt",std::ios_base::app);
-                myfile<<"\n\n\n Time recorded: "<<schedules_annotations->size()<<"\t"<<elapsed_seconds.count()<<"s"<<std::endl;
-                myfile.close();
-                                //auto start = std::chrono::system_clock::now();
-            }
 
             if (std::atoi(read_env_var("AS_VERBOSE"))==1){
-                std::ofstream myfile;
-                /*myfile.open ("example.txt",std::ios_base::app);
-                myfile<<"\n\n\n Schedule: "<<schedule_annot<<std::endl;
-                myfile<<"Schedule number "<< schedules_annotations->size() << std::endl;
-                myfile<<"Evaluation : " << child->evaluation << std::endl;
-                myfile<<"Schedule number "<< schedules_annotations->size() << std::endl;
-                myfile.close();*/
                 std::cout << "Schedule number "<< schedules_annotations->size() << std::endl;
                 std::cout << "Evaluation : " << child->evaluation << std::endl;
                 std::cout << "Number of measurements : " << measurements.size() << std::endl;
@@ -1222,7 +1159,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
             to_be_explored.push_back(child);
         }
     }
-    
+
     to_be_explored.resize(std::min(nb_matrices, (int)to_be_explored.size()));
     
 
@@ -1237,13 +1174,13 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     });
 
     // shuffle the children so that they are selected a random
-    std::shuffle(std::begin(to_be_explored), std::end(to_be_explored), rand_generator);
+//    std::shuffle(std::begin(children), std::end(children), rand_generator);
 
     // keep the top 'beam_size' children and delete the rest
-    //for (int i = beam_size; i < to_be_explored.size(); ++i)
-    //   delete to_be_explored[i];
+    for (int i = beam_size; i < to_be_explored.size(); ++i)
+       delete to_be_explored[i];
 
-    //to_be_explored.resize(std::min(beam_size, (int)to_be_explored.size()));
+    to_be_explored.resize(std::min(beam_size, (int)to_be_explored.size()));
 
     // Search recursively on the best children
     for (syntax_tree *child : to_be_explored)
