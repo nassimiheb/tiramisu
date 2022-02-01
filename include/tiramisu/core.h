@@ -169,11 +169,13 @@ void prepare_schedules_for_legality_checks(bool reset_static_dimesion = false);
      * so invoking \p prepare_schedules_for_legality_checks() method before is mandatory. 
   */
   bool loop_parallelization_is_legal(tiramisu::var i, std::vector<tiramisu::computation *> fuzed_computations);
+  bool loop_parallelization_is_legal(int i, std::vector<tiramisu::computation *> fuzed_computations);
 
   /**
   * Checks if the given fuzed computations could legally have their loop level \p i unrolled.
   */
   bool loop_unrolling_is_legal(tiramisu::var i, std::vector<tiramisu::computation *> fuzed_computations);
+  bool loop_unrolling_is_legal(int i, std::vector<tiramisu::computation *> fuzed_computations);
 
   /**
   * Checks if the given fuzed computations could legally have their loop level \p i vectorized.
@@ -1281,11 +1283,15 @@ public:
     bool loop_parallelization_is_legal(int parallel_dim, std::vector<tiramisu::computation *> fuzed_computations);
     // @}
 
+
     /**
      * Checks if the given fuzed computations could legally have their loop level \p i unrolled.
     */
-    bool loop_unrolling_is_legal(tiramisu::var i, std::vector<tiramisu::computation *> fuzed_computations);
+    // @{
+    bool loop_unrolling_is_legal(int i, std::vector<tiramisu::computation *> fuzed_computations);
 
+    bool loop_unrolling_is_legal(tiramisu::var i, std::vector<tiramisu::computation *> fuzed_computations);
+    // @}
     /**
      * Checks if the given fuzed computations could legally have their loop level \p i vectorized.
     */
