@@ -2801,7 +2801,7 @@ namespace tiramisu
         DEBUG_FCT_NAME(3);
         DEBUG_INDENT(4);
 
-        this->perform_full_dependency_analysis();
+        //this->perform_full_dependency_analysis();
         assert(this->dep_read_after_write != NULL);
         
         isl_union_map *all_deps = isl_union_map_range_factor_domain(
@@ -2996,6 +2996,7 @@ namespace tiramisu
         computation *first_computation = fused_computations[0];
 
         DEBUG(3, tiramisu::str_dump(" unrolling check for var : " + i.get_name()));
+        
 
         std::vector<std::string> original_loop_level_names = first_computation->get_loop_level_names();
 
@@ -3014,7 +3015,6 @@ namespace tiramisu
                 break;
             }
         }
-
         DEBUG_INDENT(-4);
 
         return result;
@@ -3035,7 +3035,7 @@ namespace tiramisu
         computation *first_computation = fused_computations[0];
 
         DEBUG(3, tiramisu::str_dump(" var parallelization check is : " + par_dim_var.get_name()));
-
+        
         std::vector<std::string> original_loop_level_names = first_computation->get_loop_level_names();
 
         std::vector<int> dimensions =
@@ -3044,7 +3044,7 @@ namespace tiramisu
         first_computation->check_dimensions_validity(dimensions);
 
         bool result = this->loop_parallelization_is_legal(dimensions[0], fused_computations);
-
+        
         DEBUG_INDENT(-4);
 
         return result;
@@ -3067,7 +3067,7 @@ namespace tiramisu
         int par_dim = tiramisu::loop_level_into_dynamic_dimension(dim_parallel);
 
         DEBUG(3, tiramisu::str_dump(" par dim number is : " + std::to_string(par_dim)));
-
+        
         // Extracting deps
 
         isl_union_map *read_after_write_dep = isl_union_map_range_factor_domain(
@@ -3087,7 +3087,8 @@ namespace tiramisu
         all_deps = isl_union_map_union(all_deps, write_after_write_dep);
 
         DEBUG(3, tiramisu::str_dump(" all the dependencies involved are : " + std::string(isl_union_map_to_str(all_deps))));
-
+        
+        
         // all current schedules in 1 union map
         std::string empty_union = "{}";
         std::string empty_time = "";
@@ -3106,7 +3107,7 @@ namespace tiramisu
         }
 
         DEBUG(3, tiramisu::str_dump(" all the used schedules are  : " + std::string(isl_union_map_to_str(schedules))));
-
+        
         // application to discard unused dep & represent them in their time space
 
         all_deps = isl_union_map_apply_range(all_deps, isl_union_map_copy(schedules));
@@ -3114,7 +3115,8 @@ namespace tiramisu
         all_deps = isl_union_map_apply_domain(all_deps, isl_union_map_copy(schedules));
 
         DEBUG(3, tiramisu::str_dump(" all the used dependencies union map are  : " + std::string(isl_union_map_to_str(all_deps))));
-
+        
+        
         if (isl_union_map_is_empty(all_deps))
         {
             DEBUG(3, tiramisu::str_dump(" No dependencies , parallelism is legal by default "));
@@ -3125,7 +3127,7 @@ namespace tiramisu
         isl_map *equation_map = isl_map_from_union_map(all_deps);
 
         DEBUG(3, tiramisu::str_dump(" all the used dependencies after transformed to map are  : " + std::string(isl_map_to_str(equation_map))));
-
+        
         bool overall_legality = false;
 
         /*
