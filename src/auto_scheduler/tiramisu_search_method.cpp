@@ -5,6 +5,8 @@
 namespace tiramisu::auto_scheduler
 {
  std::string get_name_ast_expr_isl( isl_ast_expr *expr);
+  std::string get_expr_isl_string( isl_ast_expr *expr, bool is_bound);
+ int get_value(isl_ast_expr *expr,std::vector<std::vector<int>> isl_ast_map );
 void beam_search::search(syntax_tree& ast)
 {
     if (ast.nb_explored_optims % NB_OPTIMIZATIONS == 0)
@@ -121,21 +123,29 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
 
     while (children.size() == 0 && nb_optims_tried < NB_OPTIMIZATIONS && nb_explored_optims < max_depth)
     {
+
         optimization_type optim_type = DEFAULT_OPTIMIZATIONS_ORDER[nb_explored_optims % NB_OPTIMIZATIONS];
+
         children = scheds_gen->generate_schedules(ast, optim_type);
+
 
         nb_explored_optims++;
         nb_optims_tried++;
     }
+
+
     // Stop if no more optimizations can be applied
     if (children.size() == 0)
         return ;
+
+
 
     // Evaluate children and sort them from smallest to highest evaluation
     // evaluate while removing illegal versions
     auto iterator = children.begin();
     while (iterator != children.end())
     {
+
         syntax_tree *child = *iterator;
         child->nb_explored_optims = nb_explored_optims;
         child->transform_ast();
@@ -269,11 +279,11 @@ int determinant( std::vector <  std::vector<int> >  matrix, int n) {
 bool check_if_repeated( std::vector < std::vector<int> >  matrix,std::vector < std::vector < std::vector<int> > > matrices)
 {
     //if there are no matrices to compare to then we return false
-    if(matrices.at(0).size()==0) return false;
+    if(matrices.size()==0) return false;
     
     int depth = matrix.size();
     int i=0;
-    while(i<MAX_NB_MATRICES && matrices.at(i).size()!=0){ 
+    while(i<matrices.size()){
         //for each matrix that we already explored  
         bool diffrent = false;
         for (int s=0;s<depth;s++){
@@ -466,10 +476,41 @@ std::vector < std::vector < std::vector<int> > > beam_search::get_random_matrcie
     }
     return result;
 }
+std::vector<std::vector<int>>  multiply(const std::vector<std::vector<int>> & m1, const std::vector<std::vector<int>> & m2)
+        {
+        std::vector<std::vector<int>> result(m1.size(), std::vector<int>(m2.at(0).size()));
+
+            for(std::size_t row = 0; row < result.size(); ++row) {
+                for(std::size_t col = 0; col < result.at(0).size(); ++col) {
+                    for(std::size_t inner = 0; inner < m2.size(); ++inner) {
+                        result.at(row).at(col) += m1.at(row).at(inner) * m2.at(inner).at(col);
+                    }
+                }
+            }
+            return result;
+        }
+
 /*
 Generate one random matrix that verifies the conditions of: 1- determinant is one 2- all of the upper left determinants are 1
 */
-  std::vector < std::vector<int> >  beam_search::get_random_matix(int depth)
+bool is_identity(std::vector < std::vector<int> > matrix){
+    for(int l = 0; l<matrix.size(); l++){
+            for(int c = 0; c<matrix.size(); c++){
+                            if (l!=c && matrix.at(l).at(c)!=0){
+                                return false;
+                            }else{
+                                if(matrix.at(l).at(c)!=1){
+                                    return false;
+                                }
+                            }
+            }
+        }
+        return true;
+}
+/*
+Generate one random matrix that verifies the conditions of: 1- determinant is one 2- all of the upper left determinants are 1
+*/
+  std::vector < std::vector<int> >  beam_search::get_random_matrix(int depth)
 {
     int max_depth = 6;
     if (depth>max_depth) std::cout << "WARNING: the depth of this program is too big. Matrix generation will take a long time \n"<< std::endl;
@@ -477,32 +518,53 @@ Generate one random matrix that verifies the conditions of: 1- determinant is on
     bool valid = false;
     while (!valid)
     {   
-        //generate a lower traiangular matrix 
+
+        //generate a lower traiangular matrix
         int l, c;
+        int choice = rand() %100;
         std::vector <  std::vector<int> >  randomL(depth);
         for(l = 0; l<depth; l++){
             randomL.at(l)= std::vector<int>(depth);
             for(c = 0; c<depth; c++){
                             if (l>c){
-                                randomL.at(l).at(c) = (rand() %16) - 8;
+                                randomL.at(l).at(c) = (rand() %14) - 7;
                             }else{
-                                randomL.at(l).at(c) = 0;
+                                if(l<c){
+                                    randomL.at(l).at(c) = 0;
+                                }else{
+                                    randomL.at(l).at(c)=1;
+                                }
                             }
             }
         }
+
+        if(choice>3 && choice< 5 && !is_identity(randomL))  return randomL;
         ////generate an upper traiangular matrix
         std::vector <  std::vector<int> >  randomU(depth);
         for(l = 0; l<depth; l++){
             randomU.at(l)= std::vector<int>(depth);
             for(c = 0; c<depth; c++){
                         if (l<c){
-                            randomU.at(l).at(c) = (rand() % 16) - 8;
+                            randomU.at(l).at(c) = (rand() % 14) - 7;
                         }else{
-                            randomU.at(l).at(c) = 0;
+                            if(l>c){
+                                    randomU.at(l).at(c) = 0;
+                                }else{
+                                    randomU.at(l).at(c)=1;
+                                }
                         }
             }
         }
-        
+        if(choice<3 && !is_identity(randomU)) return randomU;
+        randomU = multiply(randomL,randomU);
+        if(choice>5 && !is_identity(randomU))return randomU;
+        if(!is_identity(randomU)) continue;
+        /*
+        randomU.at(0)= std::vector<int>(depth);randomU.at(0).at(0)=1;randomU.at(0).at(1)=0;randomU.at(0).at(2)=0;
+        randomU.at(1)= std::vector<int>(depth);randomU.at(1).at(0)=-6;randomU.at(1).at(1)=1;randomU.at(1).at(2)=0;
+        randomU.at(2)= std::vector<int>(depth);randomU.at(2).at(0)=5;randomU.at(2).at(1)=-5;randomU.at(2).at(2)=1;
+        return randomU;
+        */
         for(l = 0; l<depth; l++){
             randomL.at(l).at(l) =1;
             randomU.at(l).at(l) =1;
@@ -534,7 +596,7 @@ Generate one random matrix that verifies the conditions of: 1- determinant is on
                 }
         }
         // Reduce elements into [-7, 7] values
-        int mx = 7;
+        int mx = 10;
         int m = -1000;
         int x,y;
         for(int i = 0; i < depth; i++){
@@ -597,7 +659,7 @@ Generate one random matrix that verifies the conditions of: 1- determinant is on
         
         // Check upper right determinants equal 1
         bool all_1 = true;
-        if (det_bool){
+        if (false){
             
             int d=0,s=0;
             
@@ -660,7 +722,7 @@ static const char *op_str[] = {
  * @param isl_ast 
  * @param corr_map 
  */
-void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::map <std::string,std::string>* corr_map, int &k){
+/*void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::map <std::string,std::string>* corr_map, int &k){
 
     if(k>=isl_ast.size()){}
     else{
@@ -678,7 +740,7 @@ void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::ma
  * @param expr 
  * @return std::string 
  */
-    std::string get_name_arguments(isl_ast_expr *expr)
+   /* std::string get_name_arguments(isl_ast_expr *expr)
     {
         int i, n;
         std::string p;
@@ -695,8 +757,8 @@ void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::ma
             isl_ast_expr_free(arg);     
         }     
         return p;
-    }
-   std::string get_name_ast_expr_isl( isl_ast_expr *expr)
+    }*/
+   /*std::string get_name_ast_expr_isl( isl_ast_expr *expr)
     {
         enum isl_ast_expr_type type;
         enum isl_ast_op_type op;
@@ -729,14 +791,14 @@ void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::ma
          }
         return p;
         }    
-    }
-/**
+    }*/
+    /**
  * @brief Get the corr map from isl ast map
  * 
  * @param ast 
  * @return ** std::map <std::string,std::string>* 
  */
-std::map <std::string,std::string>* get_corr_map_from_isl(syntax_tree& ast){
+/*std::map <std::string,std::string>* get_corr_map_from_isl(syntax_tree& ast){
     //Create map between ISL iterator names and the AST iterator names
     isl_ast_expr * iter_expr;
     int stop=0;
@@ -766,21 +828,200 @@ std::map <std::string,std::string>* get_corr_map_from_isl(syntax_tree& ast){
             get_save_name_node(root,isl_ast,corr_map,starting_k);
         }
     return corr_map;
+}*/
+
+
+        // Gettig the values of the isl AST
+    int print_arguments_string(isl_ast_op_type prev_op,isl_ast_expr *expr,std::vector<std::vector<int>> isl_ast_map )
+    {
+        int i, n, p = 0;
+
+        n = isl_ast_expr_get_op_n_arg(expr);
+
+        if (n < 0) return 0;
+        if (n == 0) return 0;
+        p = 0;
+        for (i = 0; i < n; ++i) {
+            isl_ast_expr *arg;
+            //std::cout<<"---------------Arg";
+            //std::cout<<i;
+            //std::cout<<"\n";
+            arg = isl_ast_expr_get_op_arg(expr, i);
+            if(i==0){
+                p = get_value(arg,isl_ast_map);
+                if (prev_op == isl_ast_op_minus){p = -get_value(arg,isl_ast_map);break;}
+            }
+            else{
+                switch(prev_op){
+                    case isl_ast_op_add:{p = p+get_value(arg,isl_ast_map);break;}
+                    case isl_ast_op_sub:{p = p-get_value(arg,isl_ast_map);break;}
+                    case isl_ast_op_mul:{p = p*get_value(arg,isl_ast_map);break;}
+                    case isl_ast_op_div:{if(get_value(arg,isl_ast_map)!= 0)p = p / get_value(arg,isl_ast_map);break;}
+                    case isl_ast_op_max:{p = std::max(p,get_value(arg,isl_ast_map));break;}
+                    case isl_ast_op_min:{p = std::min(p,get_value(arg,isl_ast_map));break;}
+                    case isl_ast_op_minus:{p = -get_value(arg,isl_ast_map);break;}
+                    default: p = get_value(arg,isl_ast_map);break;;
+                }
+            }
+            isl_ast_expr_free(arg);
+        }
+        return p;
+    }
+    //get the Upper bound of an id
+    int get_id_value(std::string id,std::vector<std::vector<int>>isl_ast_map)
+    {
+        std::map <int,  std::tuple<std::string , std::string,std::string> >::iterator it;
+
+        /*for (it = isl_ast_map.begin(); it != isl_ast_map.end(); it++)
+        {
+            if(std::get<2>(it->second) == id){
+                return (std::stoi(std::get<0>(it->second)) + std::stoi(std::get<1>(it->second))) / 2;
+            }
+        }*/
+        return 0;
+    }
+
+    int get_value(isl_ast_expr *expr,std::vector<std::vector<int>> isl_ast_map){
+
+        enum isl_ast_expr_type type;
+        enum isl_ast_op_type op;
+        isl_id *id;
+        isl_val *v;
+        std::string p;
+        int val = 0;
+
+        if (!expr){return -1;}
+        else{
+            type = isl_ast_expr_get_type(expr);
+            switch (type) {
+                case isl_ast_expr_error: return 0; break;
+                case isl_ast_expr_op:
+                    op = isl_ast_expr_get_op_type(expr);
+                    if (op == isl_ast_op_error) return 0;
+                    val=val+print_arguments_string(op,expr,isl_ast_map);
+                    //std::cout<<"Entreing OP : ";
+                    //std::cout<<op;
+                    //std::cout<<"\n";
+                    break;
+                case isl_ast_expr_id:
+                    id = isl_ast_expr_get_id(expr);
+                    p = isl_id_get_name(id);
+                    val = get_id_value(p,isl_ast_map);
+                    //std::cout<<"Entreing Id with";
+                    //std::cout<<val;
+                    //std::cout<<"\n";
+                    break;
+                case isl_ast_expr_int:
+                    v = isl_ast_expr_get_val(expr);val=1;
+                    val= isl_val_get_num_si(v);
+                    //std::cout<<"Entreing Int with";
+                    //std::cout<<val;
+                    //std::cout<<"\n";
+                    break;
+                default: return 0;
+                }
+        return val;
+        }
+    }
+
+    std::string get_expr_isl_string( isl_ast_expr *expr,std::vector<std::vector<int>> isl_ast_map,bool is_bound)
+    {
+        enum isl_ast_expr_type type;
+        enum isl_ast_op_type op;
+        isl_id *id;
+        isl_val *v;
+        std::string p;
+
+        if (!expr){return "!Expression";}
+        else{
+            type = isl_ast_expr_get_type(expr);
+            switch (type) {
+                case isl_ast_expr_error: return "$Error in the expression"; break;
+                case isl_ast_expr_op:
+                    op = isl_ast_expr_get_op_type(expr);
+                    if (op == isl_ast_op_error) return "$Error in the operation type";
+                    p = std::to_string(print_arguments_string(op,expr,isl_ast_map));
+                    //std::cout<<"Entreing OP with ";
+                    //std::cout<<op;
+                    //std::cout<<"\n";
+                    break;
+                case isl_ast_expr_id:
+                    if(!is_bound){
+                        id = isl_ast_expr_get_id(expr);
+                        p = isl_id_get_name(id);
+                    }
+                    else{
+                        id = isl_ast_expr_get_id(expr);
+                        p = isl_id_get_name(id);
+                        p=std::to_string(  get_id_value(isl_id_get_name(id),isl_ast_map));
+                    }
+
+                    //std::cout<<"Entreing Id with ";
+                    //std::cout<<p;
+                    //std::cout<<"\n";
+                    break;
+                case isl_ast_expr_int:
+                    v = isl_ast_expr_get_val(expr);
+                    p = std::to_string(isl_val_get_num_si(v));
+                    //std::cout<<"Entreing Int with";
+                    //std::cout<<p;
+                    //std::cout<<"\n";
+                    break;
+                default: return "%";
+            }
+        return p;
+        }
+    }
+ std::vector<std::vector<int>> get_ast_isl_bound_matrice(syntax_tree& ast){
+
+        std::vector<std::vector<int>> isl_ast_mat;
+        std::vector<int>p1;
+        isl_ast_expr * init_expr;
+        isl_ast_expr * cond_expr;
+        isl_ast_expr * iter_expr;
+        int stop = 0;
+
+        ast.fct->gen_isl_ast();
+
+        isl_ast_node *ast_i = ast.fct->get_isl_ast();
+        while(stop!=1)
+        {
+
+            if(isl_ast_node_get_type(ast_i) == isl_ast_node_for)
+            {
+                init_expr=isl_ast_node_for_get_init(ast_i); //Lower bound
+                cond_expr=isl_ast_node_for_get_cond(ast_i); //Upper bound
+                iter_expr=isl_ast_node_for_get_iterator(ast_i); //Get the ID name
+
+                p1.push_back(std::stoi(get_expr_isl_string(init_expr,isl_ast_mat,true)));
+                p1.push_back(std::stoi(get_expr_isl_string(cond_expr,isl_ast_mat,true)));
+                isl_ast_mat.push_back(p1);
+                p1.clear();
+                ast_i= isl_ast_node_for_get_body(ast_i);
+            }
+            else{stop=1;}
+        }
+
+        return isl_ast_mat;
 }
+
+
 void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout)
 {
     std::default_random_engine rand_generator;
 
 
     std::vector<syntax_tree*> children;
+    std::vector<syntax_tree*> to_be_explored;
 
     // Look for an optimization that can be applied
     int nb_optims_tried = 0;
     int nb_explored_optims = ast.nb_explored_optims;
-    
+    auto start = std::chrono::system_clock::now();
     //Generate n matrice asts to be explored
     //To change the number of matrices being explored go to: generate_schedules then the MATRIX case and change the length of the loop
     optimization_type optim_type = optimization_type::MATRIX;
+
     children = scheds_gen->generate_schedules(ast, optim_type);
     
     
@@ -792,20 +1033,24 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     // Evaluate children and sort them from smallest to highest evaluation
     // evaluate while removing illegal versions
     auto iterator = children.begin();
-    std::vector < std::vector < std::vector<int> > > matrices(MAX_NB_MATRICES);
+    std::vector < std::vector < std::vector<int> > > matrices;
 
-    std::map <std::string,std::string>* corr_map;
+    //std::map <std::string,std::string>* corr_map;
+    std::vector<std::vector<int>> bounds_mat;
+    bounds_mat = get_ast_isl_bound_matrice(ast);
 
     // Add the corr_map to the ast structue
-    corr_map = get_corr_map_from_isl(ast);
-
+    //corr_map = get_corr_map_from_isl(ast);
     //Hash the program string to get a unique seed for each program 
     std::hash<std::string> hasher;
     auto hashed = hasher(evaluate_by_learning_model::get_program_json(ast));
     srand(hashed);
     int nb_matrices =0;
     int nb_steps = 0;
-    
+    bool illegal = false;
+    bool first_time_illegal = true;
+    syntax_tree *child = *iterator;
+
     while (iterator != children.end())
     {
 
@@ -813,10 +1058,11 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         if (nb_steps++>MAX_NB_STEPS){
             break;
         } 
-        syntax_tree *child = *iterator;
+        if (!illegal)  child = *iterator;
 
         // Add the corr_map to the ast structue
-        child->corr_map = corr_map;
+        //child->corr_map = corr_map;
+
         child->nb_explored_optims = nb_explored_optims;
         
         int shape = child->get_program_depth();
@@ -824,17 +1070,22 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         syntax_tree* new_ast = new syntax_tree();
         new_ast = child->copy_ast();
         
-        
+        //std::vector<std::vector<int>> vec {{1,0,0},{0,1,0},{0,0,1}};
         //add the matrix to optim.info
-        
-        child->new_optims.back().matrix = get_random_matix(shape);
-        
+        child->new_optims.back().matrix = get_random_matrix(shape);
+
+        //std::cout<<nb_matrices<<std::endl;
+        //std::cout<<nb_steps<<std::endl;
+        child->bounds_matrix = bounds_mat;
+        child->transformed_bounds_matrix = multiply(child->new_optims.back().matrix,bounds_mat);
+
         if(check_if_repeated(child->new_optims.back().matrix, matrices)) continue;
         
-        matrices.at(nb_matrices++) = child->new_optims.back().matrix;
+
         child->transform_ast();
 
         if (!child->program_is_legal()) {
+            illegal=true;
             if (std::atoi(read_env_var("AS_VERBOSE"))==1){
                 // print deleted Ast
                 child->print_previous_optims();
@@ -844,9 +1095,24 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                 child->print_isl_states();
                 std::cout << "\n<illegal>\n";
             }
+
+            if (first_time_illegal) {
+                delete child;
+                //iterator = children.erase(iterator);
+                //if(iterator == children.end()) iterator--;
+                first_time_illegal=false;
+            }
+
             child = new_ast;
         }
         else {
+
+            matrices.push_back(child->new_optims.back().matrix);
+            nb_matrices++;
+            ++iterator;
+
+            first_time_illegal=true;
+            illegal = false;
             if (std::atoi(read_env_var("AS_VERBOSE"))==1){
                 child->print_previous_optims();
                 std::cout << "\n-----------" << std::endl;
@@ -890,10 +1156,11 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                 best_evaluation = child->evaluation;
                 best_ast = child;
             }
-            ++iterator;
+            to_be_explored.push_back(child);
         }
     }
-    children.resize(std::min(nb_matrices, (int)children.size()));
+
+    to_be_explored.resize(std::min(nb_matrices, (int)to_be_explored.size()));
     
 
     // Stop if we reached the maximum depth
@@ -902,7 +1169,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
 
 
     // Sort children from smallest evaluation to largest
-    std::sort(children.begin(), children.end(), [](syntax_tree *a, syntax_tree *b) {
+    std::sort(to_be_explored.begin(), to_be_explored.end(), [](syntax_tree *a, syntax_tree *b) {
         return a->evaluation < b->evaluation;
     });
 
@@ -910,13 +1177,13 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
 //    std::shuffle(std::begin(children), std::end(children), rand_generator);
 
     // keep the top 'beam_size' children and delete the rest
-    for (int i = beam_size; i < children.size(); ++i)
-       delete children[i];
+    for (int i = beam_size; i < to_be_explored.size(); ++i)
+       delete to_be_explored[i];
 
-    children.resize(std::min(beam_size, (int)children.size()));
+    to_be_explored.resize(std::min(beam_size, (int)to_be_explored.size()));
 
     // Search recursively on the best children
-    for (syntax_tree *child : children)
+    for (syntax_tree *child : to_be_explored)
     {
         child->search_depth = ast.search_depth ;
         

@@ -1,0 +1,520 @@
+{
+	"filename" : "./function191931_explored_schedules.json",
+	"node_name" : "",
+	"parameters" : {
+		"beam_size" : 1, 
+		"max_depth" : 1
+	}, 
+	"program_annotation" : {"memory_size" : "64.0" ,"iterators" : {"i0" : {"lower_bound" : 0,"upper_bound" : 2048,"parent_iterator" : null,"child_iterators" : ["i1"],"computations_list" : []},"i1" : {"lower_bound" : 0,"upper_bound" : 2048,"parent_iterator" : "i0","child_iterators" : ["i2"],"computations_list" : []},"i2" : {"lower_bound" : 0,"upper_bound" : 2048,"parent_iterator" : "i1","child_iterators" : [],"computations_list" : ["comp00"]}},"computations" : {"comp00" : {"absolute_order" : 1,"iterators" : ["i0","i1","i2"],"comp_is_reduction" : true,"number_of_additions" : 1,"number_of_subtraction" : 0,"number_of_multiplication" : 0,"number_of_division" : 0,"write_access_relation" : "{ comp00[i0, i1, i2] -> buf00[i0, i1] }","write_buffer_id" : 0,"data_type" : "float64","data_type_size" : 0,"accesses" : [{"access_is_reduction" : true,"buffer_id" : 0,"access_matrix" : [[1, 0, 0, 0],[0, 1, 0, 0]]},{"access_is_reduction" : false,"buffer_id" : 1,"access_matrix" : [[0, 1, 0, 0],[0, 0, 1, 0]]}]}}}
+, 
+	"initial_execution_time" : 8724.589844, 
+	"schedules_list" : [
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : [],"transformation matrix" : [],"resulting constraint matrix" : [],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8724.589844]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-7", "4", "0", "1", "-6", "-1", "6", "3"],"resulting constraint matrix" : ["0", "-4094", "0", "-10235", "0", "16376"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 9889.570312]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-3", "4", "4", "-11", "20", "2", "-1", "29"],"resulting constraint matrix" : ["0", "4094", "0", "26611", "0", "61410"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 9248.889648]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "3", "4", "-2", "-5", "-10", "0", "-6", "13"],"resulting constraint matrix" : ["0", "16376", "0", "-34799", "0", "14329"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8915.950195]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-4", "3", "-2", "9", "-4", "-6", "28", "-9"],"resulting constraint matrix" : ["0", "0", "0", "6141", "0", "26611"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8917.799805]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-4", "4", "0", "1", "1", "-3", "12", "-11"],"resulting constraint matrix" : ["0", "2047", "0", "4094", "0", "-4094"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8742.540039]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-1", "6", "-5", "6", "-27", "5", "1", "49"],"resulting constraint matrix" : ["0", "12282", "0", "-53222", "0", "112585"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8678.429688]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "0", "2", "1", "1", "-2", "-6", "3", "-23"],"resulting constraint matrix" : ["0", "6141", "0", "0", "0", "-53222"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8574.650391]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "3", "0", "0", "1", "0", "4", "13", "1"],"resulting constraint matrix" : ["0", "8188", "0", "2047", "0", "36846"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8534.320312]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-4", "4", "2", "-7", "13", "2", "-13", "-16"],"resulting constraint matrix" : ["0", "2047", "0", "16376", "0", "-55269"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8395.160156]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-7", "2", "-1", "8", "4", "-7", "47", "-25"],"resulting constraint matrix" : ["0", "-8188", "0", "22517", "0", "30705"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8662.440430]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "3", "5", "-2", "-5", "-16", "-3", "-7", "-26"],"resulting constraint matrix" : ["0", "18423", "0", "-47081", "0", "-73692"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8370.049805]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "2", "1", "6", "13", "4", "5", "6", "14"],"resulting constraint matrix" : ["0", "8188", "0", "47081", "0", "51175"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8612.679688]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "2", "6", "-2", "-3", "-11", "-6", "-16", "-39"],"resulting constraint matrix" : ["0", "18423", "0", "-32752", "0", "-124867"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8804.000000]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "4", "2", "1", "5", "0", "-2", "-2", "-15"],"resulting constraint matrix" : ["0", "14329", "0", "12282", "0", "-38893"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8817.679688]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-6", "1", "5", "-29", "7", "-3", "13", "-12"],"resulting constraint matrix" : ["0", "-8188", "0", "-34799", "0", "-4094"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8658.570312]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-3", "2", "-1", "4", "4", "4", "-9", "27"],"resulting constraint matrix" : ["0", "0", "0", "14329", "0", "45034"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8817.089844]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-6", "6", "-5", "31", "-29", "1", "-6", "7"],"resulting constraint matrix" : ["0", "2047", "0", "-6141", "0", "4094"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8813.639648]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "5", "5", "0", "1", "0", "-4", "-15", "-19"],"resulting constraint matrix" : ["0", "22517", "0", "2047", "0", "-77786"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8717.099609]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "0", "2", "1", "1", "-1", "-1", "6", "-19"],"resulting constraint matrix" : ["0", "6141", "0", "2047", "0", "-28658"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8721.549805]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "1", "6", "1", "2", "8", "-1", "-7", "-17"],"resulting constraint matrix" : ["0", "16376", "0", "22517", "0", "-51175"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8796.219727]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "4", "3", "-6", "-23", "-18", "2", "14", "7"],"resulting constraint matrix" : ["0", "16376", "0", "-96209", "0", "47081"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8701.929688]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-5", "2", "6", "-29", "15", "5", "-28", "2"],"resulting constraint matrix" : ["0", "-4094", "0", "-16376", "0", "-42987"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8715.089844]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "4", "3", "6", "25", "23", "4", "11", "-12"],"resulting constraint matrix" : ["0", "16376", "0", "110538", "0", "6141"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8656.990234]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "2", "1", "6", "13", "4", "-1", "-7", "10"],"resulting constraint matrix" : ["0", "8188", "0", "47081", "0", "4094"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8677.429688]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "1", "6", "0", "1", "2", "2", "3", "15"],"resulting constraint matrix" : ["0", "16376", "0", "6141", "0", "40940"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8747.610352]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "0", "1", "0", "1", "1", "-2", "2", "1"],"resulting constraint matrix" : ["0", "4094", "0", "4094", "0", "2047"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8758.280273]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-7", "2", "-6", "43", "-17", "6", "-36", "-17"],"resulting constraint matrix" : ["0", "-8188", "0", "40940", "0", "-96209"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8710.750000]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "0", "0", "3", "1", "0", "-6", "1", "1"],"resulting constraint matrix" : ["0", "2047", "0", "8188", "0", "-8188"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8716.809570]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-4", "5", "-3", "13", "-11", "-6", "28", "-13"],"resulting constraint matrix" : ["0", "4094", "0", "-2047", "0", "18423"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8643.950195]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "5", "2", "-4", "-19", "-7", "2", "4", "-1"],"resulting constraint matrix" : ["0", "16376", "0", "-61410", "0", "10235"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8761.820312]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "1", "2", "2", "3", "-2", "1", "6", "-27"],"resulting constraint matrix" : ["0", "8188", "0", "6141", "0", "-40940"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8626.690430]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "6", "1", "-3", "-17", "0", "-5", "-24", "14"],"resulting constraint matrix" : ["0", "16376", "0", "-40940", "0", "-30705"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8682.480469]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "0", "6", "2", "1", "9", "2", "3", "4"],"resulting constraint matrix" : ["0", "14329", "0", "24564", "0", "18423"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8778.759766]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "3", "1", "-1", "-2", "-8", "1", "-1", "30"],"resulting constraint matrix" : ["0", "10235", "0", "-22517", "0", "61410"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8710.959961]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-1", "6", "0", "1", "-6", "-2", "-1", "7"],"resulting constraint matrix" : ["0", "12282", "0", "-10235", "0", "8188"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8683.660156]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-7", "2", "-2", "15", "-8", "-7", "46", "-1"],"resulting constraint matrix" : ["0", "-8188", "0", "10235", "0", "77786"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8658.889648]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "5", "4", "4", "21", "20", "5", "19", "-3"],"resulting constraint matrix" : ["0", "20470", "0", "92115", "0", "42987"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8717.019531]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "0", "1", "-5", "1", "-10", "-2", "5", "-26"],"resulting constraint matrix" : ["0", "4094", "0", "-28658", "0", "-47081"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8755.150391]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-1", "5", "2", "-1", "3", "-7", "0", "15"],"resulting constraint matrix" : ["0", "10235", "0", "8188", "0", "16376"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8774.610352]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "4", "0", "1", "5", "6", "4", "21", "31"],"resulting constraint matrix" : ["0", "10235", "0", "24564", "0", "114632"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8723.280273]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-1", "5", "6", "-5", "34", "1", "-6", "-14"],"resulting constraint matrix" : ["0", "10235", "0", "71645", "0", "-38893"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8647.379883]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "0", "0", "5", "1", "3", "0", "4", "13"],"resulting constraint matrix" : ["0", "2047", "0", "18423", "0", "34799"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8410.099609]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-4", "1", "2", "-7", "7", "1", "-7", "-13"],"resulting constraint matrix" : ["0", "-4094", "0", "4094", "0", "-38893"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8357.400391]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "3", "5", "4", "13", "13", "-3", "-16", "35"],"resulting constraint matrix" : ["0", "18423", "0", "61410", "0", "32752"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8530.330078]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-5", "4", "3", "-14", "11", "-2", "13", "-10"],"resulting constraint matrix" : ["0", "0", "0", "0", "0", "2047"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8408.660156]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "2", "2", "-7", "-13", "-10", "-6", "-10", "-3"],"resulting constraint matrix" : ["0", "10235", "0", "-61410", "0", "-38893"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8430.849609]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "3", "4", "-6", "-17", "-22", "0", "2", "5"],"resulting constraint matrix" : ["0", "16376", "0", "-92115", "0", "14329"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 9064.959961]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "6", "4", "6", "37", "25", "3", "24", "19"],"resulting constraint matrix" : ["0", "22517", "0", "139196", "0", "94162"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8946.320312]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-4", "3", "-3", "13", "-3", "-4", "15", "-17"],"resulting constraint matrix" : ["0", "0", "0", "14329", "0", "-12282"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8908.219727]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-5", "6", "0", "1", "0", "-1", "3", "-5"],"resulting constraint matrix" : ["0", "4094", "0", "2047", "0", "-6141"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8775.429688]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-3", "1", "-6", "19", "-1", "4", "-16", "-15"],"resulting constraint matrix" : ["0", "-2047", "0", "24564", "0", "-55269"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8631.250000]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "4", "6", "5", "21", "26", "-4", "-19", "-11"],"resulting constraint matrix" : ["0", "22517", "0", "106444", "0", "-69598"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8832.660156]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "5", "5", "1", "6", "6", "2", "5", "6"],"resulting constraint matrix" : ["0", "22517", "0", "26611", "0", "26611"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8691.129883]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "6", "6", "-1", "-5", "-10", "0", "-7", "29"],"resulting constraint matrix" : ["0", "26611", "0", "-32752", "0", "45034"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8740.700195]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "4", "2", "-6", "-23", "-11", "-1", "-8", "-5"],"resulting constraint matrix" : ["0", "14329", "0", "-81880", "0", "-28658"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8689.809570]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "1", "3", "5", "6", "20", "-6", "-8", "-27"],"resulting constraint matrix" : ["0", "10235", "0", "63457", "0", "-83927"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8709.450195]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-5", "3", "-4", "21", "-12", "-3", "11", "-8"],"resulting constraint matrix" : ["0", "-2047", "0", "10235", "0", "0"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8671.709961]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "2", "1", "-3", "-5", "-6", "6", "9", "16"],"resulting constraint matrix" : ["0", "8188", "0", "-28658", "0", "63457"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8902.540039]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-3", "4", "-5", "16", "-24", "-2", "7", "-11"],"resulting constraint matrix" : ["0", "4094", "0", "-26611", "0", "-12282"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8707.440430]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-5", "3", "-3", "16", "-13", "1", "-11", "28"],"resulting constraint matrix" : ["0", "-2047", "0", "0", "0", "36846"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8837.379883]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-6", "1", "1", "-5", "-1", "3", "-25", "18"],"resulting constraint matrix" : ["0", "-8188", "0", "-10235", "0", "-8188"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8722.589844]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "5", "1", "3", "16", "-2", "-5", "-25", "-4"],"resulting constraint matrix" : ["0", "14329", "0", "34799", "0", "-69598"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8558.870117]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-3", "1", "-4", "13", "-6", "-2", "-1", "13"],"resulting constraint matrix" : ["0", "-2047", "0", "6141", "0", "20470"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8400.759766]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-7", "4", "2", "-13", "3", "-4", "24", "5"],"resulting constraint matrix" : ["0", "-4094", "0", "-16376", "0", "51175"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8607.139648]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-5", "2", "1", "-4", "8", "-1", "3", "-13"],"resulting constraint matrix" : ["0", "-4094", "0", "10235", "0", "-22517"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8550.080078]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-1", "1", "-4", "5", "1", "10", "-12", "1"],"resulting constraint matrix" : ["0", "2047", "0", "4094", "0", "-2047"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 9157.299805]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-1", "5", "1", "0", "11", "-2", "3", "-3"],"resulting constraint matrix" : ["0", "10235", "0", "24564", "0", "-4094"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8861.410156]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-2", "1", "-6", "13", "-8", "-3", "2", "6"],"resulting constraint matrix" : ["0", "0", "0", "-2047", "0", "10235"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 9154.940430]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "3", "2", "5", "16", "15", "1", "1", "-7"],"resulting constraint matrix" : ["0", "12282", "0", "73692", "0", "-10235"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8525.259766]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "5", "6", "6", "31", "41", "-2", "-6", "9"],"resulting constraint matrix" : ["0", "24564", "0", "159666", "0", "2047"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8430.759766]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "4", "2", "-5", "-19", "-11", "2", "14", "-1"],"resulting constraint matrix" : ["0", "14329", "0", "-71645", "0", "30705"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8417.040039]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-3", "2", "3", "-8", "6", "5", "-16", "11"],"resulting constraint matrix" : ["0", "0", "0", "2047", "0", "0"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8429.440430]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "5", "1", "-5", "-24", "1", "0", "0", "1"],"resulting constraint matrix" : ["0", "14329", "0", "-57316", "0", "2047"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8642.540039]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-6", "6", "-6", "37", "-36", "-3", "19", "-17"],"resulting constraint matrix" : ["0", "2047", "0", "-10235", "0", "-2047"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 9497.980469]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-4", "0", "0", "1", "2", "4", "-20", "-7"],"resulting constraint matrix" : ["0", "-6141", "0", "6141", "0", "-47081"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8539.780273]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-5", "4", "4", "-19", "20", "1", "1", "29"],"resulting constraint matrix" : ["0", "0", "0", "10235", "0", "63457"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8714.169922]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-5", "3", "3", "-14", "4", "6", "-25", "-6"],"resulting constraint matrix" : ["0", "-2047", "0", "-14329", "0", "-51175"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8604.980469]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "5", "6", "6", "31", "29", "2", "9", "20"],"resulting constraint matrix" : ["0", "24564", "0", "135102", "0", "63457"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8991.280273]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-2", "5", "-6", "13", "-34", "-4", "10", "-27"],"resulting constraint matrix" : ["0", "8188", "0", "-55269", "0", "-42987"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8877.500000]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-6", "2", "-5", "31", "-4", "-1", "11", "29"],"resulting constraint matrix" : ["0", "-6141", "0", "45034", "0", "79833"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8878.129883]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-4", "0", "2", "-7", "2", "3", "-14", "-3"],"resulting constraint matrix" : ["0", "-6141", "0", "-6141", "0", "-28658"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8916.099609]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-7", "0", "-6", "43", "5", "-1", "5", "-9"],"resulting constraint matrix" : ["0", "-12282", "0", "85974", "0", "-10235"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8782.099609]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-1", "1", "2", "-1", "-3", "-6", "0", "25"],"resulting constraint matrix" : ["0", "2047", "0", "-4094", "0", "38893"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8820.660156]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-3", "4", "-7", "22", "-26", "5", "-10", "31"],"resulting constraint matrix" : ["0", "4094", "0", "-22517", "0", "53222"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8755.379883]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-5", "2", "-4", "21", "-11", "-4", "16", "5"],"resulting constraint matrix" : ["0", "-4094", "0", "12282", "0", "34799"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8468.509766]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-2", "2", "3", "-5", "3", "1", "-5", "12"],"resulting constraint matrix" : ["0", "2047", "0", "2047", "0", "16376"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8703.290039]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-1", "3", "3", "-2", "13", "-5", "7", "-6"],"resulting constraint matrix" : ["0", "6141", "0", "28658", "0", "-8188"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8451.730469]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "3", "6", "4", "13", "28", "5", "11", "15"],"resulting constraint matrix" : ["0", "20470", "0", "92115", "0", "63457"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8904.940430]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "4", "3", "-6", "-23", "-24", "1", "5", "-2"],"resulting constraint matrix" : ["0", "16376", "0", "-108491", "0", "8188"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8388.370117]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "3", "3", "-1", "-2", "-6", "5", "20", "1"],"resulting constraint matrix" : ["0", "14329", "0", "-18423", "0", "53222"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8496.400391]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "2", "2", "-7", "-13", "-20", "6", "5", "55"],"resulting constraint matrix" : ["0", "10235", "0", "-81880", "0", "135102"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8498.530273]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-3", "4", "-1", "4", "0", "3", "-16", "-15"],"resulting constraint matrix" : ["0", "4094", "0", "6141", "0", "-57316"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8428.639648]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "4", "6", "3", "13", "23", "-2", "-11", "-26"],"resulting constraint matrix" : ["0", "22517", "0", "79833", "0", "-79833"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8509.469727]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-5", "3", "2", "-9", "4", "6", "-28", "15"],"resulting constraint matrix" : ["0", "-2047", "0", "-6141", "0", "-14329"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8883.099609]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "4", "1", "-6", "-23", "-6", "-5", "-24", "-4"],"resulting constraint matrix" : ["0", "12282", "0", "-71645", "0", "-67551"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 9353.480469]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "2", "3", "1", "3", "7", "2", "7", "19"],"resulting constraint matrix" : ["0", "12282", "0", "22517", "0", "57316"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8983.690430]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "6", "3", "-1", "-5", "-7", "6", "36", "19"],"resulting constraint matrix" : ["0", "20470", "0", "-26611", "0", "124867"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8814.190430]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-4", "6", "1", "-3", "1", "-2", "9", "-16"],"resulting constraint matrix" : ["0", "6141", "0", "-2047", "0", "-18423"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8781.250000]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-6", "3", "1", "-5", "1", "0", "5", "-9"],"resulting constraint matrix" : ["0", "-4094", "0", "-6141", "0", "-8188"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8671.070312]
+}
+,
+{"comp00" : {"interchange_dims" : [],"initial constraint matrix" : ["0", "2047", "0", "2047", "0", "2047"],"transformation matrix" : ["1", "-4", "4", "-6", "25", "-24", "0", "-7", "1"],"resulting constraint matrix" : ["0", "2047", "0", "-10235", "0", "-12282"],"tiling" : {},"unrolling_factor" : null,"parallelized_dim" : null, "skewing" : null},"unfuse_iterators" : [],"tree_structure": {"loop_name" : "i0","computations_list" : [],"child_list" : [{"loop_name" : "i1","computations_list" : [],"child_list" : [{"loop_name" : "i2","computations_list" : ["comp00"],"child_list" : []}]}]}, 
+"execution_times" : [ 8954.290039]
+}
+
+	], 
+"exploration_trace": { "id": 0, "schedule": "", "depth": 1, "evaluation": 8724.589844, "children": [
+{ "id": 1, "schedule": "M(1, -7, 4, 0, 1, -6, -1, 6, 3)", "depth": 1, "evaluation": 9889.570312, "children": []}
+,{ "id": 2, "schedule": "M(1, -3, 4, 4, -11, 20, 2, -1, 29)", "depth": 1, "evaluation": 9248.889648, "children": []}
+,{ "id": 3, "schedule": "M(1, 3, 4, -2, -5, -10, 0, -6, 13)", "depth": 1, "evaluation": 8915.950195, "children": []}
+,{ "id": 4, "schedule": "M(1, -4, 3, -2, 9, -4, -6, 28, -9)", "depth": 1, "evaluation": 8917.799805, "children": []}
+,{ "id": 5, "schedule": "M(1, -4, 4, 0, 1, 1, -3, 12, -11)", "depth": 1, "evaluation": 8742.540039, "children": []}
+,{ "id": 6, "schedule": "M(1, -1, 6, -5, 6, -27, 5, 1, 49)", "depth": 1, "evaluation": 8678.429688, "children": []}
+,{ "id": 7, "schedule": "M(1, 0, 2, 1, 1, -2, -6, 3, -23)", "depth": 1, "evaluation": 8574.650391, "children": []}
+,{ "id": 8, "schedule": "M(1, 3, 0, 0, 1, 0, 4, 13, 1)", "depth": 1, "evaluation": 8534.320312, "children": []}
+,{ "id": 9, "schedule": "M(1, -4, 4, 2, -7, 13, 2, -13, -16)", "depth": 1, "evaluation": 8395.160156, "children": []}
+,{ "id": 10, "schedule": "M(1, -7, 2, -1, 8, 4, -7, 47, -25)", "depth": 1, "evaluation": 8662.440430, "children": []}
+,{ "id": 11, "schedule": "M(1, 3, 5, -2, -5, -16, -3, -7, -26)", "depth": 1, "evaluation": 8370.049805, "children": []}
+,{ "id": 12, "schedule": "M(1, 2, 1, 6, 13, 4, 5, 6, 14)", "depth": 1, "evaluation": 8612.679688, "children": []}
+,{ "id": 13, "schedule": "M(1, 2, 6, -2, -3, -11, -6, -16, -39)", "depth": 1, "evaluation": 8804.000000, "children": []}
+,{ "id": 14, "schedule": "M(1, 4, 2, 1, 5, 0, -2, -2, -15)", "depth": 1, "evaluation": 8817.679688, "children": []}
+,{ "id": 15, "schedule": "M(1, -6, 1, 5, -29, 7, -3, 13, -12)", "depth": 1, "evaluation": 8658.570312, "children": []}
+,{ "id": 16, "schedule": "M(1, -3, 2, -1, 4, 4, 4, -9, 27)", "depth": 1, "evaluation": 8817.089844, "children": []}
+,{ "id": 17, "schedule": "M(1, -6, 6, -5, 31, -29, 1, -6, 7)", "depth": 1, "evaluation": 8813.639648, "children": []}
+,{ "id": 18, "schedule": "M(1, 5, 5, 0, 1, 0, -4, -15, -19)", "depth": 1, "evaluation": 8717.099609, "children": []}
+,{ "id": 19, "schedule": "M(1, 0, 2, 1, 1, -1, -1, 6, -19)", "depth": 1, "evaluation": 8721.549805, "children": []}
+,{ "id": 20, "schedule": "M(1, 1, 6, 1, 2, 8, -1, -7, -17)", "depth": 1, "evaluation": 8796.219727, "children": []}
+,{ "id": 21, "schedule": "M(1, 4, 3, -6, -23, -18, 2, 14, 7)", "depth": 1, "evaluation": 8701.929688, "children": []}
+,{ "id": 22, "schedule": "M(1, -5, 2, 6, -29, 15, 5, -28, 2)", "depth": 1, "evaluation": 8715.089844, "children": []}
+,{ "id": 23, "schedule": "M(1, 4, 3, 6, 25, 23, 4, 11, -12)", "depth": 1, "evaluation": 8656.990234, "children": []}
+,{ "id": 24, "schedule": "M(1, 2, 1, 6, 13, 4, -1, -7, 10)", "depth": 1, "evaluation": 8677.429688, "children": []}
+,{ "id": 25, "schedule": "M(1, 1, 6, 0, 1, 2, 2, 3, 15)", "depth": 1, "evaluation": 8747.610352, "children": []}
+,{ "id": 26, "schedule": "M(1, 0, 1, 0, 1, 1, -2, 2, 1)", "depth": 1, "evaluation": 8758.280273, "children": []}
+,{ "id": 27, "schedule": "M(1, -7, 2, -6, 43, -17, 6, -36, -17)", "depth": 1, "evaluation": 8710.750000, "children": []}
+,{ "id": 28, "schedule": "M(1, 0, 0, 3, 1, 0, -6, 1, 1)", "depth": 1, "evaluation": 8716.809570, "children": []}
+,{ "id": 29, "schedule": "M(1, -4, 5, -3, 13, -11, -6, 28, -13)", "depth": 1, "evaluation": 8643.950195, "children": []}
+,{ "id": 30, "schedule": "M(1, 5, 2, -4, -19, -7, 2, 4, -1)", "depth": 1, "evaluation": 8761.820312, "children": []}
+,{ "id": 31, "schedule": "M(1, 1, 2, 2, 3, -2, 1, 6, -27)", "depth": 1, "evaluation": 8626.690430, "children": []}
+,{ "id": 32, "schedule": "M(1, 6, 1, -3, -17, 0, -5, -24, 14)", "depth": 1, "evaluation": 8682.480469, "children": []}
+,{ "id": 33, "schedule": "M(1, 0, 6, 2, 1, 9, 2, 3, 4)", "depth": 1, "evaluation": 8778.759766, "children": []}
+,{ "id": 34, "schedule": "M(1, 3, 1, -1, -2, -8, 1, -1, 30)", "depth": 1, "evaluation": 8710.959961, "children": []}
+,{ "id": 35, "schedule": "M(1, -1, 6, 0, 1, -6, -2, -1, 7)", "depth": 1, "evaluation": 8683.660156, "children": []}
+,{ "id": 36, "schedule": "M(1, -7, 2, -2, 15, -8, -7, 46, -1)", "depth": 1, "evaluation": 8658.889648, "children": []}
+,{ "id": 37, "schedule": "M(1, 5, 4, 4, 21, 20, 5, 19, -3)", "depth": 1, "evaluation": 8717.019531, "children": []}
+,{ "id": 38, "schedule": "M(1, 0, 1, -5, 1, -10, -2, 5, -26)", "depth": 1, "evaluation": 8755.150391, "children": []}
+,{ "id": 39, "schedule": "M(1, -1, 5, 2, -1, 3, -7, 0, 15)", "depth": 1, "evaluation": 8774.610352, "children": []}
+,{ "id": 40, "schedule": "M(1, 4, 0, 1, 5, 6, 4, 21, 31)", "depth": 1, "evaluation": 8723.280273, "children": []}
+,{ "id": 41, "schedule": "M(1, -1, 5, 6, -5, 34, 1, -6, -14)", "depth": 1, "evaluation": 8647.379883, "children": []}
+,{ "id": 42, "schedule": "M(1, 0, 0, 5, 1, 3, 0, 4, 13)", "depth": 1, "evaluation": 8410.099609, "children": []}
+,{ "id": 43, "schedule": "M(1, -4, 1, 2, -7, 7, 1, -7, -13)", "depth": 1, "evaluation": 8357.400391, "children": []}
+,{ "id": 44, "schedule": "M(1, 3, 5, 4, 13, 13, -3, -16, 35)", "depth": 1, "evaluation": 8530.330078, "children": []}
+,{ "id": 45, "schedule": "M(1, -5, 4, 3, -14, 11, -2, 13, -10)", "depth": 1, "evaluation": 8408.660156, "children": []}
+,{ "id": 46, "schedule": "M(1, 2, 2, -7, -13, -10, -6, -10, -3)", "depth": 1, "evaluation": 8430.849609, "children": []}
+,{ "id": 47, "schedule": "M(1, 3, 4, -6, -17, -22, 0, 2, 5)", "depth": 1, "evaluation": 9064.959961, "children": []}
+,{ "id": 48, "schedule": "M(1, 6, 4, 6, 37, 25, 3, 24, 19)", "depth": 1, "evaluation": 8946.320312, "children": []}
+,{ "id": 49, "schedule": "M(1, -4, 3, -3, 13, -3, -4, 15, -17)", "depth": 1, "evaluation": 8908.219727, "children": []}
+,{ "id": 50, "schedule": "M(1, -5, 6, 0, 1, 0, -1, 3, -5)", "depth": 1, "evaluation": 8775.429688, "children": []}
+,{ "id": 51, "schedule": "M(1, -3, 1, -6, 19, -1, 4, -16, -15)", "depth": 1, "evaluation": 8631.250000, "children": []}
+,{ "id": 52, "schedule": "M(1, 4, 6, 5, 21, 26, -4, -19, -11)", "depth": 1, "evaluation": 8832.660156, "children": []}
+,{ "id": 53, "schedule": "M(1, 5, 5, 1, 6, 6, 2, 5, 6)", "depth": 1, "evaluation": 8691.129883, "children": []}
+,{ "id": 54, "schedule": "M(1, 6, 6, -1, -5, -10, 0, -7, 29)", "depth": 1, "evaluation": 8740.700195, "children": []}
+,{ "id": 55, "schedule": "M(1, 4, 2, -6, -23, -11, -1, -8, -5)", "depth": 1, "evaluation": 8689.809570, "children": []}
+,{ "id": 56, "schedule": "M(1, 1, 3, 5, 6, 20, -6, -8, -27)", "depth": 1, "evaluation": 8709.450195, "children": []}
+,{ "id": 57, "schedule": "M(1, -5, 3, -4, 21, -12, -3, 11, -8)", "depth": 1, "evaluation": 8671.709961, "children": []}
+,{ "id": 58, "schedule": "M(1, 2, 1, -3, -5, -6, 6, 9, 16)", "depth": 1, "evaluation": 8902.540039, "children": []}
+,{ "id": 59, "schedule": "M(1, -3, 4, -5, 16, -24, -2, 7, -11)", "depth": 1, "evaluation": 8707.440430, "children": []}
+,{ "id": 60, "schedule": "M(1, -5, 3, -3, 16, -13, 1, -11, 28)", "depth": 1, "evaluation": 8837.379883, "children": []}
+,{ "id": 61, "schedule": "M(1, -6, 1, 1, -5, -1, 3, -25, 18)", "depth": 1, "evaluation": 8722.589844, "children": []}
+,{ "id": 62, "schedule": "M(1, 5, 1, 3, 16, -2, -5, -25, -4)", "depth": 1, "evaluation": 8558.870117, "children": []}
+,{ "id": 63, "schedule": "M(1, -3, 1, -4, 13, -6, -2, -1, 13)", "depth": 1, "evaluation": 8400.759766, "children": []}
+,{ "id": 64, "schedule": "M(1, -7, 4, 2, -13, 3, -4, 24, 5)", "depth": 1, "evaluation": 8607.139648, "children": []}
+,{ "id": 65, "schedule": "M(1, -5, 2, 1, -4, 8, -1, 3, -13)", "depth": 1, "evaluation": 8550.080078, "children": []}
+,{ "id": 66, "schedule": "M(1, -1, 1, -4, 5, 1, 10, -12, 1)", "depth": 1, "evaluation": 9157.299805, "children": []}
+,{ "id": 67, "schedule": "M(1, -1, 5, 1, 0, 11, -2, 3, -3)", "depth": 1, "evaluation": 8861.410156, "children": []}
+,{ "id": 68, "schedule": "M(1, -2, 1, -6, 13, -8, -3, 2, 6)", "depth": 1, "evaluation": 9154.940430, "children": []}
+,{ "id": 69, "schedule": "M(1, 3, 2, 5, 16, 15, 1, 1, -7)", "depth": 1, "evaluation": 8525.259766, "children": []}
+,{ "id": 70, "schedule": "M(1, 5, 6, 6, 31, 41, -2, -6, 9)", "depth": 1, "evaluation": 8430.759766, "children": []}
+,{ "id": 71, "schedule": "M(1, 4, 2, -5, -19, -11, 2, 14, -1)", "depth": 1, "evaluation": 8417.040039, "children": []}
+,{ "id": 72, "schedule": "M(1, -3, 2, 3, -8, 6, 5, -16, 11)", "depth": 1, "evaluation": 8429.440430, "children": []}
+,{ "id": 73, "schedule": "M(1, 5, 1, -5, -24, 1, 0, 0, 1)", "depth": 1, "evaluation": 8642.540039, "children": []}
+,{ "id": 74, "schedule": "M(1, -6, 6, -6, 37, -36, -3, 19, -17)", "depth": 1, "evaluation": 9497.980469, "children": []}
+,{ "id": 75, "schedule": "M(1, -4, 0, 0, 1, 2, 4, -20, -7)", "depth": 1, "evaluation": 8539.780273, "children": []}
+,{ "id": 76, "schedule": "M(1, -5, 4, 4, -19, 20, 1, 1, 29)", "depth": 1, "evaluation": 8714.169922, "children": []}
+,{ "id": 77, "schedule": "M(1, -5, 3, 3, -14, 4, 6, -25, -6)", "depth": 1, "evaluation": 8604.980469, "children": []}
+,{ "id": 78, "schedule": "M(1, 5, 6, 6, 31, 29, 2, 9, 20)", "depth": 1, "evaluation": 8991.280273, "children": []}
+,{ "id": 79, "schedule": "M(1, -2, 5, -6, 13, -34, -4, 10, -27)", "depth": 1, "evaluation": 8877.500000, "children": []}
+,{ "id": 80, "schedule": "M(1, -6, 2, -5, 31, -4, -1, 11, 29)", "depth": 1, "evaluation": 8878.129883, "children": []}
+,{ "id": 81, "schedule": "M(1, -4, 0, 2, -7, 2, 3, -14, -3)", "depth": 1, "evaluation": 8916.099609, "children": []}
+,{ "id": 82, "schedule": "M(1, -7, 0, -6, 43, 5, -1, 5, -9)", "depth": 1, "evaluation": 8782.099609, "children": []}
+,{ "id": 83, "schedule": "M(1, -1, 1, 2, -1, -3, -6, 0, 25)", "depth": 1, "evaluation": 8820.660156, "children": []}
+,{ "id": 84, "schedule": "M(1, -3, 4, -7, 22, -26, 5, -10, 31)", "depth": 1, "evaluation": 8755.379883, "children": []}
+,{ "id": 85, "schedule": "M(1, -5, 2, -4, 21, -11, -4, 16, 5)", "depth": 1, "evaluation": 8468.509766, "children": []}
+,{ "id": 86, "schedule": "M(1, -2, 2, 3, -5, 3, 1, -5, 12)", "depth": 1, "evaluation": 8703.290039, "children": []}
+,{ "id": 87, "schedule": "M(1, -1, 3, 3, -2, 13, -5, 7, -6)", "depth": 1, "evaluation": 8451.730469, "children": []}
+,{ "id": 88, "schedule": "M(1, 3, 6, 4, 13, 28, 5, 11, 15)", "depth": 1, "evaluation": 8904.940430, "children": []}
+,{ "id": 89, "schedule": "M(1, 4, 3, -6, -23, -24, 1, 5, -2)", "depth": 1, "evaluation": 8388.370117, "children": []}
+,{ "id": 90, "schedule": "M(1, 3, 3, -1, -2, -6, 5, 20, 1)", "depth": 1, "evaluation": 8496.400391, "children": []}
+,{ "id": 91, "schedule": "M(1, 2, 2, -7, -13, -20, 6, 5, 55)", "depth": 1, "evaluation": 8498.530273, "children": []}
+,{ "id": 92, "schedule": "M(1, -3, 4, -1, 4, 0, 3, -16, -15)", "depth": 1, "evaluation": 8428.639648, "children": []}
+,{ "id": 93, "schedule": "M(1, 4, 6, 3, 13, 23, -2, -11, -26)", "depth": 1, "evaluation": 8509.469727, "children": []}
+,{ "id": 94, "schedule": "M(1, -5, 3, 2, -9, 4, 6, -28, 15)", "depth": 1, "evaluation": 8883.099609, "children": []}
+,{ "id": 95, "schedule": "M(1, 4, 1, -6, -23, -6, -5, -24, -4)", "depth": 1, "evaluation": 9353.480469, "children": []}
+,{ "id": 96, "schedule": "M(1, 2, 3, 1, 3, 7, 2, 7, 19)", "depth": 1, "evaluation": 8983.690430, "children": []}
+,{ "id": 97, "schedule": "M(1, 6, 3, -1, -5, -7, 6, 36, 19)", "depth": 1, "evaluation": 8814.190430, "children": []}
+,{ "id": 98, "schedule": "M(1, -4, 6, 1, -3, 1, -2, 9, -16)", "depth": 1, "evaluation": 8781.250000, "children": []}
+,{ "id": 99, "schedule": "M(1, -6, 3, 1, -5, 1, 0, 5, -9)", "depth": 1, "evaluation": 8671.070312, "children": []}
+,{ "id": 100, "schedule": "M(1, -4, 4, -6, 25, -24, 0, -7, 1)", "depth": 1, "evaluation": 8954.290039, "children": []}
+]}
+ 
+}
