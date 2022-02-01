@@ -503,7 +503,7 @@ std::string evaluate_by_learning_model::get_schedule_json(syntax_tree const& ast
         
         comp_sched_json += "],";
         // JSON for initial constraint matrix
-        comp_sched_json += "\"initial constraint matrix\" : [";
+        comp_sched_json += "\"initial_constraint_matrix\" : [";
 
         if (transformed_by_matrix)
         {
