@@ -3,14 +3,24 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <signal.h>
-
+#include <err.h> 
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
+
 namespace tiramisu::auto_scheduler
 {
+//timelimit in seconds
+#define TIME_LIMIT 10 
 
+    struct TimeLimitException : public std::exception
+    {
+        const char * what () const throw ()
+        {
+            return "passed timelimit while measuring the execution time";
+        }
+    };
 evaluate_by_execution::evaluate_by_execution(std::vector<tiramisu::buffer*> const& arguments, 
                                              std::string const& obj_filename, 
                                              std::string const& wrapper_cmd,
@@ -138,21 +148,58 @@ std::vector<float> evaluate_by_execution::get_measurements(syntax_tree& ast, boo
 
     return measurements;
 }
+void alarm_handler(int sig) 
+{ 
+    std::cout<<"ERROR: surpassed timelimit"<<std::endl;
+    throw TimeLimitException();
+}
 std::vector<float> evaluate_by_execution::get_measurements_matrix(syntax_tree& ast, bool exit_on_timeout, float timeout)
 {
+    
     // Apply all the optimizations
     apply_optimizations_matrix(ast);
-    // Compile the program to an object file
-    fct->lift_dist_comps();
-    fct->gen_time_space_domain();
-    fct->gen_isl_ast();
-    fct->gen_halide_stmt();
-
+    std::cout<<"done applying"<<std::endl;
+    
     Halide::Module m = lower_halide_pipeline(fct->get_name(), halide_target, halide_arguments,
                                              Halide::Internal::LoweredFunc::External,
                                              fct->get_halide_stmt());
-                                             
-    m.compile(Halide::Outputs().object(obj_filename));
+         
+    // Compile the program to an object file
+    fct->lift_dist_comps();
+    fct->gen_time_space_domain();
+        
+    
+    try
+    {
+        
+        if (sigaction(SIGALRM, NULL, NULL) == -1) err(1, NULL);
+        signal(SIGALRM, alarm_handler); 
+        // install an alarm to be fired after TIME_LIMIT 
+        alarm(TIME_LIMIT);
+        
+        fct->gen_isl_ast(); 
+        
+        // cancel any previously set alarm 
+        alarm(0);
+          
+    }
+    catch( TimeLimitException& e )
+    {
+        std::cout << "\n<timelimit>\n";
+        // Remove all the optimizations
+        fct->reset_schedules();
+        std::vector<float> measurements;
+        float cumulative_timeout;
+        cumulative_timeout = timeout * 30;
+        measurements.push_back(cumulative_timeout*1000);
+        // cancel any previously set alarm 
+        alarm(0);
+        return measurements; 
+    }
+    fct->gen_halide_stmt();
+                                                
+        m.compile(Halide::Outputs().object(obj_filename));
+        
 
     // Turn the object file to a shared library
     std::string gcc_cmd = "g++ -shared -o " + obj_filename + ".so " + obj_filename;
@@ -199,12 +246,13 @@ std::vector<float> evaluate_by_execution::get_measurements_matrix(syntax_tree& a
         measurements.push_back(cumulative_timeout*1000); // converted to ms
         std::cout<< "Execution timed out"<< std::endl;
     }
-
-
+    
+    
     // Remove all the optimizations
     fct->reset_schedules();
 
     return measurements;
+        
 }
 
 evaluate_by_learning_model::evaluate_by_learning_model(std::string const& cmd_path, std::vector<std::string> const& cmd_args)

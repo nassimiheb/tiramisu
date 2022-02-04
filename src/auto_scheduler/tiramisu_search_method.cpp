@@ -180,7 +180,7 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
             std::vector<float> measurements;
             measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
             child->evaluation = min_eval(measurements);
-
+            std::cout<<"done with evaluation"<<std::endl;
             parent_trace->add_child_path(child, schedules_annotations->size());
 
             std::string schedule_annot = evaluate_by_learning_model::get_schedule_json(*child);
@@ -723,7 +723,6 @@ static const char *op_str[] = {
  * @param corr_map 
  */
 /*void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::map <std::string,std::string>* corr_map, int &k){
-
     if(k>=isl_ast.size()){}
     else{
         (*corr_map).insert(std::pair<std::string,std::string> (isl_ast[k],node->name));
@@ -745,10 +744,8 @@ static const char *op_str[] = {
         int i, n;
         std::string p;
         n = isl_ast_expr_get_op_n_arg(expr);
-
         if (n < 0) return "$Error in getting corr map arguments";
         if (n == 0) return "$Error in getting corr map arguments";
-
         for (i = 0; i < n; ++i) {
             isl_ast_expr *arg;
             arg = isl_ast_expr_get_op_arg(expr, i);
@@ -764,7 +761,6 @@ static const char *op_str[] = {
         enum isl_ast_op_type op;
         isl_id *id;
         std::string p;
-
         if (!expr){return "!Expression";}  
         else{     
         type = isl_ast_expr_get_type(expr);
