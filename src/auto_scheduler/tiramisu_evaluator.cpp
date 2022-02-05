@@ -7,12 +7,12 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-
+#include <sys/wait.h>
 
 namespace tiramisu::auto_scheduler
 {
 //timelimit in seconds
-#define TIME_LIMIT 10 
+#define TIME_LIMIT 5 
 
     struct TimeLimitException : public std::exception
     {
@@ -148,9 +148,12 @@ std::vector<float> evaluate_by_execution::get_measurements(syntax_tree& ast, boo
 
     return measurements;
 }
+bool is_surpassed;
 void alarm_handler(int sig) 
 { 
     std::cout<<"ERROR: surpassed timelimit"<<std::endl;
+
+    is_surpassed=true;
     throw TimeLimitException();
 }
 std::vector<float> evaluate_by_execution::get_measurements_matrix(syntax_tree& ast, bool exit_on_timeout, float timeout)
@@ -167,8 +170,39 @@ std::vector<float> evaluate_by_execution::get_measurements_matrix(syntax_tree& a
     // Compile the program to an object file
     fct->lift_dist_comps();
     fct->gen_time_space_domain();
-        
+    if (fork() == 0) {
+        unsigned secsLeft;
+        alarm(TIME_LIMIT); // no handler (terminate proc)
+        fct->gen_isl_ast(); 
+        secsLeft = alarm(0);
+        // maybe write (MAX_SECONDS - secsLeft) to a file
     
+    }else{
+        int status;
+        waitpid(-1,&status,0);
+    
+        if (WIFSIGNALED(status)) {
+            // child was interrupted
+            if (WTERMSIG(status) == SIGALRM) {
+                // child interrupted by alarm signal
+                std::cout << "\n<timelimit>\n";
+                // Remove all the optimizations
+                fct->reset_schedules();
+                std::vector<float> measurements;
+                float cumulative_timeout;
+                cumulative_timeout = timeout * 30;
+                measurements.push_back(cumulative_timeout*1000);
+                // cancel any previously set alarm 
+                alarm(0);
+                return measurements; 
+            }else{
+                // child interrupted by another signal
+            }
+        }else{
+            // child ran to completion
+        }
+    }
+   /*is_surpassed=false;
     try
     {
         
@@ -185,7 +219,7 @@ std::vector<float> evaluate_by_execution::get_measurements_matrix(syntax_tree& a
     }
     catch( TimeLimitException& e )
     {
-        std::cout << "\n<timelimit>\n";
+       std::cout << "\n<timelimit>\n";
         // Remove all the optimizations
         fct->reset_schedules();
         std::vector<float> measurements;
@@ -195,6 +229,9 @@ std::vector<float> evaluate_by_execution::get_measurements_matrix(syntax_tree& a
         // cancel any previously set alarm 
         alarm(0);
         return measurements; 
+    }*/
+    if(is_surpassed){
+         
     }
     fct->gen_halide_stmt();
                                                 
