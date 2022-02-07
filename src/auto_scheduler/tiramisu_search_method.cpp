@@ -1,7 +1,18 @@
+#include <sys/wait.h>
 #include <tiramisu/auto_scheduler/search_method.h>
 #include <random>
 #include <functional>
+#include <exception>
 
+#include <stdexcept>
+#define TIME_LIMIT 100
+struct TimeLimitException : public std::exception
+    {
+        const char * what () const throw ()
+        {
+            return "passed timelimit while measuring the execution time";
+        }
+    };
 namespace tiramisu::auto_scheduler
 {
  std::string get_name_ast_expr_isl( isl_ast_expr *expr);
@@ -107,11 +118,24 @@ void beam_search::search(syntax_tree& ast)
         search(*child);
     }
 }
-
+pid_t pid= -1;
+  int timeout = 0;
+int child_done = 0;
+  void child_handler(int sig)
+{
+    child_done = 1;
+}
+int nb_exec = std::stoi(std::getenv("MAX_RUNS"));
+void alarm_handler(int sig)
+{
+    timeout = 1;
+}
+std::vector<float> measurements;
+bool changes_mes = false;
 void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout)
 {
     std::default_random_engine rand_generator;
-
+    
     //if (ast.nb_explored_optims % NB_OPTIMIZATIONS == 0)
     //    ast.clear_new_optimizations();
 
@@ -176,11 +200,109 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
                 std::cout << "\n<legal>\n";
                 child->print_computations_accesses();
             }
+            int fd[2];
+            int parentID;
+            // create pipe descriptors
+	        pipe(fd);
+            measurements.clear();
+            
+            pid = fork();
+            if (pid == -1) {
+                perror("fork failed");
+                exit(1);
+            } else if (pid == 0) {
+                measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
+                float ar[measurements.size()];
+                for(int i=0;i<measurements.size();i++) ar[i]=measurements.at(i);
+                close(fd[0]);
+                parentID = 0;
+                write(fd[1], &ar, sizeof(ar));
+                std::cout<<"meas size"<<sizeof(ar)<<std::endl;
+                close(fd[1]);
+                _exit(1);
+            }
 
-            std::vector<float> measurements;
-            measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
+            // set up the signal handlers after forking so the child doesn't inherit them
+
+            signal(SIGALRM, alarm_handler);
+            signal(SIGCHLD, child_handler);
+            alarm(0);
+            alarm(TIME_LIMIT);  // install an alarm to be fired after TIME_LIMIT
+            pause();
+
+            if (timeout) {
+                printf("alarm triggered\n");
+                int result = waitpid(pid, NULL, WNOHANG);
+                if (result == 0) {
+                    // child still running, so kill it
+                    printf("killing child\n");
+                    
+                    // Remove all the optimizations
+                    exec_eval->fct->reset_schedules();
+                    measurements.clear();
+                    measurements.push_back(std::numeric_limits<float>::infinity());
+                    // cancel any previously set alarm 
+                    alarm(0); 
+                    kill(pid, 9);
+                    //kill(pid, SIGKILL);
+                    
+                
+                    waitpid(-1,NULL,0);
+                } else {
+                    //exec_eval->fct->gen_isl_ast();
+                    printf("alarm triggered, but child finished normally\n");
+                    close(fd[1]);
+                    float ar[nb_exec];
+                    read(fd[0], &ar, nb_exec*sizeof(float));
+                    for(int i=0;i<1;i++) measurements.push_back(ar[i]);
+                    close(fd[0]);
+                    //measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
+                }
+            } else if (child_done) {
+                printf("child finished normally\n");
+                close(fd[1]);
+                float ar[nb_exec];
+                read(fd[0], &ar, nb_exec*sizeof(float));
+                for(int i=0;i<1;i++) measurements.push_back(ar[i]);
+                close(fd[0]);
+                
+                //measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
+                waitpid(-1,NULL,0);
+            }
+            
+           
+            /*
+            std::future<std::vector<float> > future = std::async(std::launch::async, [&](){
+                return exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
+            });
+            std::future_status status;
+            std::chrono::milliseconds timespan(200000);
+            do {
+                switch(status = future.wait_for(timespan); status) {
+                    case std::future_status::deferred: std::cout << "deferred\n"; break;
+                    case std::future_status::timeout: std::cout << "timeout\n"; break;
+                    case std::future_status::ready: std::cout << "ready!\n"; break;
+                }
+            } while (status != std::future_status::ready && status != std::future_status::timeout);
+            if(status == std::future_status::timeout){
+                    measurements.push_back(std::numeric_limits<float>::infinity());
+            }else{
+                    measurements = future.get();
+            } 
+            */
+            /*
+                std::thread([&]{
+                    measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
+                }).join();
+            */
+            /*   
+            }catch(TimeLimitException &e){
+                    exec_eval->fct->reset_schedules();
+                    measurements.push_back(std::numeric_limits<float>::infinity());
+            }
+            */
             child->evaluation = min_eval(measurements);
-            std::cout<<"done with evaluation"<<std::endl;
+
             parent_trace->add_child_path(child, schedules_annotations->size());
 
             std::string schedule_annot = evaluate_by_learning_model::get_schedule_json(*child);
@@ -723,6 +845,7 @@ static const char *op_str[] = {
  * @param corr_map 
  */
 /*void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::map <std::string,std::string>* corr_map, int &k){
+
     if(k>=isl_ast.size()){}
     else{
         (*corr_map).insert(std::pair<std::string,std::string> (isl_ast[k],node->name));
@@ -744,8 +867,10 @@ static const char *op_str[] = {
         int i, n;
         std::string p;
         n = isl_ast_expr_get_op_n_arg(expr);
+
         if (n < 0) return "$Error in getting corr map arguments";
         if (n == 0) return "$Error in getting corr map arguments";
+
         for (i = 0; i < n; ++i) {
             isl_ast_expr *arg;
             arg = isl_ast_expr_get_op_arg(expr, i);
@@ -761,6 +886,7 @@ static const char *op_str[] = {
         enum isl_ast_op_type op;
         isl_id *id;
         std::string p;
+
         if (!expr){return "!Expression";}  
         else{     
         type = isl_ast_expr_get_type(expr);

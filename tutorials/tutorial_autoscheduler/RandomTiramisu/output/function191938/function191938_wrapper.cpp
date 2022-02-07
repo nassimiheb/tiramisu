@@ -10,11 +10,11 @@ using namespace std;
 int main(int, char **argv)
 {
 	double *c_buf00 = (double*)malloc(96* sizeof(double));
-	parallel_init_buffer(c_buf00, 96, (double)71);
+	parallel_init_buffer(c_buf00, 96, (double)6);
 	Halide::Buffer<double> buf00(c_buf00, 96);
 
 	double *c_buf01 = (double*)malloc(96*64* sizeof(double));
-	parallel_init_buffer(c_buf01, 96*64, (double)93);
+	parallel_init_buffer(c_buf01, 96*64, (double)17);
 	Halide::Buffer<double> buf01(c_buf01, 96,64);
 
     bool nb_runs_dynamic = is_nb_runs_dynamic();

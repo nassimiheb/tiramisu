@@ -10,19 +10,19 @@ using namespace std;
 int main(int, char **argv)
 {
 	double *c_buf00 = (double*)malloc(32*32*32* sizeof(double));
-	parallel_init_buffer(c_buf00, 32*32*32, (double)69);
+	parallel_init_buffer(c_buf00, 32*32*32, (double)83);
 	Halide::Buffer<double> buf00(c_buf00, 32,32,32);
 
 	double *c_buf01 = (double*)malloc(32*32* sizeof(double));
-	parallel_init_buffer(c_buf01, 32*32, (double)68);
+	parallel_init_buffer(c_buf01, 32*32, (double)39);
 	Halide::Buffer<double> buf01(c_buf01, 32,32);
 
 	double *c_buf02 = (double*)malloc(32*32*32* sizeof(double));
-	parallel_init_buffer(c_buf02, 32*32*32, (double)50);
+	parallel_init_buffer(c_buf02, 32*32*32, (double)9);
 	Halide::Buffer<double> buf02(c_buf02, 32,32,32);
 
 	double *c_buf03 = (double*)malloc(32*32* sizeof(double));
-	parallel_init_buffer(c_buf03, 32*32, (double)41);
+	parallel_init_buffer(c_buf03, 32*32, (double)25);
 	Halide::Buffer<double> buf03(c_buf03, 32,32);
 
     bool nb_runs_dynamic = is_nb_runs_dynamic();
