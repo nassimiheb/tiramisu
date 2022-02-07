@@ -5,7 +5,7 @@
 #include <exception>
 
 #include <stdexcept>
-#define TIME_LIMIT 100
+#define TIME_LIMIT 10
 struct TimeLimitException : public std::exception
     {
         const char * what () const throw ()
@@ -217,7 +217,7 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
                 close(fd[0]);
                 parentID = 0;
                 write(fd[1], &ar, sizeof(ar));
-                std::cout<<"meas size"<<sizeof(ar)<<std::endl;
+                
                 close(fd[1]);
                 _exit(1);
             }
@@ -231,11 +231,11 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
             pause();
 
             if (timeout) {
-                printf("alarm triggered\n");
+                
                 int result = waitpid(pid, NULL, WNOHANG);
                 if (result == 0) {
                     // child still running, so kill it
-                    printf("killing child\n");
+                    
                     
                     // Remove all the optimizations
                     exec_eval->fct->reset_schedules();
@@ -249,21 +249,20 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
                 
                     waitpid(-1,NULL,0);
                 } else {
-                    //exec_eval->fct->gen_isl_ast();
-                    printf("alarm triggered, but child finished normally\n");
+            
                     close(fd[1]);
                     float ar[nb_exec];
                     read(fd[0], &ar, nb_exec*sizeof(float));
-                    for(int i=0;i<1;i++) measurements.push_back(ar[i]);
+                    for(int i=0;i<nb_exec;i++) measurements.push_back(ar[i]);
                     close(fd[0]);
                     //measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
                 }
             } else if (child_done) {
-                printf("child finished normally\n");
+                
                 close(fd[1]);
                 float ar[nb_exec];
                 read(fd[0], &ar, nb_exec*sizeof(float));
-                for(int i=0;i<1;i++) measurements.push_back(ar[i]);
+                for(int i=0;i<nb_exec;i++) measurements.push_back(ar[i]);
                 close(fd[0]);
                 
                 //measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
@@ -271,36 +270,7 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
             }
             
            
-            /*
-            std::future<std::vector<float> > future = std::async(std::launch::async, [&](){
-                return exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
-            });
-            std::future_status status;
-            std::chrono::milliseconds timespan(200000);
-            do {
-                switch(status = future.wait_for(timespan); status) {
-                    case std::future_status::deferred: std::cout << "deferred\n"; break;
-                    case std::future_status::timeout: std::cout << "timeout\n"; break;
-                    case std::future_status::ready: std::cout << "ready!\n"; break;
-                }
-            } while (status != std::future_status::ready && status != std::future_status::timeout);
-            if(status == std::future_status::timeout){
-                    measurements.push_back(std::numeric_limits<float>::infinity());
-            }else{
-                    measurements = future.get();
-            } 
-            */
-            /*
-                std::thread([&]{
-                    measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
-                }).join();
-            */
-            /*   
-            }catch(TimeLimitException &e){
-                    exec_eval->fct->reset_schedules();
-                    measurements.push_back(std::numeric_limits<float>::infinity());
-            }
-            */
+            
             child->evaluation = min_eval(measurements);
 
             parent_trace->add_child_path(child, schedules_annotations->size());
