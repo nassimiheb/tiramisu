@@ -138,7 +138,8 @@ std::vector<float> evaluate_by_execution::get_measurements(syntax_tree& ast, boo
 
     return measurements;
 }
-std::vector<float> evaluate_by_execution::get_measurements_matrix(syntax_tree& ast, bool exit_on_timeout, float timeout)
+
+std::vector<float> evaluate_by_execution::get_measurements_matrix(syntax_tree& ast, bool exit_on_timeout, float timeout )
 {
     // Apply all the optimizations
     apply_optimizations_matrix(ast);
@@ -147,11 +148,16 @@ std::vector<float> evaluate_by_execution::get_measurements_matrix(syntax_tree& a
     fct->gen_time_space_domain();
     fct->gen_isl_ast();
     fct->gen_halide_stmt();
+    kill(getppid(), SIGUSR1);
 
     Halide::Module m = lower_halide_pipeline(fct->get_name(), halide_target, halide_arguments,
                                              Halide::Internal::LoweredFunc::External,
                                              fct->get_halide_stmt());
                                              
+    
+    
+    
+    
     m.compile(Halide::Outputs().object(obj_filename));
 
     // Turn the object file to a shared library

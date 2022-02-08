@@ -118,9 +118,10 @@ void beam_search::search(syntax_tree& ast)
         search(*child);
     }
 }
-pid_t pid= -1;
+
   int timeout = 0;
 int child_done = 0;
+int cont = 0;
   void child_handler(int sig)
 {
     child_done = 1;
@@ -130,7 +131,10 @@ void alarm_handler(int sig)
 {
     timeout = 1;
 }
-std::vector<float> measurements;
+void sig_usr(int signo){
+    cont = 1; 
+    
+}
 bool changes_mes = false;
 void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout)
 {
@@ -201,21 +205,30 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
                 child->print_computations_accesses();
             }
             int fd[2];
-            int parentID;
+            
             // create pipe descriptors
 	        pipe(fd);
-            measurements.clear();
+            timeout=0;
+            child_done=0;
+            cont = false;
+            std::vector<float> measurements;
             
+            
+            pid_t pid, ppid;
+            ppid = getpid();
             pid = fork();
+
             if (pid == -1) {
                 perror("fork failed");
                 exit(1);
             } else if (pid == 0) {
                 measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
+                int size =measurements.size();
                 float ar[measurements.size()];
                 for(int i=0;i<measurements.size();i++) ar[i]=measurements.at(i);
                 close(fd[0]);
-                parentID = 0;
+                write(fd[1], &size, sizeof(size));
+                
                 write(fd[1], &ar, sizeof(ar));
                 
                 close(fd[1]);
@@ -226,12 +239,16 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
 
             signal(SIGALRM, alarm_handler);
             signal(SIGCHLD, child_handler);
-            alarm(0);
-            alarm(TIME_LIMIT);  // install an alarm to be fired after TIME_LIMIT
+            signal(SIGUSR1,sig_usr);
+              // install an alarm to be fired after TIME_LIMIT
+            
+            alarm(TIME_LIMIT);
+            
             pause();
 
             if (timeout) {
                 
+                    
                 int result = waitpid(pid, NULL, WNOHANG);
                 if (result == 0) {
                     // child still running, so kill it
@@ -249,23 +266,41 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
                 
                     waitpid(-1,NULL,0);
                 } else {
-            
+                    
+                    int size = 0;
                     close(fd[1]);
-                    float ar[nb_exec];
-                    read(fd[0], &ar, nb_exec*sizeof(float));
-                    for(int i=0;i<nb_exec;i++) measurements.push_back(ar[i]);
+                    read(fd[0], &size, sizeof(int));
+                    float ar[size];
+                    read(fd[0], &ar, size*sizeof(float));
+                    for(int i=0;i<size;i++) measurements.push_back(ar[i]);
                     close(fd[0]);
-                    //measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
+                    
                 }
-            } else if (child_done) {
                 
+                
+            }else if (child_done) {
+                
+                int size =0;
                 close(fd[1]);
-                float ar[nb_exec];
-                read(fd[0], &ar, nb_exec*sizeof(float));
-                for(int i=0;i<nb_exec;i++) measurements.push_back(ar[i]);
+                read(fd[0], &size, sizeof(int));
+                float ar[size];
+                read(fd[0], &ar, size*sizeof(float));
+                for(int i=0;i<size;i++) measurements.push_back(ar[i]);
                 close(fd[0]);
                 
-                //measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
+                waitpid(-1,NULL,0);
+            }else if(cont){ 
+                alarm(0);
+                int size=0;
+                
+                while(!child_done){}
+                
+                close(fd[1]);
+                read(fd[0], &size, sizeof(int));
+                float ar[size];
+                read(fd[0], &ar, size*sizeof(float));
+                for(int i=0;i<size;i++) measurements.push_back(ar[i]);
+                close(fd[0]);
                 waitpid(-1,NULL,0);
             }
             
@@ -280,12 +315,12 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
             //remove the last two characters }\n
             schedule_annot.pop_back();
             schedule_annot.pop_back();
-
+            
             if (std::isfinite(child->evaluation)) // the evaluation is not finite mean that the schedule didn't run
                 schedule_annot += ", \n\"execution_times\" : " + measurements_to_str(measurements) + "\n}\n";
             else
                 schedule_annot += ", \n\"execution_times\" : null\n}\n";
-
+            
             schedules_annotations->push_back(schedule_annot);
 
             if (std::atoi(read_env_var("AS_VERBOSE"))==1){
@@ -953,9 +988,104 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                 child->print_isl_states();
                 std::cout << "\n<legal>\n";
             }
+            
+            int fd[2];
+            
+            // create pipe descriptors
+	        pipe(fd);
+            timeout=0;
+            child_done=0;
+            cont = false;
             std::vector<float> measurements;
+            
+            pid_t pid, ppid;
+            ppid = getpid();
+            pid = fork();
 
-            measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
+            if (pid == -1) {
+                perror("fork failed");
+                exit(1);
+            } else if (pid == 0) {
+                measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
+                int size =measurements.size();
+                float ar[measurements.size()];
+                for(int i=0;i<measurements.size();i++) ar[i]=measurements.at(i);
+                close(fd[0]);
+                write(fd[1], &size, sizeof(size));
+                
+                write(fd[1], &ar, sizeof(ar));
+                
+                close(fd[1]);
+                _exit(1);
+            }
+
+            // set up the signal handlers after forking so the child doesn't inherit them
+
+            signal(SIGALRM, alarm_handler);
+            signal(SIGCHLD, child_handler);
+            signal(SIGUSR1,sig_usr);
+              // install an alarm to be fired after TIME_LIMIT
+            
+            alarm(TIME_LIMIT);
+            
+            pause();
+
+            if (timeout) {
+                
+                    
+                int result = waitpid(pid, NULL, WNOHANG);
+                if (result == 0) {
+                    // child still running, so kill it
+                    
+                    
+                    // Remove all the optimizations
+                    exec_eval->fct->reset_schedules();
+                    measurements.clear();
+                    measurements.push_back(std::numeric_limits<float>::infinity());
+                    // cancel any previously set alarm 
+                    alarm(0); 
+                    kill(pid, 9);
+                    
+                    
+                
+                    waitpid(-1,NULL,0);
+                } else {
+                    
+                    int size = 0;
+                    close(fd[1]);
+                    read(fd[0], &size, sizeof(int));
+                    float ar[size];
+                    read(fd[0], &ar, size*sizeof(float));
+                    for(int i=0;i<size;i++) measurements.push_back(ar[i]);
+                    close(fd[0]);
+                    
+                }
+                
+                
+            }else if (child_done) {
+                
+                int size =0;
+                close(fd[1]);
+                read(fd[0], &size, sizeof(int));
+                float ar[size];
+                read(fd[0], &ar, size*sizeof(float));
+                for(int i=0;i<size;i++) measurements.push_back(ar[i]);
+                close(fd[0]);
+                
+                waitpid(-1,NULL,0);
+            }else if(cont){ 
+                alarm(0);
+                int size=0;
+                while(!child_done){}
+                close(fd[1]);
+                read(fd[0], &size, sizeof(int));
+                float ar[size];
+                read(fd[0], &ar, size*sizeof(float));
+                for(int i=0;i<size;i++) measurements.push_back(ar[i]);
+                close(fd[0]);
+                waitpid(-1,NULL,0);
+            }
+            
             child->evaluation = min_eval(measurements);
             
             parent_trace->add_child_path(child, schedules_annotations->size());
@@ -965,7 +1095,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
             //remove the last two characters }\n
             schedule_annot.pop_back();
             schedule_annot.pop_back();
-
+            
             if (std::isfinite(child->evaluation)) // the evaluation is not finite mean that the schedule didn't run
                 schedule_annot += ", \n\"execution_times\" : " + measurements_to_str(measurements) + "\n}\n";
             else
