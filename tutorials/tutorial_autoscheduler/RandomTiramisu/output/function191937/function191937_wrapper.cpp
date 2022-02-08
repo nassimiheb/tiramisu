@@ -10,7 +10,7 @@ using namespace std;
 int main(int, char **argv)
 {
 	double *c_buf00 = (double*)malloc(66*66*64* sizeof(double));
-	parallel_init_buffer(c_buf00, 66*66*64, (double)12);
+	parallel_init_buffer(c_buf00, 66*66*64, (double)69);
 	Halide::Buffer<double> buf00(c_buf00, 66,66,64);
 
     bool nb_runs_dynamic = is_nb_runs_dynamic();

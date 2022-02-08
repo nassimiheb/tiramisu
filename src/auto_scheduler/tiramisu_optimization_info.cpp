@@ -103,7 +103,7 @@ void apply_optimizations_matrix(optimization_info const& optim_info)
 {
     // tiramisu::block can be used to apply the same optimization to a set of computations
     tiramisu::block block(optim_info.comps);
-        
+    
     switch (optim_info.type)
     {
         case optimization_type::TILING:

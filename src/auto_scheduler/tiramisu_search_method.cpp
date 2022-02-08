@@ -1,7 +1,18 @@
+#include <sys/wait.h>
 #include <tiramisu/auto_scheduler/search_method.h>
 #include <random>
 #include <functional>
+#include <exception>
 
+#include <stdexcept>
+#define TIME_LIMIT 15
+struct TimeLimitException : public std::exception
+    {
+        const char * what () const throw ()
+        {
+            return "passed timelimit while measuring the execution time";
+        }
+    };
 namespace tiramisu::auto_scheduler
 {
  std::string get_name_ast_expr_isl( isl_ast_expr *expr);
@@ -107,11 +118,24 @@ void beam_search::search(syntax_tree& ast)
         search(*child);
     }
 }
-
+pid_t pid= -1;
+  int timeout = 0;
+int child_done = 0;
+  void child_handler(int sig)
+{
+    child_done = 1;
+}
+int nb_exec = std::stoi(std::getenv("MAX_RUNS"));
+void alarm_handler(int sig)
+{
+    timeout = 1;
+}
+std::vector<float> measurements;
+bool changes_mes = false;
 void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout)
 {
     std::default_random_engine rand_generator;
-
+    
     //if (ast.nb_explored_optims % NB_OPTIMIZATIONS == 0)
     //    ast.clear_new_optimizations();
 
@@ -176,9 +200,77 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
                 std::cout << "\n<legal>\n";
                 child->print_computations_accesses();
             }
+            int fd[2];
+            int parentID;
+            // create pipe descriptors
+	        pipe(fd);
+            measurements.clear();
+            
+            pid = fork();
+            if (pid == -1) {
+                perror("fork failed");
+                exit(1);
+            } else if (pid == 0) {
+                measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
+                float ar[measurements.size()];
+                for(int i=0;i<measurements.size();i++) ar[i]=measurements.at(i);
+                close(fd[0]);
+                parentID = 0;
+                write(fd[1], &ar, sizeof(ar));
+                
+                close(fd[1]);
+                _exit(1);
+            }
 
-            std::vector<float> measurements;
-            measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
+            // set up the signal handlers after forking so the child doesn't inherit them
+
+            signal(SIGALRM, alarm_handler);
+            signal(SIGCHLD, child_handler);
+            alarm(0);
+            alarm(TIME_LIMIT);  // install an alarm to be fired after TIME_LIMIT
+            pause();
+
+            if (timeout) {
+                
+                int result = waitpid(pid, NULL, WNOHANG);
+                if (result == 0) {
+                    // child still running, so kill it
+                    
+                    
+                    // Remove all the optimizations
+                    exec_eval->fct->reset_schedules();
+                    measurements.clear();
+                    measurements.push_back(std::numeric_limits<float>::infinity());
+                    // cancel any previously set alarm 
+                    alarm(0); 
+                    kill(pid, 9);
+                    //kill(pid, SIGKILL);
+                    
+                
+                    waitpid(-1,NULL,0);
+                } else {
+            
+                    close(fd[1]);
+                    float ar[nb_exec];
+                    read(fd[0], &ar, nb_exec*sizeof(float));
+                    for(int i=0;i<nb_exec;i++) measurements.push_back(ar[i]);
+                    close(fd[0]);
+                    //measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
+                }
+            } else if (child_done) {
+                
+                close(fd[1]);
+                float ar[nb_exec];
+                read(fd[0], &ar, nb_exec*sizeof(float));
+                for(int i=0;i<nb_exec;i++) measurements.push_back(ar[i]);
+                close(fd[0]);
+                
+                //measurements = exec_eval->get_measurements_matrix(*child, false, schedule_timeout);
+                waitpid(-1,NULL,0);
+            }
+            
+           
+            
             child->evaluation = min_eval(measurements);
 
             parent_trace->add_child_path(child, schedules_annotations->size());
@@ -491,7 +583,7 @@ std::vector<std::vector<int>>  multiply(const std::vector<std::vector<int>> & m1
         }
 
 /*
-Generate one random matrix that verifies the conditions of: 1- determinant is one 2- all of the upper left determinants are 1
+check if a matrix is the identity matrix
 */
 bool is_identity(std::vector < std::vector<int> > matrix){
     for(int l = 0; l<matrix.size(); l++){
@@ -565,270 +657,10 @@ Generate one random matrix that verifies the conditions of: 1- determinant is on
         randomU.at(2)= std::vector<int>(depth);randomU.at(2).at(0)=5;randomU.at(2).at(1)=-5;randomU.at(2).at(2)=1;
         return randomU;
         */
-        for(l = 0; l<depth; l++){
-            randomL.at(l).at(l) =1;
-            randomU.at(l).at(l) =1;
-            int sum=0,j=0;
-            if(l<depth-1){
-                sum=0;
-                for(j=0;j<l;j++){
-                    sum+= randomL.at(l).at(j) * randomU.at(j).at(depth-1);
-                }
-                randomU.at(l).at(depth-1) = (1-sum)/randomL.at(l).at(l);
-            }else{
-                sum=0;
-                for(j=1;j<l+1;j++){
-                    sum+= randomL.at(l).at(j) * randomU.at(j).at(depth-1);
-                }
-                randomL.at(depth-1).at(0) = (1-sum)/randomU.at(0).at(depth-1);
-            }
-        }
-        int k;
-        //multiply both matrices and put the result in a matrix random
-        for(l = 0; l < depth; ++l){
-            random.at(l)= std::vector<int>(depth);
-            for(c = 0; c < depth; ++c)
-                {
-                    for(k = 0; k < depth; ++k)
-                    {
-                        random.at(l).at(c)+= randomL.at(l).at(k) * randomU.at(k).at(c);
-                    }
-                }
-        }
-        // Reduce elements into [-7, 7] values
-        int mx = 10;
-        int m = -1000;
-        int x,y;
-        for(int i = 0; i < depth; i++){
-                    for(int j = 0; j< depth; j++){
-                        if(m < std::abs(random.at(i).at(j)))
-                        {
-                            m = random.at(i).at(j);
-                            x = i;
-                            y = j;
-                        }
-                    }
-        }
-        int mm=-8;
-        int useless = 0;
-        int steps = 0;
-        bool bad_case;
-        int f = -1;
-        while(m>=mx && useless<= depth*depth){
-                steps+=1;
-                bad_case=0;
-                for(int i = 0; i < depth; i++){
-                    if (i==x) continue;
-                    if(random.at(i).at(y)!=0)
-                        {
-                            f = i;
-                            break;
-                        }
-                    if(i==depth-1) bad_case=1;
-                }
-                
-                if(bad_case) break;
-                int s =1;
-                
-                if (m*random.at(f).at(y)<0) s=s*-1;
-                
-                for(int j = 0; j < depth; j++){
-                        
-                        random.at(x).at(j) = random.at(x).at(j) - s * random.at(f).at(j);
-                }
-                
-                mm=-10000;
-                for(int i = 0; i < depth; i++){
-                    for(int j = 0; j< depth; j++){
-                        if(mm < std::abs(random.at(i).at(j)))
-                        {
-                            mm = random.at(i).at(j);
-                            x = i;
-                            y = j;
-                        }
-                    }
-                }
-
-                if(m>=mm) useless++;
-                m=mm;
-        }
-        // Check determinant equals 1
-        int det = determinant(random, depth);
-        // if determinant is 1 and we were able to reduce the elements to the desired interval
-        bool det_bool = det==1 && !bad_case && (useless <= depth*depth) ;
-        
-        // Check upper right determinants equal 1
-        bool all_1 = true;
-        if (false){
-            
-            int d=0,s=0;
-            
-            for (k=depth-1;k>0;k--){
-                    
-                    std::vector <  std::vector<int> >  submatrixd(depth-k);
-                    
-                    for (s=0;s<depth-k;s++){
-                                submatrixd.at(s) = std::vector<int> (depth-k);
-                                for (d=0;d<depth-k;d++){
-                                        
-                                        submatrixd.at(s).at(d) = random.at(s).at(k+d); 
-                                } 
-                    }  
-                    
-                    if(determinant(submatrixd, depth-k)!=1){ 
-                        all_1 = false;
-                        break;
-                    }
-            }
-        } 
-        valid = det_bool && all_1 ;
     }
     return random;
     
 }
-
-static const char *op_str[] = {
-	[isl_ast_op_and] = "and",
-	[isl_ast_op_and_then] = "and_then",
-	[isl_ast_op_or] = "or",
-	[isl_ast_op_or_else] = "or_else",
-	[isl_ast_op_max] = "max",
-	[isl_ast_op_min] = "min",
-	[isl_ast_op_minus] = "minus",
-	[isl_ast_op_add] = "add",
-	[isl_ast_op_sub] = "sub",
-	[isl_ast_op_mul] = "mul",
-	[isl_ast_op_div] = "div",
-	[isl_ast_op_fdiv_q] = "fdiv_q",
-	[isl_ast_op_pdiv_q] = "pdiv_q",
-	[isl_ast_op_pdiv_r] = "pdiv_r",
-	[isl_ast_op_zdiv_r] = "zdiv_r",
-	[isl_ast_op_cond] = "cond",
-	[isl_ast_op_select] = "select",
-	[isl_ast_op_eq] = "eq",
-	[isl_ast_op_le] = "le",
-	[isl_ast_op_lt] = "lt",
-	[isl_ast_op_ge] = "ge",
-	[isl_ast_op_gt] = "gt",
-	[isl_ast_op_call] = "call",
-	[isl_ast_op_access] = "access",
-	[isl_ast_op_member] = "member",
-	[isl_ast_op_address_of] = "address_of"
-};
-/**
- * @brief Get the names of the iterator in the ast and save them into a map 
- * 
- * @param node 
- * @param isl_ast 
- * @param corr_map 
- */
-/*void get_save_name_node(ast_node * node,std::vector<std::string> isl_ast,std::map <std::string,std::string>* corr_map, int &k){
-
-    if(k>=isl_ast.size()){}
-    else{
-        (*corr_map).insert(std::pair<std::string,std::string> (isl_ast[k],node->name));
-        k++;
-    }
-    for (ast_node *child : node->children)
-    {
-        get_save_name_node(child,isl_ast,corr_map,k);
-    }
-}
-/**
- * @brief Get expression info from the ISL AST
- * 
- * @param expr 
- * @return std::string 
- */
-   /* std::string get_name_arguments(isl_ast_expr *expr)
-    {
-        int i, n;
-        std::string p;
-        n = isl_ast_expr_get_op_n_arg(expr);
-
-        if (n < 0) return "$Error in getting corr map arguments";
-        if (n == 0) return "$Error in getting corr map arguments";
-
-        for (i = 0; i < n; ++i) {
-            isl_ast_expr *arg;
-            arg = isl_ast_expr_get_op_arg(expr, i);
-            if(i!=0) p = p + "," + get_name_ast_expr_isl(arg);
-            else p = p + get_name_ast_expr_isl(arg);
-            isl_ast_expr_free(arg);     
-        }     
-        return p;
-    }*/
-   /*std::string get_name_ast_expr_isl( isl_ast_expr *expr)
-    {
-        enum isl_ast_expr_type type;
-        enum isl_ast_op_type op;
-        isl_id *id;
-        std::string p;
-
-        if (!expr){return "!Expression";}  
-        else{     
-        type = isl_ast_expr_get_type(expr);
-        switch (type) {
-            case isl_ast_expr_error: return "$Error in the expression"; break;
-                
-            case isl_ast_expr_op:
-                //std::cout<<"Entreing OP \n";
-                op = isl_ast_expr_get_op_type(expr);
-                if (op == isl_ast_op_error) return "$Opertation in getting the type of the operation";
-                p = p + op_str[op] + "(";
-                p = p + get_name_arguments(expr);
-                p = p + ")";
-                break;
-            case isl_ast_expr_id:
-                id = isl_ast_expr_get_id(expr);
-                p = isl_id_get_name(id);
-                break;
-            case isl_ast_expr_int:
-                //std::cout<<"Entreing Int \n";
-                //v = isl_ast_expr_get_val(expr);
-                break;
-            default: return "%";
-         }
-        return p;
-        }    
-    }*/
-    /**
- * @brief Get the corr map from isl ast map
- * 
- * @param ast 
- * @return ** std::map <std::string,std::string>* 
- */
-/*std::map <std::string,std::string>* get_corr_map_from_isl(syntax_tree& ast){
-    //Create map between ISL iterator names and the AST iterator names
-    isl_ast_expr * iter_expr;
-    int stop=0;
-    std::map <std::string,std::string>* corr_map= new std::map<std::string, std::string>();
-    std::vector<std::string> isl_ast;  
-    //Genrate isl ast
-    ast.fct->gen_isl_ast();
-        
-    isl_ast_node *ast_i = ast.fct->get_isl_ast(); 
-        
-    //Get the iterator names from the ISL ast
-    //Fill a vector with the iterator names 
-    while(stop != 1)
-    {  
-        if(isl_ast_node_get_type(ast_i)==isl_ast_node_for){   
-            iter_expr=isl_ast_node_for_get_iterator(ast_i);
-            isl_ast.push_back(get_name_ast_expr_isl(iter_expr));          
-            ast_i= isl_ast_node_for_get_body(ast_i); //n
-        }else{
-            stop = 1;
-        }
-    }  
-    //Get the names of iterators of the AST and create the map corr_map
-    int starting_k = 0;
-    for (ast_node *root : ast.roots)
-        {
-            get_save_name_node(root,isl_ast,corr_map,starting_k);
-        }
-    return corr_map;
-}*/
 
 
         // Gettig the values of the isl AST
