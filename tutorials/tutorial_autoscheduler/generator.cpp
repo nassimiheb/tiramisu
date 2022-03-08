@@ -1,6 +1,7 @@
 #include <tiramisu/tiramisu.h>
 #include <tiramisu/auto_scheduler/evaluator.h>
 #include <tiramisu/auto_scheduler/search_method.h>
+#include <vector>
 
 using namespace tiramisu;
 
@@ -16,38 +17,18 @@ const std::string py_interface_path = "/home/nassim/Desktop/tiramisu_raw/tutoria
 int main(int argc, char **argv)
 {
     tiramisu::init("conv");
-    
-    var t("t", 0, 70), y("y", 0, 1024), x("x", 0, 1024),z("z", 0, 128);;
 
-    //var  yy("yy", 1, 223), xx("xx", 1, 223);
-    var  yy("yy", 1, 33), xx("xx", 1, 65), zz("zz", 1, 128);
-
-    var t2("t2"),t1("t1"),y1("y1"),x1("x1"),y2("y2"),x2("x2") ,x0("x0");
-    
-    // Declare computations
-
-    input A("A", {x,y}, p_int32);
-    input B("B", {x,y}, p_int32);
-
-
-
-    computation B_out("B_out", {t,xx,yy}, A(xx, yy) + A(xx, yy-1) + A(xx, 1+yy) + A(1+xx, yy) + A(xx-1, yy));
-
-    computation A_out("A_out", {t,xx,yy}, B(xx, yy) + B(xx, yy-1) + B(xx, 1+yy) + B(1+xx, yy) + B(xx-1, yy));
-
-    
-
-    buffer b_A("buffA", {1024,1024}, p_int32, a_output);    
-    buffer b_B("buffB", {1024,1024}, p_int32, a_output); 
-    A.store_in(&b_A);
-    B.store_in(&b_B);
-
-    //Store computations
-    A_out.store_in(&b_A, {xx,yy});
-    B_out.store_in(&b_B, {xx,yy});  
-
-
-    B_out.then(A_out, t);
+    var i0("i0", 0, 256), i1("i1", 1, 129), i2("i2", 0, 128), i3("i3", 0, 384), i4("i4", 0, 64), i1_p1("i1_p1", 0, 130);
+    input input01("input01", {i1_p1}, p_float64);
+    computation comp00("comp00", {i0,i1,i2}, 10.0);
+    computation comp01("comp01", {i0,i1,i3,i4}, 20.0);
+    comp00.then(comp01, i1);
+    buffer buf00("buf00", {256,129,12}, p_float64, a_output);
+    buffer buf01("buf01", {130}, p_float64, a_input);
+    buffer buf02("buf02", {256,129,384}, p_float64, a_output);
+    input01.store_in(&buf01);
+    comp00.store_in(&buf00, {i0,i1,i2});
+    comp01.store_in(&buf02, {i0,i1,i3});
 //    B_out.interchange(1,2);
     // the code above is the initial unfused code since we used "B_out.then(A_out, t)" 
     // we want to dependency analysis to be performed on the original code correctly
@@ -91,25 +72,28 @@ int main(int argc, char **argv)
 //
 //        B_out.parallelize(xx);
 
-        B_out.then(A_out, 4);
-        A_out.shift(1,1);
+//        B_out.then(A_out, 4);
+//        A_out.shift(1,1);
 //        A_out.interchange(0,1);
 //        B_out.interchange(0,1);
 //        A_out.tile(1,2,20,10);
 //        A_out.tile(1,2,20,10);
 //        A_out.tile(1,2,32,10);
-        A_out.skew(0,1,4,1);
-        B_out.skew(0,1,4,1);
+//        A_out.skew(0,1,4,1);
+//        B_out.skew(0,1,4,1);
 //        A_out.tag_parallel_level(1);
 //        B_out.tag_parallel_level(1);
-        A_out.tile(0,1,64,32);
-        B_out.tile(0,1,64,32);
+//        A_out.tile(0,1,64,32);
+//        B_out.tile(0,1,64,32);
 
+        std::vector<tiramisu::computation*> comps = {&comp00,&comp01};
+        tiramisu::block b(comps);
+        b.tile(0,1,32,32);
+//        comp00.tile(0,1,32,32);
+//        comp01.tile(0,1,32,32);
+        comp00.then(comp01, 3);
 
-
-        tiramisu::codegen({
-            &b_A,&b_B
-        }, "function.o");
+        tiramisu::codegen({&buf00,&buf01,&buf02}, "function.o");
        
         return 0;
     }
@@ -125,7 +109,7 @@ int main(int argc, char **argv)
     auto_scheduler::schedules_generator *scheds_gen = new auto_scheduler::ml_model_schedules_generator();
     
     // An evaluation function that measures execution time by compiling and executing the program
-    auto_scheduler::evaluate_by_execution *exec_eval = new auto_scheduler::evaluate_by_execution({&b_A,&b_B}, 
+    auto_scheduler::evaluate_by_execution *exec_eval = new auto_scheduler::evaluate_by_execution({&buf00,&buf01,&buf02},
                                       "function.o", "./wrapper");
     
     // An evaluation function that uses an ML model to estimate speedup

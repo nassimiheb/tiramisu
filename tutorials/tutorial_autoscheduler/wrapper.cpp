@@ -8,14 +8,11 @@ using namespace std;
 
 int main(int, char **argv)
 {
-    Halide::Buffer<int32_t> buf01(1024, 1024,"buffer01");
+    Halide::Buffer<double> buf00(128,129,256);
+    Halide::Buffer<double> buf02(384,129,256);
+    Halide::Buffer<double> buf01(130);
 
-    init_buffer(buf01, (int32_t)2);
 
-    Halide::Buffer<int32_t> buf001(1024, 1024,"buffer001");
-
-    init_buffer(buf001, (int32_t)2);
-    
     std::vector<double> duration_vector;
     double start, end;
     
@@ -25,7 +22,7 @@ int main(int, char **argv)
     for (int i = 0; i < 1; i++)
     {
         start = rtclock();
-        conv(buf01.raw_buffer(),buf001.raw_buffer());
+        conv(buf00.raw_buffer(),buf01.raw_buffer(),buf02.raw_buffer());
         end = rtclock();
         
         duration_vector.push_back((end - start) * 1000);
