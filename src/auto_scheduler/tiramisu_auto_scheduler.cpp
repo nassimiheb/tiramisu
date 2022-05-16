@@ -101,6 +101,29 @@ void auto_scheduler::sample_search_space(std::string filename, bool timeout_sche
 //    if (std::atoi(read_env_var("AS_VERBOSE"))==1){
     std::cout << "Search time : " << std::chrono::duration_cast<std::chrono::milliseconds>(sampling_end - sampling_start).count() << " ms" << std::endl;
     std::cout << "Best execution time : " << searcher->get_best_evaluation() << std::endl;
+    syntax_tree* best = searcher->get_best_ast();
+    
+
+    std::vector<float> measurements = exec_evaluator->get_measurements(*best, false, schedule_timeout);
+    float speedup =  initial_exec_time / *std::min_element(measurements.begin(), measurements.end());
+    
+    if (std::atoi(read_env_var("AS_VERBOSE"))==1){
+                std::cout << "Initial execution time "<< initial_exec_time << std::endl;
+                std::cout << "Tranformed execution time : " << *std::min_element(measurements.begin(), measurements.end()) << std::endl;
+                std::cout << "Predicted speedup "<< - searcher->get_best_evaluation() << std::endl;
+                std::cout << "Real speedup : " << speedup << std::endl;
+                std::cout << "===================================" << std::endl << std::endl;
+            }
+    std::ofstream myfile;
+    ///
+    myfile.open ("data/scratch/mmerouani/benchmark_tests_mixed_dataset_model.txt",std::ios_base::app);
+    myfile<<"\""<<filename.substr(2,filename.size()-26)<<"\",";
+    myfile << "\""<< initial_exec_time<<"\",";
+    myfile << "\"" << *std::min_element(measurements.begin(), measurements.end())<<"\"," ;
+    myfile << "\""<< -searcher->get_best_evaluation()<<"\",";
+    myfile << "\"" << speedup <<"\",";
+    myfile << "\"" << best->get_schedule_str() <<"\""<< std::endl;
+    myfile.close();
 //    }
 }
 

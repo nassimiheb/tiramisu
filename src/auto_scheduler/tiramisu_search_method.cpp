@@ -99,7 +99,7 @@ void beam_search::search(syntax_tree& ast)
             std::cout << "\n<legal>\n";
 
             (*iterator)->evaluation = eval_func->evaluate(*(*iterator));
-            std::cout << "Evaluation : " << (*iterator)->evaluation << std::endl << std::endl;
+            std::cout << "Evaluation : " << - (*iterator)->evaluation << std::endl << std::endl;
 
 
             std::cout << "\n============================================================================================================" << std::endl;
@@ -295,7 +295,7 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
                         if ((*iterator)->can_set_default_evaluation()){ // if yes the child's evaluation is set to a default value
                             measurements = {(*iterator)->evaluation};
                         }else{
-                            measurements = exec_eval->get_measurements(**iterator, false, schedule_timeout,true);
+                            measurements.push_back(eval_func->evaluate(*(*iterator)));
                         }
                     }
                     catch(UnrollingException e){ 
@@ -417,7 +417,7 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
                     schedules_annotations->push_back(schedule_annot);
 
                     std::cout << "Schedule number "<< schedules_annotations->size() << std::endl;
-                    std::cout << "Evaluation : " << (*iterator)->evaluation << std::endl;
+                    std::cout << "Evaluation : " << - (*iterator)->evaluation << std::endl;
                     std::cout << "Number of measurements : " << measurements.size() << std::endl;
                     std::cout << "===================================" << std::endl << std::endl;
 
@@ -526,7 +526,7 @@ void beam_search::explore_fusion(syntax_tree& ast, std::vector<std::string> *sch
             std::cout << "\n<legal>\n";
 
             std::vector<float> measurements;
-            measurements = exec_eval->get_measurements(**iterator, false, schedule_timeout);
+            measurements.push_back(eval_func->evaluate(*(*iterator)));
             (*iterator)->evaluation = min_eval(measurements);
 
             parent_trace->add_child_path((*iterator), schedules_annotations->size());
@@ -545,7 +545,7 @@ void beam_search::explore_fusion(syntax_tree& ast, std::vector<std::string> *sch
             schedules_annotations->push_back(schedule_annot);
 
             std::cout << "Schedule number "<< schedules_annotations->size() << std::endl;
-            std::cout << "Evaluation : " << (*iterator)->evaluation << std::endl;
+            std::cout << "Evaluation : " << - (*iterator)->evaluation << std::endl;
             std::cout << "Number of measurements : " << measurements.size() << std::endl;
             std::cout << "===================================" << std::endl << std::endl;
 
@@ -654,7 +654,7 @@ void beam_search::explore_parallelization(syntax_tree& ast, std::vector<std::str
             std::cout << "\n<legal>\n";
 
             std::vector<float> measurements;
-            measurements = exec_eval->get_measurements(**iterator, false, schedule_timeout);
+            measurements.push_back(eval_func->evaluate(*(*iterator)));
             (*iterator)->evaluation = min_eval(measurements);
 
             parent_trace->add_child_path((*iterator), schedules_annotations->size());
@@ -673,7 +673,7 @@ void beam_search::explore_parallelization(syntax_tree& ast, std::vector<std::str
             schedules_annotations->push_back(schedule_annot);
 
             std::cout << "Schedule number "<< schedules_annotations->size() << std::endl;
-            std::cout << "Evaluation : " << (*iterator)->evaluation << std::endl;
+            std::cout << "Evaluation : " << - (*iterator)->evaluation << std::endl;
             std::cout << "Number of measurements : " << measurements.size() << std::endl;
             std::cout << "===================================" << std::endl << std::endl;
 
@@ -914,7 +914,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                     exit(1);
                 } else if (pid == 0) {
                     
-                    measurements = exec_eval->get_measurements(*child, false, schedule_timeout,true);
+                    measurements.push_back(eval_func->evaluate(*(*iterator)));
                     
                     
                     int size =measurements.size();
@@ -1039,7 +1039,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                 //std::cout<<" schedules_annotations->push_back "<<std::endl;
                 if (std::atoi(read_env_var("AS_VERBOSE"))==1){
                     std::cout << "Schedule number "<< schedules_annotations->size() << std::endl;
-                    std::cout << "Evaluation : " << child->evaluation << std::endl;
+                    std::cout << "Evaluation : " << - child->evaluation << std::endl;
                     std::cout << "Number of measurements : " << measurements.size() << std::endl;
                     std::cout << "===================================" << std::endl << std::endl;
                 }
