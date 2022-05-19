@@ -23,8 +23,9 @@ void auto_scheduler::sample_search_space(std::string filename, bool timeout_sche
     setenv("INIT_EXEC_TIME", "0", true); // set the INIT_EXEC_TIME to 0 meaning that it's the non scheduled version
     float initial_timeout = std::atof(read_env_var("INITIAL_TIMEOUT"));
 
-    std::vector<float> initial_measurements = exec_evaluator->get_measurements(ast, true, initial_timeout);
-    initial_exec_time = min_eval(initial_measurements);
+    std::vector<float> initial_measurements;
+
+    initial_exec_time = -1;
     if (std::isinf(initial_exec_time)){
         std::cerr << "error: Evaluation of the non scheduled version of the program failed "<< std::endl;
         exit(1);
@@ -76,7 +77,7 @@ void auto_scheduler::sample_search_space(std::string filename, bool timeout_sche
 //                  "\n\t\t\"nb_exec\" : " + nb_exec +
                   "\n\t}, " +
                   "\n\t\"program_annotation\" : " + program_json + ", " +
-                  "\n\t\"initial_execution_time\" : " + std::to_string(initial_exec_time) + ", " +
+                  "\n\t\"initial_execution_time\" : " + std::to_string( - initial_exec_time) + ", " +
                   "\n\t\"schedules_list\" : [\n" ;
 
     for (std::string schedules_annot : schedules_annotations)
@@ -100,28 +101,24 @@ void auto_scheduler::sample_search_space(std::string filename, bool timeout_sche
     std::chrono::steady_clock::time_point sampling_end = std::chrono::steady_clock::now();
 //    if (std::atoi(read_env_var("AS_VERBOSE"))==1){
     std::cout << "Search time : " << std::chrono::duration_cast<std::chrono::milliseconds>(sampling_end - sampling_start).count() << " ms" << std::endl;
-    std::cout << "Best execution time : " << searcher->get_best_evaluation() << std::endl;
+    std::cout << "Best execution time : " << - searcher->get_best_evaluation() << std::endl;
     syntax_tree* best = searcher->get_best_ast();
     
 
+
     std::vector<float> measurements = exec_evaluator->get_measurements(*best, false, schedule_timeout);
-    float speedup =  initial_exec_time / *std::min_element(measurements.begin(), measurements.end());
-    
+    float real_measurement = *std::min_element(measurements.begin(), measurements.end());
     if (std::atoi(read_env_var("AS_VERBOSE"))==1){
-                std::cout << "Initial execution time "<< initial_exec_time << std::endl;
-                std::cout << "Tranformed execution time : " << *std::min_element(measurements.begin(), measurements.end()) << std::endl;
+                std::cout << "Tranformed execution time : " << real_measurement << std::endl;
                 std::cout << "Predicted speedup "<< - searcher->get_best_evaluation() << std::endl;
-                std::cout << "Real speedup : " << speedup << std::endl;
                 std::cout << "===================================" << std::endl << std::endl;
             }
     std::ofstream myfile;
     ///
-    myfile.open ("data/scratch/mmerouani/benchmark_tests_mixed_dataset_model.txt",std::ios_base::app);
+    myfile.open ("data/scratch/mmerouani/benchmark_multi_tests_mixed_dataset_model.txt",std::ios_base::app);
     myfile<<"\""<<filename.substr(2,filename.size()-26)<<"\",";
-    myfile << "\""<< initial_exec_time<<"\",";
-    myfile << "\"" << *std::min_element(measurements.begin(), measurements.end())<<"\"," ;
+    myfile << "\"" << real_measurement <<"\"," ;
     myfile << "\""<< -searcher->get_best_evaluation()<<"\",";
-    myfile << "\"" << speedup <<"\",";
     myfile << "\"" << best->get_schedule_str() <<"\""<< std::endl;
     myfile.close();
 //    }

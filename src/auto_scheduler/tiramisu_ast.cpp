@@ -2363,7 +2363,7 @@ bool syntax_tree::can_set_default_evaluation()
 
     if (std::regex_search(schedule_str,regexp))
     {
-        evaluation =  std::atof(read_env_var("INIT_EXEC_TIME"))*1000;
+        evaluation = - 0.01;
         return true;
     }
     
