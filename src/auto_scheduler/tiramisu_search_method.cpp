@@ -190,7 +190,7 @@ std::vector<std::vector<int>> result(m1.size(), std::vector<int>(m2.at(0).size()
     }
     return result;
 }
-void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout)
+void beam_search::search_save(syntax_tree& ast, float schedule_timeout)
 {
     
     std::vector<syntax_tree*> children;
@@ -237,39 +237,19 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
         bool unrolling_exception_thrown = false;
         if ((*iterator)->schedule_is_prunable()){
         
-            if (std::atoi(read_env_var("AS_VERBOSE"))==1){
-                // print deleted Ast
-                (*iterator)->print_previous_optims();
-                std::cout << "\n-----------" << std::endl;
-                (*iterator)->print_new_optims();
-                (*iterator)->print_ast();
-                std::cout << "\n<Schedule pruned>\n";
-            }
+            
             delete (*iterator);
             iterator = children.erase(iterator);
         }else{
             
             (*iterator)->transform_ast();
             if ((*iterator)->ast_is_legal() == false) {
-                // print deleted Ast
-                (*iterator)->print_previous_optims();
-                std::cout << "\n-----------" << std::endl;
-                (*iterator)->print_new_optims();
-                (*iterator)->print_ast();
-                (*iterator)->print_isl_states();
-                std::cout << "\n<illegal>\n";
+                
                 delete (*iterator);
                 iterator = children.erase(iterator);
             }
             else {
-                // evaluate and print Ast
-                (*iterator)->print_previous_optims();
-                std::cout << "\n-----------" << std::endl;
-                (*iterator)->print_new_optims();
-                (*iterator)->print_ast();
-    //            (*iterator)->print_isl_states();
-    //            (*iterator)->print_computations_accesses();
-                std::cout << "\n<legal>\n";
+                
 
                 int fd[2];
                 
@@ -400,29 +380,26 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
 
                     (*iterator)->evaluation = min_eval(measurements);
 
-                    parent_trace->add_child_path((*iterator), schedules_annotations->size());
+                    // parent_trace->add_child_path((*iterator), schedules_annotations->size());
 
 
-                    std::string schedule_annot = evaluate_by_learning_model::get_schedule_json(*(*iterator));
+                    // std::string schedule_annot = evaluate_by_learning_model::get_schedule_json(*(*iterator));
 
-                    //remove the last two characters }\n
-                    schedule_annot.pop_back();
-                    schedule_annot.pop_back();
+                    // //remove the last two characters }\n
+                    // schedule_annot.pop_back();
+                    // schedule_annot.pop_back();
 
-                    if (std::isfinite((*iterator)->evaluation)) // the evaluation is not finite mean that the schedule didn't run
-                        schedule_annot += ", \n\"execution_times\" : " + measurements_to_str(measurements) + "\n}\n";
-                    else
-                        schedule_annot += ", \n\"execution_times\" : null\n}\n";
+                    // if (std::isfinite((*iterator)->evaluation)) // the evaluation is not finite mean that the schedule didn't run
+                    //     schedule_annot += ", \n\"execution_times\" : " + measurements_to_str(measurements) + "\n}\n";
+                    // else
+                    //     schedule_annot += ", \n\"execution_times\" : null\n}\n";
                 if(!unrolling_exception_thrown){
-                    schedules_annotations->push_back(schedule_annot);
+                    // schedules_annotations->push_back(schedule_annot);
 
-                    std::cout << "Schedule number "<< schedules_annotations->size() << std::endl;
-                    std::cout << "Evaluation : " << - (*iterator)->evaluation << std::endl;
-                    std::cout << "Number of measurements : " << measurements.size() << std::endl;
-                    std::cout << "===================================" << std::endl << std::endl;
+                   
 
-                    if (std::isinf((*iterator)->evaluation))
-                        std::cerr<< "Evaluation of schedule "<< schedules_annotations->size() <<" failed "<< std::endl;
+                    // if (std::isinf((*iterator)->evaluation))
+                    //     std::cerr<< "Evaluation of schedule "<< schedules_annotations->size() <<" failed "<< std::endl;
 
                     if ((*iterator)->evaluation < best_evaluation)
                     {
@@ -442,7 +419,7 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
     syntax_tree *ast_copy = ast.copy_ast();
     children.push_back(ast_copy);
 
-    parent_trace->add_child_path(ast_copy, parent_trace->get_candidate_id()); // keeps the same id since it's just copy
+    // parent_trace->add_child_path(ast_copy, parent_trace->get_candidate_id()); // keeps the same id since it's just copy
 
     // Sort children from smallest evaluation to largest
 
@@ -460,11 +437,11 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
     for (syntax_tree *child : children)
     {
         child->search_depth = ast.search_depth + 1;
-        search_save(*child, schedules_annotations, parent_trace->child_mappings[child], schedule_timeout);
+        search_save(*child, schedule_timeout);
     }
 
 }
-void beam_search::explore_fusion(syntax_tree& ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout)
+void beam_search::explore_fusion(syntax_tree& ast, float schedule_timeout)
 {
     //std::cout<<"inside explore fusion"<<std::endl;
     std::vector<syntax_tree*> children;
@@ -505,53 +482,33 @@ void beam_search::explore_fusion(syntax_tree& ast, std::vector<std::string> *sch
     {
         (*iterator)->transform_ast();
         if ((*iterator)->ast_is_legal() == false) {
-            // print deleted Ast
-            (*iterator)->print_previous_optims();
-            std::cout << "\n-----------" << std::endl;
-            (*iterator)->print_new_optims();
-            (*iterator)->print_ast();
-            (*iterator)->print_isl_states();
-            std::cout << "\n<illegal>\n";
             delete (*iterator);
             iterator = children.erase(iterator);
         }
         else {
-            // evaluate and print Ast
-            (*iterator)->print_previous_optims();
-            std::cout << "\n-----------" << std::endl;
-            (*iterator)->print_new_optims();
-            (*iterator)->print_ast();
-//            (*iterator)->print_isl_states();
-//            (*iterator)->print_computations_accesses();
-            std::cout << "\n<legal>\n";
+            
 
             std::vector<float> measurements;
             measurements.push_back(eval_func->evaluate(*(*iterator)));
             (*iterator)->evaluation = min_eval(measurements);
 
-            parent_trace->add_child_path((*iterator), schedules_annotations->size());
+            // parent_trace->add_child_path((*iterator), schedules_annotations->size());
 
-            std::string schedule_annot = evaluate_by_learning_model::get_schedule_json(*(*iterator));
+            // std::string schedule_annot = evaluate_by_learning_model::get_schedule_json(*(*iterator));
 
-            //remove the last two characters }\n
-            schedule_annot.pop_back();
-            schedule_annot.pop_back();
+            // //remove the last two characters }\n
+            // schedule_annot.pop_back();
+            // schedule_annot.pop_back();
 
-            if (std::isfinite((*iterator)->evaluation)) // the evaluation is not finite mean that the schedule didn't run
-                schedule_annot += ", \n\"execution_times\" : " + measurements_to_str(measurements) + "\n}\n";
-            else
-                schedule_annot += ", \n\"execution_times\" : null\n}\n";
+            // if (std::isfinite((*iterator)->evaluation)) // the evaluation is not finite mean that the schedule didn't run
+            //     schedule_annot += ", \n\"execution_times\" : " + measurements_to_str(measurements) + "\n}\n";
+            // else
+            //     schedule_annot += ", \n\"execution_times\" : null\n}\n";
 
-            schedules_annotations->push_back(schedule_annot);
+            // schedules_annotations->push_back(schedule_annot);
 
-            std::cout << "Schedule number "<< schedules_annotations->size() << std::endl;
-            std::cout << "Evaluation : " << - (*iterator)->evaluation << std::endl;
-            std::cout << "Number of measurements : " << measurements.size() << std::endl;
-            std::cout << "===================================" << std::endl << std::endl;
 
-            if (std::isinf((*iterator)->evaluation))
-                std::cerr<< "Evaluation of schedule "<< schedules_annotations->size() <<" failed "<< std::endl;
-
+            
             if ((*iterator)->evaluation < best_evaluation)
             {
                 best_evaluation = (*iterator)->evaluation;
@@ -569,7 +526,7 @@ void beam_search::explore_fusion(syntax_tree& ast, std::vector<std::string> *sch
     syntax_tree *ast_copy = ast.copy_ast();
     children.push_back(ast_copy);
 
-    parent_trace->add_child_path(ast_copy, parent_trace->get_candidate_id()); // keeps the same id since it's just copy
+    // parent_trace->add_child_path(ast_copy, parent_trace->get_candidate_id()); // keeps the same id since it's just copy
 
     // Sort children from smallest evaluation to largest
     //std::cout<<"Schedule of first comp after applying fusion: "<<isl_map_to_str(children.at(0)->computations_list.at(0)->get_schedule())<<std::endl;
@@ -588,11 +545,11 @@ void beam_search::explore_fusion(syntax_tree& ast, std::vector<std::string> *sch
     for (syntax_tree *child : children)
     {
 
-        search_save_matrix(*child, schedules_annotations, parent_trace->child_mappings[child], schedule_timeout);
+        search_save_matrix(*child, schedule_timeout);
     }
 
 }
-void beam_search::explore_parallelization(syntax_tree& ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout)
+void beam_search::explore_parallelization(syntax_tree& ast, float schedule_timeout)
 {
     //std::cout<<"inside explore fusion"<<std::endl;
     std::vector<syntax_tree*> children;
@@ -657,7 +614,7 @@ void beam_search::explore_parallelization(syntax_tree& ast, std::vector<std::str
             measurements.push_back(eval_func->evaluate(*(*iterator)));
             (*iterator)->evaluation = min_eval(measurements);
 
-            parent_trace->add_child_path((*iterator), schedules_annotations->size());
+            // parent_trace->add_child_path((*iterator), schedules_annotations->size());
 
             std::string schedule_annot = evaluate_by_learning_model::get_schedule_json(*(*iterator));
 
@@ -670,15 +627,15 @@ void beam_search::explore_parallelization(syntax_tree& ast, std::vector<std::str
             else
                 schedule_annot += ", \n\"execution_times\" : null\n}\n";
 
-            schedules_annotations->push_back(schedule_annot);
+            // schedules_annotations->push_back(schedule_annot);
 
-            std::cout << "Schedule number "<< schedules_annotations->size() << std::endl;
-            std::cout << "Evaluation : " << - (*iterator)->evaluation << std::endl;
-            std::cout << "Number of measurements : " << measurements.size() << std::endl;
-            std::cout << "===================================" << std::endl << std::endl;
+            // std::cout << "Schedule number "<< schedules_annotations->size() << std::endl;
+            // std::cout << "Evaluation : " << - (*iterator)->evaluation << std::endl;
+            // std::cout << "Number of measurements : " << measurements.size() << std::endl;
+            // std::cout << "===================================" << std::endl << std::endl;
 
-            if (std::isinf((*iterator)->evaluation))
-                std::cerr<< "Evaluation of schedule "<< schedules_annotations->size() <<" failed "<< std::endl;
+            // if (std::isinf((*iterator)->evaluation))
+            //     std::cerr<< "Evaluation of schedule "<< schedules_annotations->size() <<" failed "<< std::endl;
 
             if ((*iterator)->evaluation < best_evaluation)
             {
@@ -697,7 +654,7 @@ void beam_search::explore_parallelization(syntax_tree& ast, std::vector<std::str
     syntax_tree *ast_copy = ast.copy_ast();
     children.push_back(ast_copy);
 
-    parent_trace->add_child_path(ast_copy, parent_trace->get_candidate_id()); // keeps the same id since it's just copy
+    // parent_trace->add_child_path(ast_copy, parent_trace->get_candidate_id()); // keeps the same id since it's just copy
 
     // Sort children from smallest evaluation to largest
     //std::cout<<"Schedule of first comp after applying fusion: "<<isl_map_to_str(children.at(0)->computations_list.at(0)->get_schedule())<<std::endl;
@@ -725,7 +682,7 @@ std::vector <  std::vector<int> > get_identity(int depth){
 //std::vector <std::vector < std::vector<int> >> matrices;
 // list of hashes of matrices we explored before to avoid repeating schedules 
 std::vector<std::size_t> hashes;
-void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout)
+void beam_search::search_save_matrix(syntax_tree& ast, float schedule_timeout)
 {
     //std::cout<<"starting search save "<<std::endl;
     //     
@@ -832,30 +789,10 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         //std::cout<<"nb_optims in child: "<<child->new_optims.size()<<std::endl;
         child->transform_ast();
         if(child->ast_is_prunable()){
-            if (std::atoi(read_env_var("AS_VERBOSE"))==1){
-                    // print deleted Ast
-                    child->print_previous_optims();
-                    std::cout << "\n-----------" << std::endl;
-                    child->print_new_optims();
-                    
-                    child->print_ast();
-                    child->print_isl_states();
-                    std::cout << "\n<surpassed MAX_MAT_DEPTH>\n";
-                }
                 delete child;
                 iterator = children.erase(iterator);
         }else{
             if (!child->ast_is_legal()) {
-                if (std::atoi(read_env_var("AS_VERBOSE"))==1){
-                    // print deleted Ast
-                    child->print_previous_optims();
-                    std::cout << "\n-----------" << std::endl;
-                    child->print_new_optims();
-                    
-                    child->print_ast();
-                    child->print_isl_states();
-                    std::cout << "\n<illegal>\n";
-                }
                 delete child;
                 iterator = children.erase(iterator);
             }
@@ -884,16 +821,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                 // if the matrix is legal and not repeated we add its hash to the list of seen hashes and we start the evaluation 
                 hashes.push_back(hash);
                 
-                // print and evaluate Ast
-                if (std::atoi(read_env_var("AS_VERBOSE"))==1){
-                    child->print_previous_optims();
-                    std::cout << "\n-----------" << std::endl;
-                    child->print_new_optims();
-                    child->print_ast();
-                    child->print_isl_states();
-                    std::cout << "\n<legal>\n";
-                    child->print_computations_accesses();
-                }
+                
                 int fd[2];
                 
                 // create pipe descriptors
@@ -1022,30 +950,25 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                 
                 
                 
-                parent_trace->add_child_path(child, schedules_annotations->size());
+                // parent_trace->add_child_path(child, schedules_annotations->size());
                 //std::cout<<"after child p ath "<<std::endl;
-                std::string schedule_annot = evaluate_by_learning_model::get_schedule_json(*child);
-                //std::cout<<" after schedule json "<<std::endl;
-                //remove the last two characters }\n
-                schedule_annot.pop_back();
-                schedule_annot.pop_back();
+                // std::string schedule_annot = evaluate_by_learning_model::get_schedule_json(*child);
+                // //std::cout<<" after schedule json "<<std::endl;
+                // //remove the last two characters }\n
+                // schedule_annot.pop_back();
+                // schedule_annot.pop_back();
                 
-                if (std::isfinite(child->evaluation)) // the evaluation is not finite mean that the schedule didn't run
-                    schedule_annot += ", \n\"execution_times\" : " + measurements_to_str(measurements) + "\n}\n";
-                else
-                    schedule_annot += ", \n\"execution_times\" : null\n}\n";
+                // if (std::isfinite(child->evaluation)) // the evaluation is not finite mean that the schedule didn't run
+                //     schedule_annot += ", \n\"execution_times\" : " + measurements_to_str(measurements) + "\n}\n";
+                // else
+                //     schedule_annot += ", \n\"execution_times\" : null\n}\n";
 
-                schedules_annotations->push_back(schedule_annot);
+                // schedules_annotations->push_back(schedule_annot);
                 //std::cout<<" schedules_annotations->push_back "<<std::endl;
-                if (std::atoi(read_env_var("AS_VERBOSE"))==1){
-                    std::cout << "Schedule number "<< schedules_annotations->size() << std::endl;
-                    std::cout << "Evaluation : " << - child->evaluation << std::endl;
-                    std::cout << "Number of measurements : " << measurements.size() << std::endl;
-                    std::cout << "===================================" << std::endl << std::endl;
-                }
+                
 
-                if (std::isinf(child->evaluation))
-                    std::cerr<< "Evaluation of schedule "<< schedules_annotations->size() <<" failed "<< std::endl;
+                // if (std::isinf(child->evaluation))
+                //     std::cerr<< "Evaluation of schedule "<< schedules_annotations->size() <<" failed "<< std::endl;
 
                 if (child->evaluation < best_evaluation)
                 {
@@ -1066,7 +989,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     to_be_explored.push_back(ast_copy);
     
                     
-    parent_trace->add_child_path(ast_copy, parent_trace->get_candidate_id());
+    // parent_trace->add_child_path(ast_copy, parent_trace->get_candidate_id());
     
 
 
@@ -1096,13 +1019,13 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         if (child->search_depth< MAX_MAT_DEPTH * nb_comps && child->search_depth <= child->nb_explored_matrices){
             //std::cout<<"search saving matrix"<<std::endl;
             
-            search_save_matrix(*child, schedules_annotations, parent_trace->child_mappings[child], schedule_timeout);
+            search_save_matrix(*child, schedule_timeout);
         }else{
             //std::cout<<"search saving"<<std::endl;
             child->initialize_search_space_optimizations(DEFAULT_OPTIMIZATIONS_ORDER);
             // if we surpassed the MAX_MAT_DEPTH amount of matrices to explore OR we detected the parent of this level through
             // the child->search_depth<=child->nb_explored_matrices condition which means that the search level is greater than the number of applied matrices
-            search_save(*child, schedules_annotations, parent_trace->child_mappings[child], schedule_timeout);  
+            search_save(*child, schedule_timeout);  
         }
     }
 }

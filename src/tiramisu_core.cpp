@@ -111,8 +111,11 @@ bool check_legality_of_function()
 
 void performe_full_dependency_analysis()
 {
+    
     function *fct = global::get_implicit_function();
-    fct->performe_full_dependency_analysis() ;
+    
+    fct->performe_full_dependency_analysis();
+    
 }
 
 void prepare_schedules_for_legality_checks(bool reset_static_dimesion)

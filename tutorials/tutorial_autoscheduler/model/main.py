@@ -11,7 +11,7 @@ import warnings
 warnings.filterwarnings('ignore', category=DeprecationWarning) 
 warnings.filterwarnings('ignore', category=UserWarning)
 
-model_path = '/data/scratch/mmerouani/tiramisu2/tiramisu/tutorials/tutorial_autoscheduler/model/multi_model_all_data_model_with_24_val.pkl'
+model_path = '/home/afif/multi/tiramisu/tutorials/tutorial_autoscheduler/model/multi_model_all_data_model_with_24_val.pkl'
 
 with torch.no_grad():
         device = 'cpu'

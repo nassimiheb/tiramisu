@@ -610,7 +610,7 @@ void generator::traverse_expr_and_extract_accesses(const tiramisu::function *fct
                                                     (exp.get_op_type() == tiramisu::o_address_of)))
     {
         DEBUG(3, tiramisu::str_dump("Extracting access from o_access."));
-
+        
         // Get the domain of the computation that corresponds to the access.
         // Even if there are many computations, we take the first because we are
         // only interested in getting the space of those computations and we assume
@@ -651,6 +651,7 @@ void generator::traverse_expr_and_extract_accesses(const tiramisu::function *fct
         // The dimension_number is a counter that indicates to which dimension
         // is the access associated.
         int access_dimension = 0;
+        
         for (const auto &access : exp.get_access())
         {
             DEBUG(3, tiramisu::str_dump("Assigning 1 to the coefficient of output dimension " +
@@ -664,6 +665,7 @@ void generator::traverse_expr_and_extract_accesses(const tiramisu::function *fct
             access_dimension++;
         }
 
+        
         DEBUG(3, tiramisu::str_dump("Transformation function after adding constraints:",
                                     isl_map_to_str(access_to_comp)));
 
@@ -683,6 +685,7 @@ void generator::traverse_expr_and_extract_accesses(const tiramisu::function *fct
             // otherwise return the access function that is not transformed into time-processor space
             // this is mainly because the function that calls this function expects the access function
             // to be in the iteration domain.
+            
             if (global::is_auto_data_mapping_set())
             {
                 DEBUG(3, tiramisu::str_dump("Apply the schedule on the domain of the access function. Access functions:",
@@ -693,7 +696,7 @@ void generator::traverse_expr_and_extract_accesses(const tiramisu::function *fct
                                                       isl_map_copy(comp->get_trimmed_union_of_schedules()));
                 DEBUG(3, tiramisu::str_dump("Result: ", isl_map_to_str(access_to_buff)));
             }
-
+            
             accesses.push_back(access_to_buff);
             isl_map_free(access_to_comp);
         }
@@ -705,7 +708,7 @@ void generator::traverse_expr_and_extract_accesses(const tiramisu::function *fct
     else if (exp.get_expr_type() == tiramisu::e_op)
     {
         DEBUG(3, tiramisu::str_dump("Extracting access from e_op."));
-
+        
         switch (exp.get_op_type())
         {
             case tiramisu::o_minus:
@@ -951,17 +954,22 @@ void generator::get_rhs_accesses(const tiramisu::function *func, const tiramisu:
 {
     DEBUG_FCT_NAME(3);
     DEBUG_INDENT(4);
-
+    
     const tiramisu::expr &rhs = comp->get_expr();
+    
     if (comp->is_wait()) {
         // Need to swap the access map of the operation we wait on
         tiramisu::computation *waitee = func->get_computation_by_name(rhs.get_name())[0];
         isl_map *orig = isl_map_copy(waitee->get_access_relation());
         waitee->set_access(waitee->wait_access_map);
+        
         generator::traverse_expr_and_extract_accesses(func, comp, rhs, accesses, return_buffer_accesses);
+        
         waitee->set_access(orig);
     } else {
+        
         generator::traverse_expr_and_extract_accesses(func, comp, rhs, accesses, return_buffer_accesses);
+        
     }
 
     DEBUG_INDENT(-4);

@@ -105,7 +105,8 @@ isl_union_map *tiramisu::function::compute_dep_graph() {
     DEBUG_INDENT(4);
 
     isl_union_map *result = NULL;
-
+    
+    
     for (const auto &consumer : this->get_computations()) {
         DEBUG(3, tiramisu::str_dump("Computing the dependences involving the computation " +
                                     consumer->get_name() + "."));
@@ -113,18 +114,20 @@ isl_union_map *tiramisu::function::compute_dep_graph() {
 
         isl_union_map *accesses_union_map = NULL;
         std::vector < isl_map * > accesses_vector;
+        
         generator::get_rhs_accesses(this, consumer, accesses_vector, false);
-
+        
         DEBUG(3, tiramisu::str_dump("Vector of accesses computed."));
 
         if (!accesses_vector.empty()) {
             // Create a union map of the accesses to the producer.
+            
             if (accesses_union_map == NULL) {
                 isl_space *space = isl_map_get_space(accesses_vector[0]);
                 assert(space != NULL);
                 accesses_union_map = isl_union_map_empty(space);
             }
-
+            
             for (size_t i = 0; i < accesses_vector.size(); ++i) {
                 isl_map *reverse_access = isl_map_reverse(accesses_vector[i]);
                 accesses_union_map = isl_union_map_union(isl_union_map_from_map(reverse_access),
@@ -136,7 +139,7 @@ isl_union_map *tiramisu::function::compute_dep_graph() {
 
             DEBUG(3, tiramisu::str_dump("Accesses after filtering."));
             DEBUG(3, tiramisu::str_dump(isl_union_map_to_str(accesses_union_map)));
-
+            
             if (result == NULL) {
                 result = isl_union_map_copy(accesses_union_map);
                 isl_union_map_free(accesses_union_map);
@@ -145,7 +148,7 @@ isl_union_map *tiramisu::function::compute_dep_graph() {
             }
         }
     }
-
+    
     DEBUG(3, tiramisu::str_dump("Dep graph: "));
     if (result != NULL)
     {
@@ -158,7 +161,7 @@ isl_union_map *tiramisu::function::compute_dep_graph() {
 
     DEBUG_INDENT(-4);
     DEBUG(3, tiramisu::str_dump("End of function"));
-
+    
     return result;
 }
 
@@ -172,8 +175,9 @@ void tiramisu::function::calculate_dep_flow()
 
     DEBUG(3, tiramisu::str_dump(" generating depandencies graph"));
 
+    
     isl_union_map * ref_res = this->compute_dep_graph();
-
+    
     if(ref_res == NULL)
     {
         // no deps fill with empty union maps
@@ -196,7 +200,7 @@ void tiramisu::function::calculate_dep_flow()
 
         return ;
     }
-
+    
     isl_union_map * ref_graph = isl_union_map_reverse(ref_res);
 
     
@@ -222,7 +226,11 @@ void tiramisu::function::calculate_dep_flow()
         }
 
     }
+
+    
     std::string ready_time_str = to_time_space_map_str+"]->" + to_time_space_map_str_2+"]";// without {} yet
+
+    
 
     DEBUG(3, tiramisu::str_dump(" using to generate time stamp tmp map "+ready_time_str));
 
@@ -268,7 +276,7 @@ void tiramisu::function::calculate_dep_flow()
         isl_union_map_copy(ref_graph),
         write_acccess_without_domain
     );
-
+    
     read_access = isl_union_map_intersect_domain(read_access, isl_union_set_copy(iteration_domains));
 
     //combine reads previous with their access to establish the read access S0[i,j] -> buf2[j] in read 
@@ -331,13 +339,13 @@ void tiramisu::function::calculate_dep_flow()
     info = isl_union_access_info_set_may_source(info,isl_union_map_copy(read_without_write_stmt));
 
     info = isl_union_access_info_set_kill(info,isl_union_map_copy(write_access));
-
+ 
     flow = isl_union_access_info_compute_flow(info);
 
     //DEBUG(3, tiramisu::str_dump(" dependency analysis for WAR dep : "+std::string(isl_union_flow_to_str(flow))));
 
     isl_union_map * anti_dependencies = isl_union_flow_get_full_may_dependence(flow);
-
+    
     DEBUG(3, tiramisu::str_dump(" write after read anti_dependencies are in the form { last_previous_read -> new write stmt } : "+std::string(isl_union_map_to_str(anti_dependencies))));
 
     //DEBUG(3, tiramisu::str_dump(" the initialisation stmt writes with no previous read before are : "+std::string(isl_union_map_to_str(initialisation_access))));
@@ -2615,12 +2623,15 @@ const std::vector<std::string> tiramisu::function::get_invariant_names() const
 void tiramisu::function::performe_full_dependency_analysis()
 {
     DEBUG_FCT_NAME(3);
-    DEBUG_INDENT(4);
+    DEBUG_INDENT(4); 
     // align schedules and order schedules
     this->align_schedules();
+     
     this->gen_ordering_schedules();
+     
     // could save default schedules and order here
     this->calculate_dep_flow();
+     
     
     DEBUG_INDENT(-4);
 
