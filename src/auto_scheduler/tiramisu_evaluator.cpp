@@ -88,7 +88,6 @@ std::vector<float> evaluate_by_execution::get_measurements(syntax_tree& ast, boo
     Halide::Module m = lower_halide_pipeline(fct->get_name(), halide_target, halide_arguments,
                                              Halide::Internal::LoweredFunc::External,
                                              fct->get_halide_stmt());
-
     m.compile(Halide::Outputs().object(obj_filename));
 
     // Turn the object file to a shared library

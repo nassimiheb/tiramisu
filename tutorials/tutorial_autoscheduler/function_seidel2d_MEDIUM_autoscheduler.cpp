@@ -6,8 +6,7 @@
 
 using namespace tiramisu;
 
-const std::string py_cmd_path = "/usr/bin/python";
-const std::string py_interface_path = "/home/afif/multi/tiramisu/tutorials/tutorial_autoscheduler/model/main.py";
+
 
 int main(int argc, char **argv)
 
@@ -27,7 +26,7 @@ int main(int argc, char **argv)
 
     A.store_in(&b_A);
     comp_A_out.store_in(&b_A, {i,j});
-
+	
     prepare_schedules_for_legality_checks();
 	performe_full_dependency_analysis();
 
@@ -36,10 +35,9 @@ int main(int argc, char **argv)
 	declare_memory_usage();
 
 	auto_scheduler::schedules_generator *scheds_gen = new auto_scheduler::ml_model_schedules_generator();
-	auto_scheduler::evaluation_function *model_eval = new auto_scheduler::evaluate_by_learning_model(py_cmd_path, {py_interface_path});
 	auto_scheduler::evaluate_by_execution *exec_eval = new auto_scheduler::evaluate_by_execution({&b_A}, "function_seidel2d_MEDIUM.o", "./function_seidel2d_MEDIUM_wrapper");
 	auto_scheduler::search_method *bs = new auto_scheduler::beam_search(beam_size, max_depth, exec_eval, scheds_gen);
-	auto_scheduler::auto_scheduler as(bs, model_eval);
+	auto_scheduler::auto_scheduler as(bs, exec_eval);
 	as.set_exec_evaluator(exec_eval);
 	as.sample_search_space("./function_seidel2d_MEDIUM_explored_schedules.json", true);
 	delete scheds_gen;

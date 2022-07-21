@@ -275,7 +275,7 @@ void beam_search::search_save(syntax_tree& ast, float schedule_timeout)
                         if ((*iterator)->can_set_default_evaluation()){ // if yes the child's evaluation is set to a default value
                             measurements = {(*iterator)->evaluation};
                         }else{
-                            measurements.push_back(eval_func->evaluate(*(*iterator)));
+                            measurements = exec_eval->get_measurements(*(*iterator), false, schedule_timeout,true);
                         }
                     }
                     catch(UnrollingException e){ 
@@ -489,7 +489,7 @@ void beam_search::explore_fusion(syntax_tree& ast, float schedule_timeout)
             
 
             std::vector<float> measurements;
-            measurements.push_back(eval_func->evaluate(*(*iterator)));
+            measurements = exec_eval->get_measurements(*(*iterator), false, schedule_timeout,true);
             (*iterator)->evaluation = min_eval(measurements);
 
             // parent_trace->add_child_path((*iterator), schedules_annotations->size());
@@ -611,7 +611,8 @@ void beam_search::explore_parallelization(syntax_tree& ast, float schedule_timeo
             std::cout << "\n<legal>\n";
 
             std::vector<float> measurements;
-            measurements.push_back(eval_func->evaluate(*(*iterator)));
+            measurements = exec_eval->get_measurements(*(*iterator), false, schedule_timeout,true);
+            
             (*iterator)->evaluation = min_eval(measurements);
 
             // parent_trace->add_child_path((*iterator), schedules_annotations->size());
@@ -842,9 +843,9 @@ void beam_search::search_save_matrix(syntax_tree& ast, float schedule_timeout)
                     exit(1);
                 } else if (pid == 0) {
                     
-                    measurements.push_back(eval_func->evaluate(*(*iterator)));
-                    
-                    
+                    measurements =  exec_eval->get_measurements(*child, false, schedule_timeout,true);
+                
+
                     int size =measurements.size();
                     float ar[measurements.size()];
 
