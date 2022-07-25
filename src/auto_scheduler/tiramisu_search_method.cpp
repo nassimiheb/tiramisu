@@ -379,7 +379,10 @@ void beam_search::search_save(syntax_tree& ast, float schedule_timeout)
                 
 
                     (*iterator)->evaluation = min_eval(measurements);
+                    
 
+                 cumulative_exec_time += (*iterator)->evaluation;
+                 
                     // parent_trace->add_child_path((*iterator), schedules_annotations->size());
 
 
@@ -410,7 +413,7 @@ void beam_search::search_save(syntax_tree& ast, float schedule_timeout)
                 ++iterator;
 
             }
-
+            
             nb_explored_schedules++;
         }
     }
@@ -491,7 +494,9 @@ void beam_search::explore_fusion(syntax_tree& ast, float schedule_timeout)
             std::vector<float> measurements;
             measurements = exec_eval->get_measurements(*(*iterator), false, schedule_timeout,true);
             (*iterator)->evaluation = min_eval(measurements);
-
+            
+            cumulative_exec_time += (*iterator)->evaluation;
+            
             // parent_trace->add_child_path((*iterator), schedules_annotations->size());
 
             // std::string schedule_annot = evaluate_by_learning_model::get_schedule_json(*(*iterator));
@@ -945,6 +950,8 @@ void beam_search::search_save_matrix(syntax_tree& ast, float schedule_timeout)
                 }
                     
                 child->evaluation = min_eval(measurements);
+                
+                cumulative_exec_time += (*iterator)->evaluation;
                 
                 if(hash != parent_hash) child->nb_explored_matrices = child->nb_explored_matrices +1; 
                 
