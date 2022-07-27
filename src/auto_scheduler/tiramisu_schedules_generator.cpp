@@ -1043,21 +1043,21 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_schedules(synt
                 std::vector<tiramisu::computation *> involved_comp_first; 
                 involved_comp_first.push_back(comp);
                 std::string loop_name = loop_names[inner_most_node->depth];
-                //std::cout<<"is_optimized_by_tag"<<std::endl;
+                
                 result = result && (!inner_most_node->is_optimized_by_tag()) &&
                                 ast.fct->loop_unrolling_is_legal(var(loop_name), involved_comp_first);
             }
-            //std::cout<<"after is_optimized_by_tag"<<std::endl;    
+                
             if (result) // unrollable: test all possible values
             {
-                //std::cout<<"unrollable: test all possible values"<<std::endl;
+                
 
                 ast.recover_isl_states();
 
                 for (int unrolling_fact: unrolling_factors_list) {
 
                     if (can_split_iterator(inner_most_node->get_extent(), unrolling_fact)) {
-                        //std::cout<<"can_split_iterator"<<std::endl;
+                        
                         // Copy the AST and add unrolling to the list of optimizations
                         syntax_tree *new_ast = new syntax_tree();
                         ast_node *new_node = ast.copy_and_return_node(*new_ast, inner_most_node);
