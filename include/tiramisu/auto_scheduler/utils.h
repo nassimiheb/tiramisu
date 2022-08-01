@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <regex>
+#include <numeric>
 
 namespace tiramisu::auto_scheduler
 {
@@ -32,6 +33,14 @@ inline float min_eval(std::vector<float> measurements)
 {
     return *std::min_element(measurements.begin(), measurements.end());
 }
+/**
+ * Returns the sum value of a vector of measurements
+ */
+inline float sum_eval(std::vector<float> measurements)
+{
+    return std::accumulate(measurements.begin(), measurements.end(),0);
+}
+
 
 /**
  * Formats a vector of measurements into a string

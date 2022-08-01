@@ -77,7 +77,7 @@ std::vector<float> evaluate_by_execution::get_measurements(syntax_tree& ast, boo
     //fct->reset_schedules();
     // Apply all the optimizations
     apply_optimizations(ast);
-
+    
     // Compile the program to an object file
     fct->lift_dist_comps();
     fct->gen_time_space_domain();
@@ -97,10 +97,10 @@ std::vector<float> evaluate_by_execution::get_measurements(syntax_tree& ast, boo
 
     // define the execution command of the wrapper
     std::string cmd = wrapper_cmd;
-
+    
     float cumulative_timeout;
-    if (timeout!=0) {// check if a timeout is defined for the execution time
-        int nb_exec = 30; //by default
+    if (timeout!=0) { // check if a timeout is defined for the execution time
+        int nb_exec = 20; //by default
         if (std::getenv("MAX_RUNS")!=NULL)
             nb_exec = std::stoi(std::getenv("MAX_RUNS"));
         cumulative_timeout = timeout * nb_exec; // the timeout for the total number of executions

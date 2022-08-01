@@ -234,188 +234,181 @@ void beam_search::search_save(syntax_tree& ast, float schedule_timeout)
     auto iterator = children.begin();
     while (iterator != children.end())
     {
-        bool unrolling_exception_thrown = false;
-        if ((*iterator)->schedule_is_prunable()){
         
+        (*iterator)->transform_ast();
+        if ((*iterator)->ast_is_legal() == false) {
             
             delete (*iterator);
             iterator = children.erase(iterator);
-        }else{
-            
-            (*iterator)->transform_ast();
-            if ((*iterator)->ast_is_legal() == false) {
-                
-                delete (*iterator);
-                iterator = children.erase(iterator);
-            }
-            else {
-                
-
-                int fd[2];
-                
-                // create pipe descriptors
-                pipe(fd);
-                timeout=0;
-                child_done=0;
-                cont = false;
-                std::vector<float> measurements;
-                
-                // create a child process to execute the code and get measurements
-                // this is added so that we can limit the code generation time for large programs
-                pid_t pid;
-                pid = fork();
-
-                if (pid == -1) {
-                    perror("fork failed");
-                    exit(1);
-                } else if (pid == 0) {
-                    // put get_measurements in a try block in the case of erroneous unrolling
-                    // this should be added to ast_is_legal but for now it can only be detected at apply_optimization level
-                    try{
-                        if ((*iterator)->can_set_default_evaluation()){ // if yes the child's evaluation is set to a default value
-                            measurements = {(*iterator)->evaluation};
-                        }else{
-                            measurements = exec_eval->get_measurements(*(*iterator), false, schedule_timeout,true);
-                        }
-                    }
-                    catch(UnrollingException e){ 
-                        // Remove all the optimizations
-                        exec_eval->fct->reset_schedules();
-                        measurements.clear();
-                        measurements.push_back(std::numeric_limits<float>::infinity());
-                        unrolling_exception_thrown = true;
-                        cont = 1;
-                    }
-                    int size = measurements.size();
-                    float ar[measurements.size()];
-                    // put the measurements in an array to be sent to the parent process
-                    for(int i=0;i<measurements.size();i++) ar[i]=measurements.at(i);
-                    close(fd[0]);
-                    // send number of measurements to parent process
-                    write(fd[1], &size, sizeof(size));
-                    // send measurements to parent process
-                    write(fd[1], &ar, sizeof(ar));
-                    // close the pipe
-                    close(fd[1]);
-                    // end child process
-                    _exit(1);
-                }
-
-                // set up the signal handlers after forking so the child doesn't inherit them
-                // an alarm in the case of the timelimit is reached and the child process was interrupted
-                signal(SIGALRM, alarm_handler);
-                // an alarm in the case of the child process ending ie. both data generation and evaluation are done
-                signal(SIGCHLD, child_handler);
-                // an alarm in the case of the data generation ending before the timelimit. We still need to wait for the evaluation to be done. 
-                signal(SIGUSR1,sig_usr);
-                // install an alarm to be fired after TIME_LIMIT
-                
-                // set the alarm
-                alarm(TIME_LIMIT);
-                
-                pause();
-
-                if (timeout) {
-                    
-                    // if the timeout has been reached    
-                    int result = waitpid(pid, NULL, WNOHANG);
-                    if (result == 0) {
-                        // child still running, so kill it
-                        
-                        // remove all the optimizations
-                        exec_eval->fct->reset_schedules();
-                        measurements.clear();
-                        // if the timeout has been reached, put infinity as a measurement
-                        measurements.push_back(std::numeric_limits<float>::infinity());
-                        // cancel any previously set alarm 
-                        alarm(0); 
-                        // kill child process
-                        kill(pid, 9);
-                        
-                    
-                        waitpid(-1,NULL,0);
-                    } else {
-                        // if by the time we detect that the alarm has been raised, the evaluation has been completed
-                        // we recieve the measurements from the child 
-                        int size = 0;
-                        close(fd[1]);
-                        read(fd[0], &size, sizeof(int));
-                        float ar[size];
-                        read(fd[0], &ar, size*sizeof(float));
-                        for(int i=0;i<size;i++) measurements.push_back(ar[i]);
-                        close(fd[0]);
-                        
-                    }
-                    
-                }else if (child_done) {
-                    // the execution of the child is done, both code generation and evaluation
-                    // we recieve the measurements from the child
-                    int size =0;
-                    close(fd[1]);
-                    read(fd[0], &size, sizeof(int));
-                    float ar[size];
-                    read(fd[0], &ar, size*sizeof(float));
-                    for(int i=0;i<size;i++) measurements.push_back(ar[i]);
-                    close(fd[0]);
-                    
-                    waitpid(-1,NULL,0);
-                }else if(cont){
-                    // execution is not done but the code generation is done. This happens for large programs that take a long time to execute
-                    // cancel the timeout alarm 
-                    alarm(0);
-                    int size=0;
-                    // we wait for the evalution of the generated code
-                    while(!child_done){}
-                    // after evealuation is done, we recieve the measurements from the child
-                    close(fd[1]);
-                    read(fd[0], &size, sizeof(int));
-                    float ar[size];
-                    read(fd[0], &ar, size*sizeof(float));
-                    for(int i=0;i<size;i++) measurements.push_back(ar[i]);
-                    close(fd[0]);
-                    waitpid(-1,NULL,0);
-                }
-                
-                
-
-                    (*iterator)->evaluation = min_eval(measurements);
-                    
-
-                 cumulative_exec_time += (*iterator)->evaluation;
-                 
-                    // parent_trace->add_child_path((*iterator), schedules_annotations->size());
-
-
-                    // std::string schedule_annot = evaluate_by_learning_model::get_schedule_json(*(*iterator));
-
-                    // //remove the last two characters }\n
-                    // schedule_annot.pop_back();
-                    // schedule_annot.pop_back();
-
-                    // if (std::isfinite((*iterator)->evaluation)) // the evaluation is not finite mean that the schedule didn't run
-                    //     schedule_annot += ", \n\"execution_times\" : " + measurements_to_str(measurements) + "\n}\n";
-                    // else
-                    //     schedule_annot += ", \n\"execution_times\" : null\n}\n";
-                if(!unrolling_exception_thrown){
-                    // schedules_annotations->push_back(schedule_annot);
-
-                   
-
-                    // if (std::isinf((*iterator)->evaluation))
-                    //     std::cerr<< "Evaluation of schedule "<< schedules_annotations->size() <<" failed "<< std::endl;
-
-                    if ((*iterator)->evaluation < best_evaluation)
-                    {
-                        best_evaluation = (*iterator)->evaluation;
-                        best_ast = (*iterator);
-                    }
-                }
-                ++iterator;
-
-            }
-            
-            nb_explored_schedules++;
         }
+        else {
+            std::vector<float> measurements;
+            measurements = exec_eval->get_measurements(*(*iterator), false, schedule_timeout,false);
+            // int fd[2];
+            
+            // // create pipe descriptors
+            // pipe(fd);
+            // timeout=0;
+            // child_done=0;
+            // cont = false;
+            
+            
+            // // create a child process to execute the code and get measurements
+            // // this is added so that we can limit the code generation time for large programs
+            // pid_t pid;
+            // pid = fork();
+
+            // if (pid == -1) {
+            //     perror("fork failed");
+            //     exit(1);
+            // } else if (pid == 0) {
+            //     // put get_measurements in a try block in the case of erroneous unrolling
+            //     // this should be added to ast_is_legal but for now it can only be detected at apply_optimization level
+            //     try{
+            //         if ((*iterator)->can_set_default_evaluation()){ // if yes the child's evaluation is set to a default value
+            //             measurements = {(*iterator)->evaluation};
+            //         }else{
+                        
+            //         }
+            //     }
+            //     catch(UnrollingException e){ 
+            //         // Remove all the optimizations
+            //         exec_eval->fct->reset_schedules();
+            //         measurements.clear();
+            //         measurements.push_back(std::numeric_limits<float>::infinity());
+            //         unrolling_exception_thrown = true;
+            //         cont = 1;
+            //     }
+            //     int size = measurements.size();
+            //     float ar[measurements.size()];
+            //     // put the measurements in an array to be sent to the parent process
+            //     for(int i=0;i<measurements.size();i++) ar[i]=measurements.at(i);
+            //     close(fd[0]);
+            //     // send number of measurements to parent process
+            //     write(fd[1], &size, sizeof(size));
+            //     // send measurements to parent process
+            //     write(fd[1], &ar, sizeof(ar));
+            //     // close the pipe
+            //     close(fd[1]);
+            //     // end child process
+            //     _exit(1);
+            // }
+
+            // // set up the signal handlers after forking so the child doesn't inherit them
+            // // an alarm in the case of the timelimit is reached and the child process was interrupted
+            // signal(SIGALRM, alarm_handler);
+            // // an alarm in the case of the child process ending ie. both data generation and evaluation are done
+            // signal(SIGCHLD, child_handler);
+            // // an alarm in the case of the data generation ending before the timelimit. We still need to wait for the evaluation to be done. 
+            // signal(SIGUSR1,sig_usr);
+            // // install an alarm to be fired after TIME_LIMIT
+            
+            // // set the alarm
+            // alarm(TIME_LIMIT);
+            
+            // pause();
+
+            // if (timeout) {
+                
+            //     // if the timeout has been reached    
+            //     int result = waitpid(pid, NULL, WNOHANG);
+            //     if (result == 0) {
+            //         // child still running, so kill it
+                    
+            //         // remove all the optimizations
+            //         exec_eval->fct->reset_schedules();
+            //         measurements.clear();
+            //         // if the timeout has been reached, put infinity as a measurement
+            //         measurements.push_back(std::numeric_limits<float>::infinity());
+            //         // cancel any previously set alarm 
+            //         alarm(0); 
+            //         // kill child process
+            //         kill(pid, 9);
+                    
+                
+            //         waitpid(-1,NULL,0);
+            //     } else {
+            //         // if by the time we detect that the alarm has been raised, the evaluation has been completed
+            //         // we recieve the measurements from the child 
+            //         int size = 0;
+            //         close(fd[1]);
+            //         read(fd[0], &size, sizeof(int));
+            //         float ar[size];
+            //         read(fd[0], &ar, size*sizeof(float));
+            //         for(int i=0;i<size;i++) measurements.push_back(ar[i]);
+            //         close(fd[0]);
+                    
+            //     }
+                
+            // }else if (child_done) {
+            //     // the execution of the child is done, both code generation and evaluation
+            //     // we recieve the measurements from the child
+            //     int size =0;
+            //     close(fd[1]);
+            //     read(fd[0], &size, sizeof(int));
+            //     float ar[size];
+            //     read(fd[0], &ar, size*sizeof(float));
+            //     for(int i=0;i<size;i++) measurements.push_back(ar[i]);
+            //     close(fd[0]);
+                
+            //     waitpid(-1,NULL,0);
+            // }else if(cont){
+            //     // execution is not done but the code generation is done. This happens for large programs that take a long time to execute
+            //     // cancel the timeout alarm 
+            //     alarm(0);
+            //     int size=0;
+            //     // we wait for the evalution of the generated code
+            //     while(!child_done){}
+            //     // after evealuation is done, we recieve the measurements from the child
+            //     close(fd[1]);
+            //     read(fd[0], &size, sizeof(int));
+            //     float ar[size];
+            //     read(fd[0], &ar, size*sizeof(float));
+            //     for(int i=0;i<size;i++) measurements.push_back(ar[i]);
+            //     close(fd[0]);
+            //     waitpid(-1,NULL,0);
+            // }
+            
+            
+
+                (*iterator)->evaluation = min_eval(measurements);
+                
+
+                cumulative_exec_time += sum_eval(measurements);
+                
+                // parent_trace->add_child_path((*iterator), schedules_annotations->size());
+
+
+                // std::string schedule_annot = evaluate_by_learning_model::get_schedule_json(*(*iterator));
+
+                // //remove the last two characters }\n
+                // schedule_annot.pop_back();
+                // schedule_annot.pop_back();
+
+                // if (std::isfinite((*iterator)->evaluation)) // the evaluation is not finite mean that the schedule didn't run
+                //     schedule_annot += ", \n\"execution_times\" : " + measurements_to_str(measurements) + "\n}\n";
+                // else
+                //     schedule_annot += ", \n\"execution_times\" : null\n}\n";
+                // schedules_annotations->push_back(schedule_annot);
+
+                
+
+                // if (std::isinf((*iterator)->evaluation))
+                //     std::cerr<< "Evaluation of schedule "<< schedules_annotations->size() <<" failed "<< std::endl;
+
+                if ((*iterator)->evaluation < best_evaluation)
+                {
+                    best_evaluation = (*iterator)->evaluation;
+                    best_ast = (*iterator);
+                }
+                
+                ++iterator;
+                nb_explored_schedules++;
+
+            }
+            
+            
+        
     }
 
     // Add the current AST to the list of children
@@ -521,10 +514,10 @@ void beam_search::explore_fusion(syntax_tree& ast, float schedule_timeout)
             }
 
             ++iterator;
-
+            nb_explored_schedules++;
         }
 
-        nb_explored_schedules++;
+        
     }
 
     // Add the current AST to the list of children
@@ -794,10 +787,6 @@ void beam_search::search_save_matrix(syntax_tree& ast, float schedule_timeout)
         //std::cout<<"nb_optims prev in child: "<<child->previous_optims.size()<<std::endl;
         //std::cout<<"nb_optims in child: "<<child->new_optims.size()<<std::endl;
         child->transform_ast();
-        if(child->ast_is_prunable()){
-                delete child;
-                iterator = children.erase(iterator);
-        }else{
             if (!child->ast_is_legal()) {
                 delete child;
                 iterator = children.erase(iterator);
@@ -823,160 +812,163 @@ void beam_search::search_save_matrix(syntax_tree& ast, float schedule_timeout)
                     continue;
                 } 
 
-                
+                std::vector<float> measurements;
+                measurements =  exec_eval->get_measurements(*child, false, schedule_timeout,false);
+
+
                 // if the matrix is legal and not repeated we add its hash to the list of seen hashes and we start the evaluation 
                 hashes.push_back(hash);
                 
                 
-                int fd[2];
+                // int fd[2];
                 
-                // create pipe descriptors
-                pipe(fd);
-                timeout=0;
-                child_done=0;
-                cont = false;
-                std::vector<float> measurements;
+                // // create pipe descriptors
+                // pipe(fd);
+                // timeout=0;
+                // child_done=0;
+                // cont = false;
+                // std::vector<float> measurements;
                 
                 
-                // create a child process to execute the code and get measurements
-                // this is added so that we can limit the code generation time for large programs
-                pid_t pid;
-                pid = fork();
+                // // create a child process to execute the code and get measurements
+                // // this is added so that we can limit the code generation time for large programs
+                // pid_t pid;
+                // pid = fork();
 
-                if (pid == -1) {
-                    perror("fork failed");
-                    exit(1);
-                } else if (pid == 0) {
+                // if (pid == -1) {
+                //     perror("fork failed");
+                //     exit(1);
+                // } else if (pid == 0) {
                     
-                    measurements =  exec_eval->get_measurements(*child, false, schedule_timeout,true);
-                
-
-                    int size =measurements.size();
-                    float ar[measurements.size()];
-
-                    // put the measurements in an array to be sent to the parent process
-                    //std::cout<<"measuring "<<std::endl;
-                    for(int i=0;i<measurements.size();i++) ar[i]=measurements.at(i);
                     
-                    close(fd[0]);
-                    // send number of measurements to parent process
-                    write(fd[1], &size, sizeof(size));
-                    // send measurements to parent process
-                    write(fd[1], &ar, sizeof(ar));
-                    // close the pipe
-                    close(fd[1]);
-                    // end child process
-                    _exit(1);
-                }
-
-                // set up the signal handlers after forking so the child doesn't inherit them
-                // an alarm in the case of the timelimit is reached and the child process was interrupted
-                signal(SIGALRM, alarm_handler);
-                // an alarm in the case of the child process ending ie. both data generation and evaluation are done
-                signal(SIGCHLD, child_handler);
-                // an alarm in the case of the data generation ending before the timelimit. We still need to wait for the evaluation to be done. 
-                signal(SIGUSR1,sig_usr);
-                // install an alarm to be fired after TIME_LIMIT
                 
-                // set the alarm
-                alarm(TIME_LIMIT);
-                
-                pause();
 
-                if (timeout) {
+                //     int size =measurements.size();
+                //     float ar[measurements.size()];
+
+                //     // put the measurements in an array to be sent to the parent process
+                //     //std::cout<<"measuring "<<std::endl;
+                //     for(int i=0;i<measurements.size();i++) ar[i]=measurements.at(i);
                     
-                    // if the timeout has been reached    
+                //     close(fd[0]);
+                //     // send number of measurements to parent process
+                //     write(fd[1], &size, sizeof(size));
+                //     // send measurements to parent process
+                //     write(fd[1], &ar, sizeof(ar));
+                //     // close the pipe
+                //     close(fd[1]);
+                //     // end child process
+                //     _exit(1);
+                // }
+
+                // // set up the signal handlers after forking so the child doesn't inherit them
+                // // an alarm in the case of the timelimit is reached and the child process was interrupted
+                // signal(SIGALRM, alarm_handler);
+                // // an alarm in the case of the child process ending ie. both data generation and evaluation are done
+                // signal(SIGCHLD, child_handler);
+                // // an alarm in the case of the data generation ending before the timelimit. We still need to wait for the evaluation to be done. 
+                // signal(SIGUSR1,sig_usr);
+                // // install an alarm to be fired after TIME_LIMIT
+                
+                // // set the alarm
+                // alarm(TIME_LIMIT);
+                
+                // pause();
+
+                // if (timeout) {
+                    
+                //     // if the timeout has been reached    
                         
-                    int result = waitpid(pid, NULL, WNOHANG);
-                    if (result == 0) {
-                        // child still running, so kill it
+                //     int result = waitpid(pid, NULL, WNOHANG);
+                //     if (result == 0) {
+                //         // child still running, so kill it
                     
-                        // Remove all the optimizations
-                        exec_eval->fct->reset_schedules();
-                        measurements.clear();
-                        // if the timeout has been reached, put infinity as a measurement
+                //         // Remove all the optimizations
+                //         exec_eval->fct->reset_schedules();
+                //         measurements.clear();
+                //         // if the timeout has been reached, put infinity as a measurement
 
 
-                        measurements.push_back(std::numeric_limits<float>::infinity());
-                        // cancel any previously set alarm 
-                        alarm(0); 
-                        // kill child process
-                        kill(pid, 9);
+                //         measurements.push_back(std::numeric_limits<float>::infinity());
+                //         // cancel any previously set alarm 
+                //         alarm(0); 
+                //         // kill child process
+                //         kill(pid, 9);
                         
                     
-                        waitpid(-1,NULL,0);
-                    } else {
-                        // if by the time we detect that the alarm has been raised, the evaluation has been completed
-                        // we recieve the measurements from the child
-                        int size = 0;
-                        close(fd[1]);
-                        read(fd[0], &size, sizeof(int));
-                        float ar[size];
-                        read(fd[0], &ar, size*sizeof(float));
-                        for(int i=0;i<size;i++) measurements.push_back(ar[i]);
-                        close(fd[0]);
+                //         waitpid(-1,NULL,0);
+                //     } else {
+                //         // if by the time we detect that the alarm has been raised, the evaluation has been completed
+                //         // we recieve the measurements from the child
+                //         int size = 0;
+                //         close(fd[1]);
+                //         read(fd[0], &size, sizeof(int));
+                //         float ar[size];
+                //         read(fd[0], &ar, size*sizeof(float));
+                //         for(int i=0;i<size;i++) measurements.push_back(ar[i]);
+                //         close(fd[0]);
                         
-                    }
+                //     }
                     
                     
-                }else if (child_done) {
-                    // the execution of the child is done, both code generation and evaluation
-                    // we recieve the measurements from the child
-                    int size =0;
-                    close(fd[1]);
-                    read(fd[0], &size, sizeof(int));
-                    float ar[size];
-                    read(fd[0], &ar, size*sizeof(float));
-                    for(int i=0;i<size;i++) measurements.push_back(ar[i]);
-                    close(fd[0]);
+                // }else if (child_done) {
+                //     // the execution of the child is done, both code generation and evaluation
+                //     // we recieve the measurements from the child
+                //     int size =0;
+                //     close(fd[1]);
+                //     read(fd[0], &size, sizeof(int));
+                //     float ar[size];
+                //     read(fd[0], &ar, size*sizeof(float));
+                //     for(int i=0;i<size;i++) measurements.push_back(ar[i]);
+                //     close(fd[0]);
                     
-                    waitpid(-1,NULL,0);
-                }else if(cont){
-                    // execution is not done but the code generation is done. This happens for large programs that take a long time to execute
-                    // cancel the timeout alarm  
-                    alarm(0);
-                    int size=0;
-                    // we wait for the evalution of the generated code
-                    while(!child_done){}
-                    // after evealuation is done, we recieve the measurements from the child
-                    close(fd[1]);
-                    read(fd[0], &size, sizeof(int));
-                    float ar[size];
-                    read(fd[0], &ar, size*sizeof(float));
-                    for(int i=0;i<size;i++) measurements.push_back(ar[i]);
+                //     waitpid(-1,NULL,0);
+                // }else if(cont){
+                //     // execution is not done but the code generation is done. This happens for large programs that take a long time to execute
+                //     // cancel the timeout alarm  
+                //     alarm(0);
+                //     int size=0;
+                //     // we wait for the evalution of the generated code
+                //     while(!child_done){}
+                //     // after evealuation is done, we recieve the measurements from the child
+                //     close(fd[1]);
+                //     read(fd[0], &size, sizeof(int));
+                //     float ar[size];
+                //     read(fd[0], &ar, size*sizeof(float));
+                //     for(int i=0;i<size;i++) measurements.push_back(ar[i]);
                     
-                    close(fd[0]);
-                    waitpid(-1,NULL,0);
-                }
+                //     close(fd[0]);
+                //     waitpid(-1,NULL,0);
+                // }
                     
-                child->evaluation = min_eval(measurements);
+                // child->evaluation = min_eval(measurements);
                 
-                cumulative_exec_time += (*iterator)->evaluation;
+                // cumulative_exec_time += (*iterator)->evaluation;
                 
-                if(hash != parent_hash) child->nb_explored_matrices = child->nb_explored_matrices +1; 
-                
-                
+                // if(hash != parent_hash) child->nb_explored_matrices = child->nb_explored_matrices +1; 
                 
                 
-                // parent_trace->add_child_path(child, schedules_annotations->size());
-                //std::cout<<"after child p ath "<<std::endl;
-                // std::string schedule_annot = evaluate_by_learning_model::get_schedule_json(*child);
-                // //std::cout<<" after schedule json "<<std::endl;
-                // //remove the last two characters }\n
-                // schedule_annot.pop_back();
-                // schedule_annot.pop_back();
                 
-                // if (std::isfinite(child->evaluation)) // the evaluation is not finite mean that the schedule didn't run
-                //     schedule_annot += ", \n\"execution_times\" : " + measurements_to_str(measurements) + "\n}\n";
-                // else
-                //     schedule_annot += ", \n\"execution_times\" : null\n}\n";
+                
+                // // parent_trace->add_child_path(child, schedules_annotations->size());
+                // //std::cout<<"after child p ath "<<std::endl;
+                // // std::string schedule_annot = evaluate_by_learning_model::get_schedule_json(*child);
+                // // //std::cout<<" after schedule json "<<std::endl;
+                // // //remove the last two characters }\n
+                // // schedule_annot.pop_back();
+                // // schedule_annot.pop_back();
+                
+                // // if (std::isfinite(child->evaluation)) // the evaluation is not finite mean that the schedule didn't run
+                // //     schedule_annot += ", \n\"execution_times\" : " + measurements_to_str(measurements) + "\n}\n";
+                // // else
+                // //     schedule_annot += ", \n\"execution_times\" : null\n}\n";
 
-                // schedules_annotations->push_back(schedule_annot);
-                //std::cout<<" schedules_annotations->push_back "<<std::endl;
+                // // schedules_annotations->push_back(schedule_annot);
+                // //std::cout<<" schedules_annotations->push_back "<<std::endl;
                 
 
-                // if (std::isinf(child->evaluation))
-                //     std::cerr<< "Evaluation of schedule "<< schedules_annotations->size() <<" failed "<< std::endl;
+                // // if (std::isinf(child->evaluation))
+                // //     std::cerr<< "Evaluation of schedule "<< schedules_annotations->size() <<" failed "<< std::endl;
 
                 if (child->evaluation < best_evaluation)
                 {
@@ -987,9 +979,9 @@ void beam_search::search_save_matrix(syntax_tree& ast, float schedule_timeout)
                 to_be_explored.push_back(child);
                 
                 ++iterator;  
-                
+                nb_explored_schedules++;
             }
-        }
+        
     }
     syntax_tree *ast_copy = ast.copy_ast();
     //ast_copy->nb_explored_optims = nb_explored_optims;
