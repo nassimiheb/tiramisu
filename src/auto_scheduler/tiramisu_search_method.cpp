@@ -266,14 +266,14 @@ void beam_search::search_save(syntax_tree& ast, float schedule_timeout)
                     }
                 
                 ++iterator;
-
+                nb_explored_schedules++;
                 // std::chrono::steady_clock::time_point sampling_end = std::chrono::steady_clock::now();
 
                 // std::cout << "Search save time : " << std::chrono::duration_cast<std::chrono::milliseconds>(sampling_end - sampling_beg).count() << " ms" << std::endl;  
                 
             }
 
-            nb_explored_schedules++;
+            
             
         }
         
@@ -381,10 +381,10 @@ void beam_search::explore_fusion(syntax_tree& ast, float schedule_timeout)
             }
 
             ++iterator;
-
+            nb_explored_schedules++;
         }
 
-        nb_explored_schedules++;
+        
     }
 
     // Add the current AST to the list of children
@@ -514,10 +514,10 @@ void beam_search::explore_parallelization(syntax_tree& ast, float schedule_timeo
             }
 
             ++iterator;
-
+            nb_explored_schedules++;
         }
 
-        nb_explored_schedules++;
+        
     }
 
     // Add the current AST to the list of children
@@ -713,7 +713,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, float schedule_timeout)
                 to_be_explored.push_back(child);
                 
                 ++iterator;  
-                
+                nb_explored_schedules++;
                 // std::chrono::steady_clock::time_point sampling_end = std::chrono::steady_clock::now();
 
                 // std::cout << "Search save matrix time :" << std::chrono::duration_cast<std::chrono::milliseconds>(sampling_end - sampling_beg).count() << " ms" << std::endl;

@@ -104,7 +104,7 @@ void auto_scheduler::sample_search_space(std::string filename, bool timeout_sche
     std::chrono::steady_clock::time_point sampling_end = std::chrono::steady_clock::now();
 //    if (std::atoi(read_env_var("AS_VERBOSE"))==1){
     std::cout << "Search time : " << std::chrono::duration_cast<std::chrono::milliseconds>(sampling_end - sampling_start).count() << " ms" << std::endl;
-    
+    std::cout << "nb_explored_schedules : "<<searcher->get_nb_explored_schedules()<<std::endl;
 //    }
 }
 

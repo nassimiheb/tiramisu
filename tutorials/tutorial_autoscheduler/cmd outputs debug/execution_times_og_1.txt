@@ -1,0 +1,532 @@
+Search fusion time : 0 ms
+Search save matrix time : 962 ms
+Search save matrix time : 13 ms
+Search save matrix time : 13 ms
+Search save matrix time : 13 ms
+Search save matrix time : 13 ms
+Search save matrix time : 27 ms
+Search save matrix time : 23 ms
+Search save matrix time : 25 ms
+Search save matrix time : 15 ms
+Search save matrix time : 24 ms
+Search save matrix time : 30 ms
+Search save matrix time : 22 ms
+Search save matrix time : 26 ms
+Search save matrix time : 17 ms
+Search save matrix time : 49 ms
+Search save matrix time : 72 ms
+Search save matrix time : 64 ms
+Search save matrix time : 52 ms
+Search save matrix time : 50 ms
+Search save matrix time : 37 ms
+Search save matrix time : 64 ms
+Search save matrix time : 29 ms
+Search save matrix time : 40 ms
+Search save matrix time : 33 ms
+Search save matrix time : 62 ms
+Search save matrix time : 30 ms
+Search save matrix time : 38 ms
+Search save matrix time : 37 ms
+Search save matrix time : 41 ms
+Search save matrix time : 41 ms
+Search save matrix time : 43 ms
+Search save matrix time : 28 ms
+Search save matrix time : 47 ms
+Search save matrix time : 31 ms
+Search save time : 7 ms
+Search save time : 32 ms
+Search save time : 41 ms
+Search save time : 31 ms
+Search save time : 47 ms
+Search save time : 22 ms
+Search save time : 15 ms
+Search save time : 17 ms
+Search save time : 20 ms
+Search save time : 5 ms
+Search save time : 24 ms
+Search save time : 14 ms
+Search save time : 16 ms
+Search save time : 17 ms
+Search save time : 16 ms
+Search save time : 15 ms
+Search save time : 15 ms
+Search save time : 18 ms
+Search save time : 5 ms
+Search save time : 17 ms
+Search save time : 17 ms
+Search save time : 16 ms
+Search save time : 24 ms
+Search save time : 17 ms
+Search save time : 18 ms
+Search save time : 19 ms
+Search save time : 19 ms
+Search save time : 5 ms
+Search save matrix time : 17 ms
+Search save matrix time : 17 ms
+Search save matrix time : 15 ms
+Search save time : 5 ms
+Search save time : 19 ms
+Search save time : 5 ms
+Search save time : 20 ms
+Search save time : 21 ms
+Search save time : 19 ms
+Search save time : 46 ms
+Search save time : 20 ms
+Search save time : 35 ms
+Search save time : 23 ms
+Search save time : 20 ms
+Search save time : 21 ms
+Search save time : 26 ms
+Search save time : 62 ms
+Search save time : 20 ms
+Search save time : 27 ms
+Search save time : 19 ms
+Search save time : 30 ms
+Search save time : 21 ms
+Search save time : 38 ms
+Search save time : 27 ms
+Search save time : 24 ms
+Search save time : 64 ms
+Search save time : 22 ms
+Search save time : 9 ms
+Search save time : 21 ms
+Search save time : 22 ms
+Search save time : 22 ms
+Search save time : 22 ms
+Search save time : 22 ms
+Search save time : 22 ms
+Search save time : 22 ms
+Search save time : 22 ms
+Search save time : 22 ms
+Search save time : 25 ms
+Search save time : 22 ms
+Search save time : 25 ms
+Search save time : 28 ms
+Search save time : 25 ms
+Search save time : 23 ms
+Search save time : 23 ms
+Search save time : 56 ms
+Search save time : 25 ms
+Search save time : 32 ms
+Search save time : 23 ms
+Search save matrix time : 24 ms
+Search save matrix time : 44 ms
+Search save matrix time : 27 ms
+Search save matrix time : 28 ms
+Search save time : 11 ms
+Search save matrix time : 37 ms
+Search save matrix time : 81 ms
+Search save matrix time : 56 ms
+Search save matrix time : 24 ms
+Search save matrix time : 24 ms
+Search save matrix time : 64 ms
+Search save matrix time : 74 ms
+Search save matrix time : 36 ms
+Search save matrix time : 30 ms
+Search save matrix time : 72 ms
+Search save time : 15 ms
+Search save time : 13 ms
+Search save time : 47 ms
+Search save time : 71 ms
+Search save time : 28 ms
+Search save time : 67 ms
+Search save time : 64 ms
+Search save time : 27 ms
+Search save time : 26 ms
+Search save time : 27 ms
+Search save time : 18 ms
+Search save time : 44 ms
+Search save time : 29 ms
+Search save time : 27 ms
+Search save time : 35 ms
+Search save time : 31 ms
+Search save time : 32 ms
+Search save time : 26 ms
+Search save time : 27 ms
+Search save matrix time : 45 ms
+Search save matrix time : 35 ms
+Search save matrix time : 29 ms
+Search save matrix time : 29 ms
+Search save matrix time : 30 ms
+Search save matrix time : 28 ms
+Search save matrix time : 48 ms
+Search save matrix time : 47 ms
+Search save time : 41 ms
+Search save time : 37 ms
+Search save time : 66 ms
+Search save time : 37 ms
+Search save time : 69 ms
+Search save time : 77 ms
+Search save time : 77 ms
+Search save time : 39 ms
+Search save time : 61 ms
+Search save time : 31 ms
+Search save time : 30 ms
+Search save time : 37 ms
+Search save time : 29 ms
+Search save time : 44 ms
+Search save time : 34 ms
+Search save time : 25 ms
+Search save time : 40 ms
+Search save time : 90 ms
+Search save time : 53 ms
+Search save time : 37 ms
+Search save time : 80 ms
+Search save time : 31 ms
+Search save time : 35 ms
+Search save time : 26 ms
+Search save time : 31 ms
+Search save time : 31 ms
+Search save time : 33 ms
+Search save time : 32 ms
+Search save time : 34 ms
+Search save time : 31 ms
+Search save time : 31 ms
+Search save time : 30 ms
+Search save time : 31 ms
+Search save time : 31 ms
+Search save time : 35 ms
+Search save time : 33 ms
+Search save time : 32 ms
+Search save time : 35 ms
+Search save time : 31 ms
+Search save time : 48 ms
+Search save time : 35 ms
+Search save time : 31 ms
+Search save time : 41 ms
+Search save time : 38 ms
+Search save matrix time : 33 ms
+Search save matrix time : 33 ms
+Search save matrix time : 36 ms
+Search save matrix time : 54 ms
+Search save matrix time : 35 ms
+Search save matrix time : 35 ms
+Search save matrix time : 37 ms
+Search save matrix time : 36 ms
+Search save matrix time : 46 ms
+Search save matrix time : 42 ms
+Search save matrix time : 34 ms
+Search save matrix time : 43 ms
+Search save matrix time : 40 ms
+Search save time : 23 ms
+Search save time : 21 ms
+Search save time : 21 ms
+Search save matrix time : 35 ms
+Search save matrix time : 42 ms
+Search save matrix time : 32 ms
+Search save matrix time : 33 ms
+Search save matrix time : 32 ms
+Search save matrix time : 31 ms
+Search save matrix time : 33 ms
+Search save matrix time : 38 ms
+Search save time : 23 ms
+Search save time : 36 ms
+Search save time : 34 ms
+Search save time : 34 ms
+Search save time : 34 ms
+Search save time : 35 ms
+Search save time : 37 ms
+Search save time : 47 ms
+Search save time : 37 ms
+Search save time : 22 ms
+Search save time : 54 ms
+Search save time : 83 ms
+Search save time : 39 ms
+Search save time : 132 ms
+Search save time : 35 ms
+Search save time : 35 ms
+Search save time : 57 ms
+Search save time : 59 ms
+Search save time : 113 ms
+Search save matrix time : 34 ms
+Search save matrix time : 47 ms
+Search save matrix time : 65 ms
+Search save matrix time : 37 ms
+Search save matrix time : 37 ms
+Search save time : 28 ms
+Search save time : 25 ms
+Search save time : 65 ms
+Search save time : 65 ms
+Search save time : 46 ms
+Search save time : 40 ms
+Search save time : 66 ms
+Search save time : 95 ms
+Search save time : 56 ms
+Search save time : 39 ms
+Search save time : 25 ms
+Search save time : 55 ms
+Search save time : 38 ms
+Search save time : 69 ms
+Search save time : 37 ms
+Search save time : 37 ms
+Search save time : 38 ms
+Search save time : 37 ms
+Search save time : 42 ms
+Search save time : 46 ms
+Search save time : 39 ms
+Search save time : 38 ms
+Search save matrix time : 35 ms
+Search save matrix time : 39 ms
+Search save matrix time : 38 ms
+Search save matrix time : 48 ms
+Search save matrix time : 38 ms
+Search save matrix time : 41 ms
+Search save matrix time : 41 ms
+Search save matrix time : 36 ms
+Search save matrix time : 56 ms
+Search save matrix time : 42 ms
+Search save matrix time : 46 ms
+Search save time : 27 ms
+Search save matrix time : 41 ms
+Search save matrix time : 58 ms
+Search save matrix time : 41 ms
+Search save matrix time : 41 ms
+Search save matrix time : 38 ms
+Search save matrix time : 40 ms
+Search save matrix time : 40 ms
+Search save matrix time : 41 ms
+Search save time : 50 ms
+Search save time : 26 ms
+Search save time : 54 ms
+Search save time : 50 ms
+Search save time : 53 ms
+Search save time : 76 ms
+Search save time : 137 ms
+Search save time : 47 ms
+Search save time : 42 ms
+Search save time : 74 ms
+Search save time : 39 ms
+Search save time : 38 ms
+Search save time : 40 ms
+Search save time : 47 ms
+Search save time : 42 ms
+Search save time : 40 ms
+Search save time : 40 ms
+Search save time : 41 ms
+Search save time : 41 ms
+Search save time : 40 ms
+Search save time : 50 ms
+Search save time : 43 ms
+Search save time : 44 ms
+Search save time : 33 ms
+Search save time : 41 ms
+Search save time : 47 ms
+Search save time : 56 ms
+Search save time : 47 ms
+Search save time : 42 ms
+Search save time : 52 ms
+Search save time : 41 ms
+Search save time : 43 ms
+Search save time : 50 ms
+Search save time : 42 ms
+Search save time : 44 ms
+Search save time : 62 ms
+Search save time : 49 ms
+Search save time : 45 ms
+Search save time : 56 ms
+Search save time : 47 ms
+Search save time : 49 ms
+Search save time : 44 ms
+Search save time : 43 ms
+Search save time : 43 ms
+Search save matrix time : 53 ms
+Search save matrix time : 44 ms
+Search save matrix time : 54 ms
+Search save matrix time : 62 ms
+Search save matrix time : 44 ms
+Search save matrix time : 43 ms
+Search save matrix time : 43 ms
+Search save matrix time : 48 ms
+Search save matrix time : 49 ms
+Search save matrix time : 47 ms
+Search save time : 32 ms
+Search save time : 38 ms
+Search save time : 45 ms
+Search save time : 42 ms
+Search save time : 41 ms
+Search save time : 41 ms
+Search save time : 101 ms
+Search save time : 64 ms
+Search save time : 64 ms
+Search save time : 42 ms
+Search save time : 38 ms
+Search save time : 42 ms
+Search save time : 42 ms
+Search save time : 50 ms
+Search save time : 50 ms
+Search save time : 56 ms
+Search save time : 53 ms
+Search save time : 45 ms
+Search save time : 61 ms
+Search save matrix time : 43 ms
+Search save matrix time : 63 ms
+Search save matrix time : 46 ms
+Search save matrix time : 43 ms
+Search save matrix time : 43 ms
+Search save matrix time : 48 ms
+Search save matrix time : 54 ms
+Search save matrix time : 51 ms
+Search save matrix time : 56 ms
+Search save matrix time : 55 ms
+Search save matrix time : 47 ms
+Search save matrix time : 46 ms
+Search save time : 30 ms
+Search save time : 33 ms
+Search save time : 64 ms
+Search save time : 30 ms
+Search save time : 44 ms
+Search save time : 53 ms
+Search save time : 67 ms
+Search save time : 48 ms
+Search save time : 45 ms
+Search save time : 44 ms
+Search save time : 49 ms
+Search save time : 53 ms
+Search save time : 71 ms
+Search save time : 49 ms
+Search save time : 47 ms
+Search save time : 57 ms
+Search save time : 82 ms
+Search save time : 70 ms
+Search save time : 66 ms
+Search save time : 62 ms
+Search save time : 56 ms
+Search save time : 86 ms
+Search save time : 54 ms
+Search save time : 64 ms
+Search save matrix time : 50 ms
+Search save matrix time : 118 ms
+Search save matrix time : 65 ms
+Search save matrix time : 115 ms
+Search save matrix time : 92 ms
+Search save matrix time : 86 ms
+Search save matrix time : 83 ms
+Search save matrix time : 87 ms
+Search save time : 46 ms
+Search save time : 47 ms
+Search save time : 55 ms
+Search save time : 47 ms
+Search save time : 51 ms
+Search save time : 103 ms
+Search save time : 44 ms
+Search save time : 53 ms
+Search save time : 46 ms
+Search save time : 34 ms
+Search save time : 36 ms
+Search save time : 186 ms
+Search save time : 139 ms
+Search save time : 105 ms
+Search save time : 91 ms
+Search save time : 60 ms
+Search save time : 81 ms
+Search save time : 60 ms
+Search save time : 150 ms
+Search save matrix time : 62 ms
+Search save matrix time : 57 ms
+Search save matrix time : 51 ms
+Search save matrix time : 55 ms
+Search save matrix time : 69 ms
+Search save time : 35 ms
+Search save time : 38 ms
+Search save time : 52 ms
+Search save time : 49 ms
+Search save time : 63 ms
+Search save time : 55 ms
+Search save time : 51 ms
+Search save time : 143 ms
+Search save time : 136 ms
+Search save time : 67 ms
+Search save time : 60 ms
+Search save time : 47 ms
+Search save time : 54 ms
+Search save time : 49 ms
+Search save matrix time : 46 ms
+Search save matrix time : 50 ms
+Search save matrix time : 64 ms
+Search save matrix time : 52 ms
+Search save time : 35 ms
+Search save time : 176 ms
+Search save time : 47 ms
+Search save time : 80 ms
+Search save time : 104 ms
+Search save time : 77 ms
+Search save time : 47 ms
+Search save time : 57 ms
+Search save time : 51 ms
+Search save matrix time : 57 ms
+Search save matrix time : 51 ms
+Search save matrix time : 51 ms
+Search save matrix time : 55 ms
+Search save matrix time : 53 ms
+Search save matrix time : 67 ms
+Search save time : 41 ms
+Search save time : 49 ms
+Search save time : 74 ms
+Search save time : 112 ms
+Search save time : 60 ms
+Search save time : 55 ms
+Search save time : 50 ms
+Search save time : 49 ms
+Search save time : 49 ms
+Search save time : 48 ms
+Search save time : 57 ms
+Search save time : 48 ms
+Search save time : 87 ms
+Search save time : 48 ms
+Search save time : 64 ms
+Search save time : 185 ms
+Search save time : 152 ms
+Search save time : 54 ms
+Search save time : 80 ms
+Search save time : 58 ms
+Search save time : 49 ms
+Search save time : 52 ms
+Search save time : 186 ms
+Search save time : 51 ms
+Search save time : 49 ms
+Search save time : 51 ms
+Search save time : 48 ms
+Search save matrix time : 65 ms
+Search save matrix time : 78 ms
+Search save matrix time : 101 ms
+Search save matrix time : 67 ms
+Search save matrix time : 54 ms
+Search save matrix time : 60 ms
+Search save matrix time : 52 ms
+Search save matrix time : 62 ms
+Search save matrix time : 63 ms
+Search save matrix time : 54 ms
+Search save time : 51 ms
+Search save time : 38 ms
+Search save time : 170 ms
+Search save time : 48 ms
+Search save time : 57 ms
+Search save time : 48 ms
+Search save time : 67 ms
+Search save time : 51 ms
+Search save time : 53 ms
+Search save time : 76 ms
+Search save time : 104 ms
+Search save time : 114 ms
+Search save time : 210 ms
+Search save time : 84 ms
+Search save time : 73 ms
+Search save time : 50 ms
+Search save time : 67 ms
+Search save time : 56 ms
+Search save time : 65 ms
+Search save time : 53 ms
+Search save time : 56 ms
+Search save time : 69 ms
+Search save time : 51 ms
+Search save time : 97 ms
+Search save time : 70 ms
+Search save time : 64 ms
+Search save time : 59 ms
+Search save time : 81 ms
+Search save time : 60 ms
+Search save time : 179 ms
+Search save time : 177 ms
+Search save time : 198 ms
+Search save time : 143 ms
+Search time : 213844 ms

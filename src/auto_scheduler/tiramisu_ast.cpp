@@ -342,10 +342,14 @@ ast_node::ast_node(tiramisu::computation *comp, syntax_tree *ast)
 
 void syntax_tree::transform_ast()
 {
+    //std::chrono::steady_clock::time_point sampling_beg = std::chrono::steady_clock::now();
     if (new_optims.size() == 0)
         return ;
         
     transform_ast(new_optims.back());
+    //std::chrono::steady_clock::time_point sampling_end = std::chrono::steady_clock::now();
+
+    //std::cout  << std::chrono::duration_cast<std::chrono::milliseconds>(sampling_end - sampling_beg).count() << std::endl;
 }
 
 void syntax_tree::transform_ast(optimization_info const& opt)
@@ -2076,7 +2080,7 @@ void syntax_tree::recover_isl_states() const
 
 bool syntax_tree::ast_is_legal() const
 {
-    
+    //std::chrono::steady_clock::time_point sampling_beg = std::chrono::steady_clock::now();
     stage_isl_states();
     
     this->fct->prepare_schedules_for_legality_checks(true);
@@ -2086,6 +2090,9 @@ bool syntax_tree::ast_is_legal() const
 
     recover_isl_states();
      
+    //std::chrono::steady_clock::time_point sampling_end = std::chrono::steady_clock::now();
+
+    //std::cout  << std::chrono::duration_cast<std::chrono::milliseconds>(sampling_end - sampling_beg).count() << std::endl;
     
     return result;
 

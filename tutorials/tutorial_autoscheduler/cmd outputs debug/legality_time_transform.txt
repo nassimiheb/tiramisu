@@ -1,0 +1,236 @@
+transform time : 10
+44
+transform time : 1
+35
+transform time : 1
+40
+transform time : 1
+45
+transform time : 1
+24
+transform time : 1
+19
+transform time : 7
+181
+transform time : 3
+145
+transform time : 2
+142
+transform time : 7
+125
+transform time : 2
+130
+transform time : 2
+135
+transform time : 2
+38
+transform time : 5
+34
+transform time : 1
+38
+transform time : 1
+133
+transform time : 7
+48
+transform time : 1
+16
+transform time : 10
+134
+transform time : 2
+138
+transform time : 2
+153
+transform time : 2
+131
+transform time : 2
+153
+transform time : 2
+135
+transform time : 2
+139
+transform time : 1
+143
+transform time : 5
+132
+transform time : 6
+172
+transform time : 2
+13
+transform time : 1
+57
+transform time : 1
+34
+transform time : 1
+33
+transform time : 9
+59
+transform time : 1
+29
+transform time : 9
+153
+transform time : 2
+67
+transform time : 2
+86
+transform time : 1
+76
+transform time : 2
+26
+transform time : 1
+86
+transform time : 2
+70
+transform time : 2
+99
+transform time : 6
+26
+transform time : 1
+16
+transform time : 1
+17
+transform time : 1
+68
+transform time : 2
+17
+transform time : 2
+9
+transform time : 1
+69
+transform time : 1
+79
+transform time : 1
+68
+transform time : 2
+68
+transform time : 2
+68
+transform time : 2
+66
+transform time : 6
+81
+transform time : 2
+68
+transform time : 2
+66
+transform time : 1
+67
+transform time : 2
+10
+transform time : 0
+77
+transform time : 28
+206
+transform time : 39
+393
+transform time : 36
+343
+transform time : 17
+212
+transform time : 36
+338
+transform time : 36
+360
+transform time : 18
+748
+transform time : 24
+775
+transform time : 23
+758
+transform time : 18
+780
+transform time : 40
+354
+transform time : 37
+362
+transform time : 52
+345
+transform time : 32
+362
+transform time : 17
+728
+transform time : 20
+727
+transform time : 18
+775
+transform time : 19
+737
+transform time : 0
+147
+transform time : 38
+367
+transform time : 85
+566
+transform time : 88
+606
+transform time : 32
+524
+transform time : 121
+891
+transform time : 129
+932
+transform time : 36
+1573
+transform time : 21
+1043
+transform time : 21
+1444
+transform time : 41
+1625
+transform time : 104
+1088
+transform time : 121
+1018
+transform time : 121
+807
+transform time : 34
+430
+transform time : 18
+791
+transform time : 53
+828
+transform time : 47
+847
+transform time : 45
+1750
+transform time : 0
+296
+transform time : 49
+569
+transform time : 88
+915
+transform time : 76
+775
+transform time : 66
+576
+transform time : 145
+1128
+transform time : 137
+773
+transform time : 17
+952
+transform time : 42
+1161
+transform time : 45
+1385
+transform time : 39
+1128
+transform time : 42
+493
+transform time : 38
+537
+transform time : 65
+572
+transform time : 36
+638
+transform time : 17
+1206
+transform time : 39
+1027
+transform time : 36
+1034
+transform time : 38
+1618
+transform time : 0
+345
+transform time : 51
+342
