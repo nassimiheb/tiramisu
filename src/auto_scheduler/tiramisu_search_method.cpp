@@ -243,7 +243,7 @@ void beam_search::search_save(syntax_tree& ast, float schedule_timeout)
         }
         else {
             std::vector<float> measurements;
-            measurements = exec_eval->get_measurements(*(*iterator), false, schedule_timeout,false);
+            measurements = exec_eval->get_measurements(*(*iterator), false, 0,false);
             // int fd[2];
             
             // // create pipe descriptors
@@ -485,7 +485,7 @@ void beam_search::explore_fusion(syntax_tree& ast, float schedule_timeout)
             
 
             std::vector<float> measurements;
-            measurements = exec_eval->get_measurements(*(*iterator), false, schedule_timeout,true);
+            measurements = exec_eval->get_measurements(*(*iterator), false, 0,true);
             (*iterator)->evaluation = min_eval(measurements);
             
             cumulative_exec_time += sum_eval(measurements);
@@ -813,7 +813,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, float schedule_timeout)
                 } 
 
                 std::vector<float> measurements;
-                measurements =  exec_eval->get_measurements(*child, false, schedule_timeout,false);
+                measurements =  exec_eval->get_measurements(*child, false, 0,false);
 
 
                 // if the matrix is legal and not repeated we add its hash to the list of seen hashes and we start the evaluation 
