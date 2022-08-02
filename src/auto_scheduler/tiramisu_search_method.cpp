@@ -488,7 +488,7 @@ void beam_search::explore_fusion(syntax_tree& ast, float schedule_timeout)
             measurements = exec_eval->get_measurements(*(*iterator), false, schedule_timeout,true);
             (*iterator)->evaluation = min_eval(measurements);
             
-            cumulative_exec_time += (*iterator)->evaluation;
+            cumulative_exec_time += sum_eval(measurements);
             
             // parent_trace->add_child_path((*iterator), schedules_annotations->size());
 
@@ -819,6 +819,11 @@ void beam_search::search_save_matrix(syntax_tree& ast, float schedule_timeout)
                 // if the matrix is legal and not repeated we add its hash to the list of seen hashes and we start the evaluation 
                 hashes.push_back(hash);
                 
+                child->evaluation = min_eval(measurements);
+                
+                cumulative_exec_time += sum_eval(measurements);
+                
+                if(hash != parent_hash) child->nb_explored_matrices = child->nb_explored_matrices +1; 
                 
                 // int fd[2];
                 
