@@ -14,6 +14,7 @@ struct UnrollingException : public std::exception {
             return "unrolling error : unrolled loop level is a user node due to dimension error";
         }
 };
+
 namespace tiramisu::auto_scheduler
 {
 
@@ -232,9 +233,10 @@ void beam_search::search_save(syntax_tree& ast, float schedule_timeout)
     // Evaluate children and sort them from smallest to highest evaluation
     // evaluate while removing illegal versions
     auto iterator = children.begin();
+    
     while (iterator != children.end())
     {
-        
+        bool unrolling_exception_thrown = false;
         (*iterator)->transform_ast();
         if ((*iterator)->ast_is_legal() == false) {
             
@@ -243,7 +245,25 @@ void beam_search::search_save(syntax_tree& ast, float schedule_timeout)
         }
         else {
             std::vector<float> measurements;
-            measurements = exec_eval->get_measurements(*(*iterator), false, 0,false);
+            
+            try{
+                measurements = exec_eval->get_measurements(*(*iterator), false, 0,false);
+            }
+            catch(UnrollingException e){ 
+                // Remove all the optimizations
+                exec_eval->fct->reset_schedules();
+                measurements.clear();
+                measurements.push_back(std::numeric_limits<float>::infinity());
+                unrolling_exception_thrown = true;
+                cont = 1;
+                
+            }
+            (*iterator)->evaluation = min_eval(measurements);
+            if(!unrolling_exception_thrown){
+                
+                cumulative_exec_time += sum_eval(measurements);
+            }
+            
             // int fd[2];
             
             // // create pipe descriptors
@@ -371,10 +391,7 @@ void beam_search::search_save(syntax_tree& ast, float schedule_timeout)
             
             
 
-                (*iterator)->evaluation = min_eval(measurements);
                 
-
-                cumulative_exec_time += sum_eval(measurements);
                 
                 // parent_trace->add_child_path((*iterator), schedules_annotations->size());
 
