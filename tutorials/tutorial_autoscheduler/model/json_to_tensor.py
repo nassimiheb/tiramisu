@@ -283,7 +283,7 @@ def get_schedule_representation(program_json, schedule_json, comps_repr_template
 
         # saving it for later to be used in loop repr
         padded_tranf_mat_per_comp[comp_name] = padded_matrix.reshape(max_depth+1,max_depth+1)
-        logging.warning(str(padded_matrix.shape))
+        
 #     # transforming the schedule_json in order to have loops as key instead of computations, this dict helps building the loop vectors
     loop_schedules_dict = dict()
     for loop_name in program_json['iterators']:
