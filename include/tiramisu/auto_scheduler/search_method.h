@@ -49,7 +49,11 @@ protected:
      * At the end of search, contains the evaluation of the best AST found.
      */
     float best_evaluation = FLT_MAX;
-    
+    /**
+     * The evaluation of the best schedule so far.
+     * At the end of search, contains the evaluation of the best AST found.
+     */
+    float cumalative_exec_time = 0;
     /**
      * The best AST so far.
      * At the end of search, contains the best AST found.
@@ -70,6 +74,7 @@ public:
 
     int get_nb_explored_schedules() const { return nb_explored_schedules; }
     float get_best_evaluation() const { return best_evaluation; }
+    float get_cumalative_exec_time() const { return cumalative_exec_time; }
     syntax_tree* get_best_ast() const { return best_ast; }
     
     void set_eval_func(evaluation_function *eval_func) { this->eval_func = eval_func; }

@@ -234,18 +234,7 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
     while (iterator != children.end())
     {
         bool unrolling_exception_thrown = false;
-        if ((*iterator)->schedule_is_prunable()){
-            if (std::atoi(read_env_var("AS_VERBOSE"))==1){
-                // print deleted Ast
-                (*iterator)->print_previous_optims();
-                std::cout << "\n-----------" << std::endl;
-                (*iterator)->print_new_optims();
-                (*iterator)->print_ast();
-                std::cout << "\n<Schedule pruned>\n";
-            }
-            delete (*iterator);
-            iterator = children.erase(iterator);
-        }else{
+        
             (*iterator)->transform_ast();
             if ((*iterator)->ast_is_legal() == false) {
                 // print deleted Ast
@@ -289,11 +278,7 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
                     // put get_measurements in a try block in the case of erroneous unrolling
                     // this should be added to ast_is_legal but for now it can only be detected at apply_optimization level
                     try{
-                        if ((*iterator)->can_set_default_evaluation()){ // if yes the child's evaluation is set to a default value
-                            measurements = {(*iterator)->evaluation};
-                        }else{
-                            measurements = exec_eval->get_measurements(**iterator, false, schedule_timeout,true);
-                        }
+                        measurements = exec_eval->get_measurements(**iterator, false, 0,true);
                     }
                     catch(UnrollingException e){ 
                         // Remove all the optimizations
@@ -396,7 +381,7 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
                 
 
                     (*iterator)->evaluation = min_eval(measurements);
-
+                    if(std::isfinite((*iterator)->evaluation)) cumalative_exec_time += (*iterator)->evaluation;
                     parent_trace->add_child_path((*iterator), schedules_annotations->size());
 
 
@@ -432,7 +417,6 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
             }
 
             nb_explored_schedules++;
-        }
     }
 
     // Add the current AST to the list of children
@@ -523,9 +507,9 @@ void beam_search::explore_fusion(syntax_tree& ast, std::vector<std::string> *sch
             std::cout << "\n<legal>\n";
 
             std::vector<float> measurements;
-            measurements = exec_eval->get_measurements(**iterator, false, schedule_timeout);
+            measurements = exec_eval->get_measurements(**iterator, false, 0);
             (*iterator)->evaluation = min_eval(measurements);
-
+            if(std::isfinite((*iterator)->evaluation)) cumalative_exec_time += (*iterator)->evaluation;
             parent_trace->add_child_path((*iterator), schedules_annotations->size());
 
             std::string schedule_annot = evaluate_by_learning_model::get_schedule_json(*(*iterator));
@@ -911,7 +895,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                     exit(1);
                 } else if (pid == 0) {
                     
-                    measurements = exec_eval->get_measurements(*child, false, schedule_timeout,true);
+                    measurements = exec_eval->get_measurements(*child, false, 0,true);
                     
                     
                     int size =measurements.size();
@@ -1013,7 +997,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                 }
                     
                 child->evaluation = min_eval(measurements);
-                
+                if(std::isfinite(child->evaluation)) cumalative_exec_time += child->evaluation;
                 if(hash != parent_hash) child->nb_explored_matrices = child->nb_explored_matrices +1; 
                 
                 

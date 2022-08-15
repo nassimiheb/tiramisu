@@ -101,6 +101,7 @@ void auto_scheduler::sample_search_space(std::string filename, bool timeout_sche
 //    if (std::atoi(read_env_var("AS_VERBOSE"))==1){
     std::cout << "Search time : " << std::chrono::duration_cast<std::chrono::milliseconds>(sampling_end - sampling_start).count() << " ms" << std::endl;
     std::cout << "Best execution time : " << searcher->get_best_evaluation() << std::endl;
+    std::cout << "Cumalative exec time : " << searcher->get_cumalative_exec_time() << std::endl;
 //    }
 }
 
