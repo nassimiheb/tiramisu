@@ -6,13 +6,13 @@ from json_to_tensor import *
 
 import os
 environ['MKL_THREADING_LAYER'] = 'GNU'
-import logging
-logging.basicConfig(filename="log_old_model.txt")
+# import logging
+# logging.basicConfig(filename="log_old_model.txt")
 import warnings
 warnings.filterwarnings('ignore', category=DeprecationWarning) 
 warnings.filterwarnings('ignore', category=UserWarning)
 
-model_path = '/home/nassimiheb/multiComp/tiramisu/tutorials/tutorial_autoscheduler/model/best_model_bidirectional_new_data_fixed_inversed_matrices_98c0.pt'
+model_path = '/data/scratch/mmerouani/tiramisu2/tiramisu/tutorials/tutorial_autoscheduler/model/best_model_bidirectional_new_data_fixed_inversed_matrices_98c0.pt'
 MAX_DEPTH = 5
 MAX_MATRICES = 4
 with torch.no_grad():
@@ -49,8 +49,8 @@ with torch.no_grad():
                 factors = torch.concat((factors, zeros_to_add), dim=1)
                 tree_tensor = (prog_tree, computations_tensor, loops_tensor, factors )
                 
-                logging.warning(computations_tensor.shape)
-                logging.warning(factors.shape)
+                # logging.warning(computations_tensor.shape)
+                # logging.warning(factors.shape)
                 speedup = model.forward(tree_tensor)
                 print(float(speedup.item()))
 
