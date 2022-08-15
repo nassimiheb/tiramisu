@@ -14,7 +14,8 @@ warnings.filterwarnings('ignore', category=UserWarning)
 
 model_path = '/data/scratch/mmerouani/tiramisu2/tiramisu/tutorials/tutorial_autoscheduler/model/best_model_bidirectional_new_data_fixed_inversed_matrices_98c0.pt'
 MAX_DEPTH = 5
-MAX_MATRICES = 4
+MAX_MATRICES = 8
+
 with torch.no_grad():
         device = 'cpu'
         torch.device('cpu')
