@@ -774,18 +774,14 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_schedules(synt
             // create a vector of involved tiramisu vars
             std::vector<tiramisu::var> loop_levels;
             // loop levels used for shifting solver
-            //std::cout<<"SHIFTING ITRS";
             for (auto const &str : real_iterators)
             {
                 loop_levels.push_back(tiramisu::var(str));
-                //std::cout<<(str);
             }
 
             std::vector<computation *> seen_computations;
                     // computations list used for shifting solver
             ast.get_previous_computations(seen_computations, node, std::get<1>(node_computation));
-
-
 
             if ((previous_node != current_node) && (previous_node_adjusted == previous_node)
                     && (previous_node != nullptr) && (current_node != nullptr))
@@ -794,8 +790,7 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_schedules(synt
                 if (previous_node->is_candidate_for_fusion(current_node))
                 { //similar itr domains
 
-
-                            // create AST copy to falsely fuze and check legality
+                    // create AST copy to falsely fuze and check legality
                     syntax_tree *new_ast = new syntax_tree();
                     ast_node *new_node = ast.copy_and_return_node(*new_ast, previous_node);
 
@@ -872,23 +867,15 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_schedules(synt
 
                         states.push_back(new_ast);
 
-
                     }
                     else
                     {
                         new_ast->recover_isl_states();
                         delete new_ast;
                     }
-
                 }
             }
-
-
-
-
-
         }
-
         break;
 
     case optimization_type::TILING:
@@ -1031,7 +1018,7 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_schedules(synt
             return states;
         }
         
-        //search for possible unrolling from the bottom loop until one is found
+        // Search for possible unrolling from the bottom loop until one is found
         // Apply all possible unrolling factors to all innermost iterators
         //test unrolling for all inner nodes until we find a valid
         bool result = true;
@@ -1043,21 +1030,17 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_schedules(synt
                 std::vector<tiramisu::computation *> involved_comp_first; 
                 involved_comp_first.push_back(comp);
                 std::string loop_name = loop_names[inner_most_node->depth];
-                //std::cout<<"is_optimized_by_tag"<<std::endl;
                 result = result && (!inner_most_node->is_optimized_by_tag()) &&
                                 ast.fct->loop_unrolling_is_legal(var(loop_name), involved_comp_first);
             }
-            //std::cout<<"after is_optimized_by_tag"<<std::endl;    
+
             if (result) // unrollable: test all possible values
             {
-                //std::cout<<"unrollable: test all possible values"<<std::endl;
-
                 ast.recover_isl_states();
 
                 for (int unrolling_fact: unrolling_factors_list) {
 
                     if (can_split_iterator(inner_most_node->get_extent(), unrolling_fact)) {
-                        //std::cout<<"can_split_iterator"<<std::endl;
                         // Copy the AST and add unrolling to the list of optimizations
                         syntax_tree *new_ast = new syntax_tree();
                         ast_node *new_node = ast.copy_and_return_node(*new_ast, inner_most_node);

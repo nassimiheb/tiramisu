@@ -136,7 +136,6 @@ std::vector<float> evaluate_by_execution::get_measurements(syntax_tree& ast, boo
         measurements.push_back(cumulative_timeout*1000); // converted to ms
         std::cout<< "Execution timed out"<< std::endl;
     }
-
     
     // Remove all the optimizations
     fct->reset_schedules();
@@ -410,33 +409,32 @@ std::string evaluate_by_learning_model::get_schedule_json(syntax_tree & ast)
                 break;
 
             case optimization_type::MATRIX:
-            if(first_time){
-                        depth = optim_info.matrix.size();
-                        for(int l = 0; l<depth; l++){
-                            matrix.push_back(std::vector<int>(depth));
-                            for(int c = 0; c<depth; c++){
-                                            if (l!=c ){
-                                                matrix.at(l).at(c) = 0;
-                                            }else{
-                                                matrix.at(l).at(c) = 1;
-                                            }
+                if(first_time){
+                    depth = optim_info.matrix.size();
+                    for(int l = 0; l<depth; l++){
+                        matrix.push_back(std::vector<int>(depth));
+                        for(int c = 0; c<depth; c++){
+                            if (l!=c ){
+                                matrix.at(l).at(c) = 0;
+                            }else{
+                                matrix.at(l).at(c) = 1;
                             }
                         }
-                        first_time =false;
+                    }
+                    first_time =false;
                 } 
                 transformed_by_matrix = true;
-                
+                    
                 if(optim_info.matrix.size()<matrix.size()){
-                    //std::cout<<"filling the matrix:  "<<optim.matrix.size()<<std::endl;
                     std::vector <  std::vector<int> >  matrix_padded(matrix.size());
                     for(int l = 0; l<matrix_padded.size(); l++){
                         matrix_padded.at(l)= std::vector<int>(matrix.size());
                         for(int c = 0; c<matrix_padded.size(); c++){
-                                        if (l!=c ){
-                                            matrix_padded.at(l).at(c) = 0;
-                                        }else{
-                                            matrix_padded.at(l).at(c) = 1;
-                                        }
+                            if (l!=c ){
+                                matrix_padded.at(l).at(c) = 0;
+                            }else{
+                                matrix_padded.at(l).at(c) = 1;
+                            }
                         }
                     }
 
@@ -445,15 +443,12 @@ std::string evaluate_by_learning_model::get_schedule_json(syntax_tree & ast)
                             matrix_padded.at(i).at(j)= optim_info.matrix.at(i).at(j);
                         }
                     }
-                    //std::cout<<"multiplying "<< matrix_padded.size()<< "and "<< matrix.size(); 
                     matrix = mat_mul( matrix_padded, matrix);
                     matrices.push_back(matrix_padded);
                 }else{
-                    //std::cout<<"multiplying "<< optim_info.matrix.size()<< "and "<< matrix.size();
                     matrices.push_back(optim_info.matrix); 
                     matrix = mat_mul( optim_info.matrix, matrix);
                 }
-                
                 break;
                 
             case optimization_type::UNROLLING:

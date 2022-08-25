@@ -40,13 +40,7 @@ void apply_optimizations(syntax_tree const& ast)
 
     // Fusion is a particular case, and we use apply_fusions() to apply it.
     // apply_fusions() uses the structure of the AST to correctly order the computations.
-    //std::cout<<"schedule before apply fusion: "<<isl_map_to_str(ast.computations_list.at(0)->get_schedule())<<std::endl;
-    //std::cout<<"schedule before apply fusion: "<<isl_map_to_str(ast.computations_list.at(1)->get_schedule())<<std::endl;
     apply_fusions(ast);
-    //std::cout<<"Schedule of first comp after applying fusion in apply: "<<isl_map_to_str(ast.computations_list.at(0)->get_schedule())<<std::endl;
-    //std::cout<<"Schedule of second comp after applying fusion in apply: "<<isl_map_to_str(ast.computations_list.at(1)->get_schedule())<<std::endl;
-    //std::cout<<"schedule after apply fusion: "<<isl_map_to_str(ast.computations_list.at(0)->get_schedule())<<std::endl;
-    //std::cout<<"schedule after apply fusion: "<<isl_map_to_str(ast.computations_list.at(1)->get_schedule())<<std::endl;
     // Parallelization needs to be applied after the other transformations in order to have the accurate loop depth of
     // the tagged ast_nodes
     apply_parallelization(ast);
@@ -110,7 +104,6 @@ void apply_optimizations(optimization_info const& optim_info)
             }
             
             break;
-
 
         default:
             break;
@@ -211,7 +204,6 @@ void print_optim(optimization_info optim)
             for (auto comp:optim.comps)
                 std::cout<< comp->get_name() <<", ";
             std::cout<<"}"<< std::endl;
-//            std::cout << std::endl;
             break;
 
         case optimization_type::UNROLLING:
