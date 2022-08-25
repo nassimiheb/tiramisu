@@ -1490,9 +1490,7 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
     int nb_try = 0;
     
     shared_nodes = node->collect_shared_nodes_from_head();
-    //std::cout<<"depth of the head "<<node->depth<<std::endl;
     int depth = node->depth + shared_nodes.size(); 
-    //std::cout<<"shared nodes size: "<<shared_nodes.size()<<std::endl;
     if (shared_nodes.size() > 0)
     {
         node->get_all_computations(involved_computations);
@@ -1563,10 +1561,7 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
     {
         //ast.recover_isl_states();
     }
-    
-    
-    
-    //std::cout<<"applying "<<shared_nodes.size()<< " reversals"<<std::endl;
+
     for(int i=0;i<shared_nodes.size();i++){
         // Copy the AST and add interchange to the list of optimizations
         syntax_tree *new_ast = new syntax_tree();
@@ -1580,14 +1575,13 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
         for(int l = 0; l<matrix.size(); l++){
             matrix.at(l)= std::vector<int>(depth);
             for(int c = 0; c<matrix.size(); c++){
-                            if (l!=c ){
-                                matrix.at(l).at(c) = 0;
-                            }else{
-                                matrix.at(l).at(c) = 1;
-                            }
+                if (l!=c ){
+                    matrix.at(l).at(c) = 0;
+                }else{
+                    matrix.at(l).at(c) = 1;
+                }
             }
         }
-        //std::cout<<"applying reversal at "<<shared_nodes[i]->depth<< " reversals"<<std::endl;
         matrix.at(shared_nodes[i]->depth).at(shared_nodes[i]->depth) = -1; 
         optim_info.comps = involved_computations_reversal;
         optim_info.matrix = matrix;
@@ -1633,7 +1627,6 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                 ast.recover_isl_states();
                 for (auto &param : std::get<1>(result_skewing))
                 {
-                    ///std::cout<<"skewing first cond"<<std::endl;
                     // Copy the AST and add unrolling to the list of optimizations
                     syntax_tree *new_ast = new syntax_tree();
                     ast_node *new_node = ast.copy_and_return_node(*new_ast, commun_node);
@@ -1642,31 +1635,26 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                     optim_info.type = optimization_type::MATRIX;
                     optim_info.node = new_node;
                     
-
                     optim_info.nb_l = 2;
                     optim_info.l0 = new_node->depth;
                     optim_info.l1 = new_node->depth + 1;
                     optim_info.l0_fact = std::get<0>(param);
                     optim_info.l1_fact = std::get<1>(param);
-                    
-
-                    
+                                        
                     std::vector <  std::vector<int> >  matrix(depth);
                     for(int l = 0; l<matrix.size(); l++){
                         matrix.at(l)= std::vector<int>(depth);
                         for(int c = 0; c<matrix.size(); c++){
-                                        if (l!=c ){
-                                            matrix.at(l).at(c) = 0;
-                                        }else{
-                                            matrix.at(l).at(c) = 1;
-                                        }
+                            if (l!=c ){
+                                matrix.at(l).at(c) = 0;
+                            }else{
+                                matrix.at(l).at(c) = 1;
+                            }
                         }
                     }
                     matrix.at(optim_info.l0).at(optim_info.l1) = optim_info.l1_fact;
                     matrix.at(optim_info.l0).at(optim_info.l0) = optim_info.l0_fact;
-                    
-                    
-                    
+                         
                     if(optim_info.l0_fact!=1){
                         std::vector<int> solutions=get_skew_params(optim_info.l0_fact, optim_info.l1_fact);
                         
@@ -1687,7 +1675,6 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                 ast.recover_isl_states();
                 for (auto &param : std::get<0>(result_skewing))
                 {
-                    //std::cout<<"skewing second cond"<<std::endl;
                     // Copy the AST and add unrolling to the list of optimizations
                     syntax_tree *new_ast = new syntax_tree();
                     ast_node *new_node = ast.copy_and_return_node(*new_ast, node);
@@ -1706,17 +1693,15 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                     for(int l = 0; l<matrix.size(); l++){
                         matrix.at(l)= std::vector<int>(depth);
                         for(int c = 0; c<matrix.size(); c++){
-                                        if (l!=c ){
-                                            matrix.at(l).at(c) = 0;
-                                        }else{
-                                            matrix.at(l).at(c) = 1;
-                                        }
+                            if (l!=c ){
+                                matrix.at(l).at(c) = 0;
+                            }else{
+                                matrix.at(l).at(c) = 1;
+                            }
                         }
                     }
                     matrix.at(optim_info.l0).at(optim_info.l1) = optim_info.l1_fact;
-                    matrix.at(optim_info.l0).at(optim_info.l0) = optim_info.l0_fact;
-                    
-                    
+                    matrix.at(optim_info.l0).at(optim_info.l0) = optim_info.l0_fact;                  
                     
                     if(optim_info.l0_fact!=1){
                         std::vector<int> solutions=get_skew_params(optim_info.l0_fact, optim_info.l1_fact);
@@ -1737,7 +1722,6 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                 ast.recover_isl_states();
                 for (auto &param : std::get<2>(result_skewing))
                 {
-                    //std::cout<<"skewing thrid cond"<<std::endl;
                     // Copy the AST and add unrolling to the list of optimizations
                     syntax_tree *new_ast = new syntax_tree();
                     ast_node *new_node = ast.copy_and_return_node(*new_ast, node);
@@ -1760,17 +1744,15 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                     for(int l = 0; l<matrix.size(); l++){
                         matrix.at(l)= std::vector<int>(depth);
                         for(int c = 0; c<matrix.size(); c++){
-                                        if (l!=c ){
-                                            matrix.at(l).at(c) = 0;
-                                        }else{
-                                            matrix.at(l).at(c) = 1;
-                                        }
+                            if (l!=c ){
+                                matrix.at(l).at(c) = 0;
+                            }else{
+                                matrix.at(l).at(c) = 1;
+                            }
                         }
                     }
                     matrix.at(optim_info.l0).at(optim_info.l1) = optim_info.l1_fact;
-                    matrix.at(optim_info.l0).at(optim_info.l0) = optim_info.l0_fact;
-                    
-                    
+                    matrix.at(optim_info.l0).at(optim_info.l0) = optim_info.l0_fact;                   
                     
                     if(optim_info.l0_fact!=1){
                         std::vector<int> solutions=get_skew_params(optim_info.l0_fact, optim_info.l1_fact);
@@ -1964,10 +1946,6 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                 }else{i--;}
         }
     }*/
-
-    
-
-
     return states;
 }
 
