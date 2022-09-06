@@ -445,10 +445,6 @@ void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedu
     parent_trace->add_child_path(ast_copy, parent_trace->get_candidate_id()); // keeps the same id since it's just copy
 
     // Sort children from smallest evaluation to largest
-    for (syntax_tree *child : children)
-    {
-        explore_parallelization(*child, schedules_annotations, parent_trace->child_mappings[child], schedule_timeout);
-    }
     std::sort(children.begin(), children.end(), [](syntax_tree *a, syntax_tree *b) {
         return a->evaluation < b->evaluation;
     });
@@ -1019,7 +1015,6 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                 }
                     
                 child->evaluation = min_eval(measurements);
-                
                 if(hash != parent_hash) child->nb_explored_matrices = child->nb_explored_matrices +1; 
                 
                 

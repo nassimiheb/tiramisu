@@ -201,7 +201,6 @@ float evaluate_by_learning_model::evaluate(syntax_tree& ast)
     // Read the evaluation from model_read.
     float speedup = 0.f;
     fscanf(model_read, "%f", &speedup);
-    
     return -speedup;
 }
 
