@@ -512,9 +512,9 @@ void syntax_tree::transform_ast_by_matrix(const optimization_info &opt)
             }
 
             std::reverse(to_change_nodes.begin(),to_change_nodes.end());
-            std::vector <  std::vector<int> >  matrix(to_change_nodes.size());
+            std::vector <  std::vector<int> >  matrix(2*to_change_nodes.size()+1);
             for(int l = 0; l<matrix.size(); l++){
-                matrix.at(l)= std::vector<int>(to_change_nodes.size());
+                matrix.at(l)= std::vector<int>(2*to_change_nodes.size()+1);
                 for(int c = 0; c<matrix.size(); c++){
                     if (l!=c ){
                         matrix.at(l).at(c) = 0;

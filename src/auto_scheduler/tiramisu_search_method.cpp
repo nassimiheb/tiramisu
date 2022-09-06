@@ -685,9 +685,9 @@ void beam_search::explore_parallelization(syntax_tree& ast, std::vector<std::str
 return identity matrix
 */
 std::vector <  std::vector<int> > get_identity(int depth){
-    std::vector <  std::vector<int> >  matrix(depth);
+    std::vector <  std::vector<int> >  matrix(2*depth+1);
         for(int l = 0; l<matrix.size(); l++){
-            matrix.at(l)= std::vector<int>(depth);
+            matrix.at(l)= std::vector<int>(2*depth+1);
             for(int c = 0; c<matrix.size(); c++){
                             if (l!=c ){
                                 matrix.at(l).at(c) = 0;
@@ -704,7 +704,7 @@ std::vector <  std::vector<int> > get_identity(int depth){
 std::vector<std::size_t> hashes;
 void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout)
 {
-        
+       
     std::default_random_engine rand_generator;
 
     
@@ -750,6 +750,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     while ((!ast.is_search_space_empty()))
     {
         // schedule generation based on generator_state attribute in the AST.
+         
         auto new_children = scheds_gen->generate_matrices(ast);
         
         for(auto& child:new_children)
@@ -803,6 +804,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         child = *iterator;
         
         child->transform_ast();
+        
         if(child->ast_is_prunable()){
             if (std::atoi(read_env_var("AS_VERBOSE"))==1){
                     // print deleted Ast
@@ -885,7 +887,6 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                     perror("fork failed");
                     exit(1);
                 } else if (pid == 0) {
-                    
                     measurements = exec_eval->get_measurements(*child, false, schedule_timeout,true);
                     
                     

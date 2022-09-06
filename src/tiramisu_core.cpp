@@ -3090,8 +3090,16 @@ void computation::matrix_transform(std::vector<std::vector<int>> matrix)
 
     DEBUG_FCT_NAME(3);
     DEBUG_INDENT(4);
-    
+    // print transformtation matrix and original schedule
+    // for(int l = 0; l<matrix.size(); l++){
+    //     for(int c = 0; c<matrix.size(); c++){
+    //         std::cout<<matrix.at(l).at(c)<<" ";
+    //     }
+    //     std::cout<<std::endl;
+    // }
+    // std::cout<<isl_map_to_str(schedule)<<std::endl;
     isl_map *schedule = this->get_schedule();
+    
     DEBUG(3, tiramisu::str_dump("Original schedule: ", isl_map_to_str(schedule)));
     DEBUG(3, tiramisu::str_dump("Matrix_transformation the dimensions " + std::to_string(matrix.size())));
     //std::cout<<"Original schedule matrix transform: "<< isl_map_to_str(schedule)<<std::endl;

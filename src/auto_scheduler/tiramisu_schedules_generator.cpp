@@ -1512,9 +1512,9 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                 
                 optim_info.nb_l = 2;
                 
-                std::vector <  std::vector<int> >  matrix(depth);
+                std::vector <  std::vector<int> >  matrix(2*depth+1);
                 for(int l = 0; l<matrix.size(); l++){
-                    matrix.at(l)= std::vector<int>(depth);
+                    matrix.at(l)= std::vector<int>(2*depth+1);
                     for(int c = 0; c<matrix.size(); c++){
                         if (l!=c ){
                             matrix.at(l).at(c) = 0;
@@ -1526,10 +1526,10 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                     
                 int first_loop = shared_nodes[i]->depth;
                 int second_loop = shared_nodes[j]->depth;
-                matrix.at(first_loop).at(second_loop) = 1;
-                matrix.at(second_loop).at(first_loop) = 1;
-                matrix.at(second_loop).at(second_loop) = 0;
-                matrix.at(first_loop).at(first_loop) = 0;
+                matrix.at(2*first_loop+2).at(2*second_loop+2) = 1;
+                matrix.at(2*second_loop+2).at(2*first_loop+2) = 1;
+                matrix.at(2*second_loop+2).at(2*second_loop+2) = 0;
+                matrix.at(2*first_loop+2).at(2*first_loop+2) = 0;
                 optim_info.comps = involved_computations;
                 optim_info.matrix = matrix;
                 new_ast->new_optims.push_back(optim_info);
@@ -1562,9 +1562,9 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
         optim_info.type = optimization_type::MATRIX;
         optim_info.node = new_node;
         
-        std::vector <  std::vector<int> >  matrix(depth);
+        std::vector <  std::vector<int> >  matrix(2*depth+1);
         for(int l = 0; l<matrix.size(); l++){
-            matrix.at(l)= std::vector<int>(depth);
+            matrix.at(l)= std::vector<int>(2*depth+1);
             for(int c = 0; c<matrix.size(); c++){
                 if (l!=c ){
                     matrix.at(l).at(c) = 0;
@@ -1573,7 +1573,7 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                 }
             }
         }
-        matrix.at(shared_nodes[i]->depth).at(shared_nodes[i]->depth) = -1; 
+        matrix.at(2*(shared_nodes[i]->depth)+2).at(2*(shared_nodes[i]->depth)+2) = -1; 
         optim_info.comps = involved_computations_reversal;
         optim_info.matrix = matrix;
         new_ast->new_optims.push_back(optim_info);
@@ -1633,9 +1633,9 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                     optim_info.l0_fact = std::get<0>(param);
                     optim_info.l1_fact = std::get<1>(param);
                     
-                    std::vector <  std::vector<int> >  matrix(depth);
+                    std::vector <  std::vector<int> >  matrix(2*depth+1);
                     for(int l = 0; l<matrix.size(); l++){
-                        matrix.at(l)= std::vector<int>(depth);
+                        matrix.at(l)= std::vector<int>(2*depth+1);
                         for(int c = 0; c<matrix.size(); c++){
                             if (l!=c ){
                                 matrix.at(l).at(c) = 0;
@@ -1644,14 +1644,14 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                             }
                         }
                     }
-                    matrix.at(optim_info.l0).at(optim_info.l1) = optim_info.l1_fact;
-                    matrix.at(optim_info.l0).at(optim_info.l0) = optim_info.l0_fact;   
+                    matrix.at(2*optim_info.l0+2).at(2*optim_info.l1+2) = optim_info.l1_fact;
+                    matrix.at(2*optim_info.l0+2).at(2*optim_info.l0+2) = optim_info.l0_fact;   
                     
                     if(optim_info.l0_fact!=1){
                         std::vector<int> solutions=get_skew_params(optim_info.l0_fact, optim_info.l1_fact);
                         
-                        matrix.at(optim_info.l1).at(optim_info.l1) =  solutions.at(1);
-                        matrix.at(optim_info.l1).at(optim_info.l1-1) =  solutions.at(0);
+                        matrix.at(2*optim_info.l1+2).at(2*optim_info.l1+2) =  solutions.at(1);
+                        matrix.at(2*optim_info.l1+2).at(2*(optim_info.l1-1)+2) =  solutions.at(0);
                     }
 
                     optim_info.matrix = matrix;
@@ -1681,9 +1681,9 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                     optim_info.l0_fact = std::get<0>(param);
                     optim_info.l1_fact = std::get<1>(param);
                     
-                    std::vector <  std::vector<int> >  matrix(depth);
+                    std::vector <  std::vector<int> >  matrix(2*depth+1);
                     for(int l = 0; l<matrix.size(); l++){
-                        matrix.at(l)= std::vector<int>(depth);
+                        matrix.at(l)= std::vector<int>(2*depth+1);
                         for(int c = 0; c<matrix.size(); c++){
                             if (l!=c ){
                                 matrix.at(l).at(c) = 0;
@@ -1692,14 +1692,14 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                             }
                         }
                     }
-                    matrix.at(optim_info.l0).at(optim_info.l1) = optim_info.l1_fact;
-                    matrix.at(optim_info.l0).at(optim_info.l0) = optim_info.l0_fact;  
+                    matrix.at(2*optim_info.l0+2).at(2*optim_info.l1+2) = optim_info.l1_fact;
+                    matrix.at(2*optim_info.l0+2).at(2*optim_info.l0+2) = optim_info.l0_fact;  
                     
                     if(optim_info.l0_fact!=1){
                         std::vector<int> solutions=get_skew_params(optim_info.l0_fact, optim_info.l1_fact);
                         
-                        matrix.at(optim_info.l1).at(optim_info.l1) =  solutions.at(1);
-                        matrix.at(optim_info.l1).at(optim_info.l1-1) =  solutions.at(0);
+                        matrix.at(2*optim_info.l1+2).at(2*optim_info.l1+2) =  solutions.at(1);
+                        matrix.at(2*optim_info.l1+2).at((2*optim_info.l1-1)+2) =  solutions.at(0);
                     }
                     optim_info.matrix = matrix;
                     optim_info.comps = involved_computations_skew;
@@ -1732,9 +1732,9 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                     { //require loop reversal for correctness
                         optim_info.l2_fact = -1;
                     }
-                    std::vector <  std::vector<int> >  matrix(depth);
+                    std::vector <  std::vector<int> >  matrix(2*depth+1);
                     for(int l = 0; l<matrix.size(); l++){
-                        matrix.at(l)= std::vector<int>(depth);
+                        matrix.at(l)= std::vector<int>(2*depth+1);
                         for(int c = 0; c<matrix.size(); c++){
                             if (l!=c ){
                                 matrix.at(l).at(c) = 0;
@@ -1743,14 +1743,14 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                             }
                         }
                     }
-                    matrix.at(optim_info.l0).at(optim_info.l1) = optim_info.l1_fact;
-                    matrix.at(optim_info.l0).at(optim_info.l0) = optim_info.l0_fact;     
+                    matrix.at(2*optim_info.l0+2).at(2*optim_info.l1+2) = optim_info.l1_fact;
+                    matrix.at(2*optim_info.l0+2).at(2*optim_info.l0+2) = optim_info.l0_fact;     
                     
                     if(optim_info.l0_fact!=1){
                         std::vector<int> solutions=get_skew_params(optim_info.l0_fact, optim_info.l1_fact);
                         
-                        matrix.at(optim_info.l1).at(optim_info.l1) =  solutions.at(1);
-                        matrix.at(optim_info.l1).at(optim_info.l1-1) =  solutions.at(0);
+                        matrix.at(2*optim_info.l1+2).at(2*optim_info.l1+2) =  solutions.at(1);
+                        matrix.at(2*optim_info.l1+2).at(2*(optim_info.l1-1)+2) =  solutions.at(0);
                     }
                     optim_info.matrix = matrix;
 
