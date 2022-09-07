@@ -3170,19 +3170,20 @@ void computation::matrix_transform(std::vector<std::vector<int>> matrix)
     //for (std::string name:temp_vector) std::cout <<name<<std::endl;
 
 
-    //std::cout<<"last t is: "<<last_t<<std::endl;
-    int dim_vector_size = (dim_vector.size()-1) / 2 - temp_vector.size();
+    // std::cout<<"last t is: "<<last_t<<std::endl;
+    int dim_vector_size = (dim_vector.size()) - temp_vector.size();
+    // std::cout<<"dim_vector_size is: "<<dim_vector_size<<std::endl;
     if(last_t<dim_vector.size()-1){
         for (int j =0;j<dim_vector_size;j++){
         temp_vector.push_back(dim_vector[last_t]);
-        last_t+=2;
+        last_t+=1;
     }
     }
     
-    //std::cout<<"temp vector: "<<std::endl;
-    //for (std::string name:temp_vector) std::cout <<name<<std::endl;
-    //std::cout<<"dim_vector: "<<std::endl;
-    //for (std::string name:dim_vector) std::cout <<name<<std::endl;
+    // std::cout<<"temp vector: "<<std::endl;
+    // for (std::string name:temp_vector) std::cout <<name<<std::endl;
+    // std::cout<<"dim_vector: "<<std::endl;
+    // for (std::string name:dim_vector) std::cout <<name<<std::endl;
     t = 0;
     //std::cout<<"m_dims: "<<n_dims<<std::endl;
     for (int i = 0; i < n_dims; i++)
