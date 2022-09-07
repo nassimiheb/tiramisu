@@ -79,6 +79,11 @@ std::vector<float> evaluate_by_execution::get_measurements(syntax_tree& ast, boo
     // Compile the program to an object file
     fct->lift_dist_comps();
     fct->gen_time_space_domain();
+    for (tiramisu::computation* current_comp : ast.computations_list) // iterate over the ordered computations list
+    {
+        isl_map *schedule = current_comp->get_schedule();
+        std::cout<<"computation schedule BEFORE GEN ISL: "<<isl_map_to_str(schedule)<<std::endl;
+    }
     fct->gen_isl_ast();
     fct->gen_halide_stmt();
     // if the code generation timeout is activated, send a signal to the parent process to communicate that code generation is now done
