@@ -1204,7 +1204,7 @@ public:
       * appearance in the vector).
       */
     void set_arguments(const std::vector<tiramisu::buffer *> &buffer_vec);
-
+    void set_use_low_level_scheduling_commands(bool value);
     /**
      * Wrapper for all the functions required to run code generation of a
      * tiramisu program.

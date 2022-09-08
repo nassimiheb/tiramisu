@@ -17,8 +17,21 @@ auto_scheduler::auto_scheduler(search_method *searcher, evaluation_function *eva
 
 void auto_scheduler::sample_search_space(std::string filename, bool timeout_schedules)
 {
+    for (tiramisu::computation* current_comp : ast.computations_list) // iterate over the ordered computations list
+    {
+        isl_map *schedule = current_comp->get_schedule();
+        std::cout<<"in search fusion: "<<isl_map_to_str(schedule)<<std::endl;
+    }
+    ast.fct->set_use_low_level_scheduling_commands(false);
+    ast.fct->gen_time_space_domain();
+    ast.fct->set_use_low_level_scheduling_commands(true);
+    for (tiramisu::computation* current_comp : ast.computations_list) // iterate over the ordered computations list
+    {
+        isl_map *schedule = current_comp->get_schedule();
+        std::cout<<"in search fusion AFTER: "<<isl_map_to_str(schedule)<<std::endl;
+    }
     std::chrono::steady_clock::time_point sampling_start = std::chrono::steady_clock::now();
-    fct->reset_all_static_dims_to_zero();
+    //fct->reset_all_static_dims_to_zero();
 
     setenv("INIT_EXEC_TIME", "0", true); // set the INIT_EXEC_TIME to 0 meaning that it's the non scheduled version
     float initial_timeout = std::atof(read_env_var("INITIAL_TIMEOUT"));
@@ -61,8 +74,7 @@ void auto_scheduler::sample_search_space(std::string filename, bool timeout_sche
 
     searcher->set_exec_eval(exec_evaluator);
     // start exploration with fusion and explore other transformations recursivly
-    //searcher->explore_fusion(ast, &schedules_annotations, &exploration_trace_root, schedule_timeout);
-    searcher->search_save_matrix(ast, &schedules_annotations, &exploration_trace_root, schedule_timeout);
+    searcher->explore_fusion(ast, &schedules_annotations, &exploration_trace_root, schedule_timeout);
     std::string output_json;
 
 

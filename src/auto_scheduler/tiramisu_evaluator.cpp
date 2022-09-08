@@ -78,6 +78,7 @@ std::vector<float> evaluate_by_execution::get_measurements(syntax_tree& ast, boo
 
     // Compile the program to an object file
     fct->lift_dist_comps();
+    
     fct->gen_time_space_domain();
     for (tiramisu::computation* current_comp : ast.computations_list) // iterate over the ordered computations list
     {

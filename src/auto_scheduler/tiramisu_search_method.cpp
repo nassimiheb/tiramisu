@@ -454,11 +454,7 @@ void beam_search::explore_fusion(syntax_tree& ast, std::vector<std::string> *sch
     std::vector<optimization_type> optims;
 
     optims.push_back(optimization_type::FUSION);
-    
     ast.initialize_search_space_optimizations(optims);
-
-
-
     while ((!ast.is_search_space_empty()))
     {
         // schedule generation based on generator_state attribute in the AST.

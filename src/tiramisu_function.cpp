@@ -92,7 +92,7 @@ function::function(std::string name)
     this->halide_stmt = Halide::Internal::Stmt();
     this->ast = NULL;
     this->context_set = NULL;
-    this->use_low_level_scheduling_commands = false;
+    this->use_low_level_scheduling_commands = true;
     this->_needs_rank_call = false;
 
     // Allocate an ISL context.  This ISL context will be used by
@@ -1780,7 +1780,7 @@ void tiramisu::function::align_schedules()
 
     for (auto &comp : this->get_computations())
     {
-        
+
         isl_map *dup_sched = comp->get_schedule();
         assert((dup_sched != NULL) && "Schedules should be set before calling align_schedules");
         dup_sched = isl_map_align_range_dims(dup_sched, max_dim);
@@ -1918,7 +1918,10 @@ void tiramisu::function::dump_schedule() const
         std::cout << std::endl << std::endl << std::endl;
     }
 }
-
+void tiramisu::function::set_use_low_level_scheduling_commands(bool value)
+{
+    this->use_low_level_scheduling_commands = value;
+}
 void tiramisu::function::set_arguments(const std::vector<tiramisu::buffer *> &buffer_vec)
 {
     this->function_arguments = buffer_vec;
@@ -2303,9 +2306,9 @@ void function::gen_time_space_domain()
     this->gen_ordering_schedules();
 
     this->align_schedules();
-
     for (auto &comp : this->get_computations())
     {
+
         comp->gen_time_space_domain();
     }
 
