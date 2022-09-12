@@ -179,7 +179,8 @@ void prepare_schedules_for_legality_checks(bool reset_static_dimesion = false);
   * Checks if the given fuzed computations could legally have their loop level \p i vectorized.
   */
   bool loop_vectorization_is_legal(tiramisu::var i, std::vector<tiramisu::computation *> fuzed_computations);
-
+  int isl_map_get_static_dim(isl_map *map, int dim_pos);
+  
 //*******************************************************
 
 /**

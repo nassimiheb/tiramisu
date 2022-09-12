@@ -1,6 +1,9 @@
 #include <tiramisu/auto_scheduler/schedules_generator.h>
 #include <tiramisu/auto_scheduler/evaluator.h>
 
+#include <tiramisu/core.h>
+
+
 namespace tiramisu::auto_scheduler
 {
 
@@ -1891,12 +1894,34 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                 new_ast->fct->set_use_low_level_scheduling_commands(false);
                 new_ast->fct->gen_time_space_domain();
                 new_ast->fct->set_use_low_level_scheduling_commands(true);
-                
+
+                isl_map *schedule;
                 for (tiramisu::computation* current_comp : new_ast->computations_list) // iterate over the ordered computations list
                 {
-                    isl_map *schedule = current_comp->get_schedule();
+                    schedule = current_comp->get_schedule();
                     std::cout<<"computation schedule before pushing to states: "<<isl_map_to_str(schedule)<<std::endl;
+                    int n_dims = isl_map_dim(schedule, isl_dim_out);
+
+                    std::vector<std::string> static_dim_vector;            
+                            
+                    for (int i = 0; i < n_dims; i++)
+                    {
+                        if (i != 0)
+                        {
+                            if (i%2!=0){
+                                    static_dim_vector.push_back(std::to_string(isl_map_get_static_dim(schedule,i)));
+                            }
+                        }
+
+                    }
+                   
                 }
+                
+              
+                
+                
+
+                
                 // create matrix from the schedule 
                 states.push_back(new_ast);
             }
