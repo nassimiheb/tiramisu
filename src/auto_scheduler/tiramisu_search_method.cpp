@@ -563,7 +563,6 @@ void beam_search::explore_fusion(syntax_tree& ast, std::vector<std::string> *sch
     // Search recursively on the best children
     for (syntax_tree *child : children)
     {
-
         search_save_matrix(*child, schedules_annotations, parent_trace->child_mappings[child], schedule_timeout);
     }
 

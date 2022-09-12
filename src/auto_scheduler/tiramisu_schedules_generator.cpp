@@ -1763,6 +1763,152 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
         }
         ast.recover_isl_states();
     }
+    //explore fusion
+
+    /* iteration of the ast in done preorder  */
+    if (ast.search_state.current_index == 0)
+    { // cant fuze the first computation
+        return states;
+    }
+
+    // 2 computations's nodes that need to fuze together  
+    auto node_computation = ast.get_current_optimization_target();
+    auto previous_node_computation = ast.get_previous_optimization_target();
+
+    ast_node * current_node = node_computation.first;
+    ast_node * previous_node = previous_node_computation.first;
+
+    // adjusted nodes are the target nodes or their parents with same depth in the AST
+    auto potentiel_fusion = current_node->get_possible_fusion_candidate(previous_node);
+    ast_node * previous_node_adjusted = std::get<0>(potentiel_fusion);
+    ast_node * current_node_adjusted = std::get<1>(potentiel_fusion);
+
+    auto involved_iterators = previous_node_adjusted->get_all_iterators();
+
+    auto real_iterators = current_node->computations[node_computation.second].comp_ptr->get_iteration_domain_dimension_names();
+
+    real_iterators.resize(involved_iterators.size());
+
+    // create a vector of involved tiramisu vars
+    std::vector<tiramisu::var> loop_levels;
+    // loop levels used for shifting solver
+    for (auto const &str : real_iterators)
+    {
+        loop_levels.push_back(tiramisu::var(str));
+    }
+
+    std::vector<computation *> seen_computations;
+            // computations list used for shifting solver
+    ast.get_previous_computations(seen_computations, node, std::get<1>(node_computation));
+
+
+
+    if ((previous_node != current_node) && (previous_node_adjusted == previous_node)
+            && (previous_node != nullptr) && (current_node != nullptr))
+    {
+        // the fusion that will generate dummy itr is removed by previous_node_adjusted == previous_node
+        if (previous_node->is_candidate_for_fusion(current_node))
+        { // similar itr domains
+            // create AST copy to falsely fuze and check legality
+            syntax_tree *new_ast = new syntax_tree();
+            ast_node *new_node = ast.copy_and_return_node(*new_ast, previous_node);
+
+            // creating new sched graph
+            ast.stage_local_sched_graph();
+            new_ast->create_new_sched_graph();
+            ast.recover_local_sched_graph();
+
+            new_ast->stage_isl_states();
+            // modify the schedule graph now using after
+
+            current_node->computations[node_computation.second].comp_ptr->after(
+                *previous_node->computations[previous_node_computation.second].comp_ptr,
+                previous_node_adjusted->depth
+            );
+
+            new_ast->fct->prepare_schedules_for_legality_checks(true);
+
+            int depth = previous_node_adjusted->depth;
+            optimization_info optim_info;
+            optim_info.type = optimization_type::FUSION;
+
+            optim_info.node = new_node->find_node_by_depth(depth);
+            optim_info.nb_l = 1;
+            optim_info.l0 =  depth;
+            optim_info.l1 =-1;
+            optim_info.l0_fact = -1;
+            optim_info.l1_fact = -1;
+            
+            optim_info.comps = {previous_node->computations[previous_node_computation.second].comp_ptr,current_node->computations[node_computation.second].comp_ptr};
+            new_ast->new_optims.push_back(optim_info);
+
+            auto shifting_res = ast.get_function()->correcting_loop_fusion_with_shifting(
+                seen_computations,
+                *current_node->computations[node_computation.second].comp_ptr,
+                loop_levels);
+
+            if (shifting_res.size() > 0)
+            {
+                
+                //fusion accepted
+                // must generate shifting optim + transforme a copy of the ast
+
+                for(auto& shifting:shifting_res)
+                {
+                    if(std::get<1>(shifting) > 0)
+                    {
+                        int depth = new_node->computations[node_computation.second].
+                            comp_ptr->get_loop_level_number_from_dimension_name(std::get<0>(shifting).get_name());
+                        optimization_info optim_info;
+                        optim_info.type = optimization_type::SHIFTING;
+
+                        optim_info.node = new_node->find_node_by_depth(depth);
+                        optim_info.nb_l = 1;
+                        optim_info.l0 =  depth;
+                        optim_info.l1 =0;
+                        optim_info.l0_fact = std::get<1>(shifting);
+                        optim_info.l1_fact = -1;
+                        optim_info.comps = {current_node->computations[node_computation.second].comp_ptr};
+                        std::cout<<"shifting is applied"<<std::endl;
+                        new_ast->new_optims.push_back(optim_info);
+
+                    }
+
+                }
+                
+                new_ast->recover_isl_states();
+                // APPLY changes to the AST it self
+                new_ast->move_in_computation(new_node,current_node->computations[node_computation.second].comp_ptr);
+
+                // recompute the states vector because locations changed.
+                
+                new_ast->refresh_states();
+                
+                new_ast->tree_structure_json = evaluate_by_learning_model::get_tree_structure_json(*new_ast);
+                
+                apply_fusions(*new_ast);
+                
+                new_ast->fct->set_use_low_level_scheduling_commands(false);
+                new_ast->fct->gen_time_space_domain();
+                new_ast->fct->set_use_low_level_scheduling_commands(true);
+                
+                for (tiramisu::computation* current_comp : new_ast->computations_list) // iterate over the ordered computations list
+                {
+                    isl_map *schedule = current_comp->get_schedule();
+                    std::cout<<"computation schedule before pushing to states: "<<isl_map_to_str(schedule)<<std::endl;
+                }
+                // create matrix from the schedule 
+                states.push_back(new_ast);
+            }
+            else
+            {
+                new_ast->recover_isl_states();
+                delete new_ast;
+            }
+
+        }
+    }
+        
     /*
     // boolean for adding random skew patterns
     bool add_3d_skew=false;
