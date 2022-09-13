@@ -554,7 +554,10 @@ void beam_search::explore_fusion(syntax_tree& ast, std::vector<std::string> *sch
     parent_trace->add_child_path(ast_copy, parent_trace->get_candidate_id()); // keeps the same id since it's just copy
 
     // Sort children from smallest evaluation to largest
-    
+    for (syntax_tree *child : children)
+    {
+        explore_parallelization(*child, schedules_annotations, parent_trace->child_mappings[child], schedule_timeout);
+    }
     std::sort(children.begin(), children.end(), [](syntax_tree *a, syntax_tree *b) {
         return a->evaluation < b->evaluation;
     });
@@ -567,7 +570,6 @@ void beam_search::explore_fusion(syntax_tree& ast, std::vector<std::string> *sch
     // Search recursively on the best children
     for (syntax_tree *child : children)
     {
-
         search_save_matrix(*child, schedules_annotations, parent_trace->child_mappings[child], schedule_timeout);
     }
 
@@ -1040,7 +1042,10 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                     
     parent_trace->add_child_path(ast_copy, parent_trace->get_candidate_id());
     
-
+    for (syntax_tree *child : to_be_explored)
+    {
+        explore_parallelization(*child, schedules_annotations, parent_trace->child_mappings[child], schedule_timeout);
+    }
 
     
     // Sort children from smallest evaluation to largest
