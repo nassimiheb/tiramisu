@@ -727,6 +727,11 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                     optimization_info optim_info;
                     optim_info.type = optimization_type::MATRIX;
                     node->get_all_computations(optim_info.comps);
+                    std::vector<tiramisu::computation *> comps;
+                    node->get_all_computations(comps);
+                    for(tiramisu::computation* comp: comps){
+                        comp->static_dims_matrix = get_identity((node->depth+1)*2+1);
+                    }
                     // for the original schedule, the transformation matrix is the identity
                     
                     optim_info.matrix = get_identity(node->depth+1);

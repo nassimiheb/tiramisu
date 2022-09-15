@@ -1814,8 +1814,9 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
         { // similar itr domains
             // create AST copy to falsely fuze and check legality
             syntax_tree *new_ast = new syntax_tree();
+            syntax_tree *new_ast_mat = new syntax_tree();
             ast_node *new_node = ast.copy_and_return_node(*new_ast, previous_node);
-
+            ast_node *new_node_mat = ast.copy_and_return_node(*new_ast_mat, previous_node);
             // creating new sched graph
             ast.stage_local_sched_graph();
             new_ast->create_new_sched_graph();
@@ -1874,9 +1875,7 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                         optim_info.comps = {current_node->computations[node_computation.second].comp_ptr};
                         std::cout<<"shifting is applied"<<std::endl;
                         new_ast->new_optims.push_back(optim_info);
-
                     }
-
                 }
                 
                 new_ast->recover_isl_states();
@@ -1896,34 +1895,75 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                 new_ast->fct->set_use_low_level_scheduling_commands(true);
 
                 isl_map *schedule;
+                int computation_index = 0;
                 for (tiramisu::computation* current_comp : new_ast->computations_list) // iterate over the ordered computations list
                 {
                     schedule = current_comp->get_schedule();
                     std::cout<<"computation schedule before pushing to states: "<<isl_map_to_str(schedule)<<std::endl;
                     int n_dims = isl_map_dim(schedule, isl_dim_out);
 
-                    std::vector<std::string> static_dim_vector;            
-                            
+                               
+                    std::vector<int> static_dim_vector;                 
                     for (int i = 0; i < n_dims; i++)
                     {
                         if (i != 0)
                         {
                             if (i%2!=0){
-                                    static_dim_vector.push_back(std::to_string(isl_map_get_static_dim(schedule,i)));
+                                    static_dim_vector.push_back(isl_map_get_static_dim(schedule,i));
                             }
                         }
-
                     }
-                   
+                    int matrix_size = static_dim_vector.size()*2 - 1;
+                    std::vector <  std::vector<int> >  matrix(matrix_size);
+                    for(int l = 0; l<matrix.size(); l++){
+                        matrix.at(l)= std::vector<int>(matrix_size);
+                        for(int c = 0; c<matrix.size(); c++){
+                            if (l!=c ){
+                                matrix.at(l).at(c) = 0;
+                            }else{
+                                matrix.at(l).at(c) = 1;
+                            }
+                        }
+                    }
+                    int i=0;
+                    for(int l = 0; l<matrix.size(); l+=2){
+                        matrix.at(l).at(l) = 0; 
+                        matrix.at(l).at(matrix.size()-1) =  static_dim_vector.at(i);i++;
+                        
+                    }
+                    new_ast_mat->computations_list.at(computation_index)->static_dims_matrix = matrix;
+                    computation_index+=1;
+                    for(int l = 0; l<static_dim_vector.size(); l++){
+                        std::cout<<" Static dim vector: "<<static_dim_vector.at(l)<<std::endl;
+                    }
+                    std::cout<<"matrix in generation"<<std::endl; 
+                    for(int l = 0; l<matrix.size(); l++){
+                        for(int c = 0; c<matrix.size(); c++){
+                            std::cout<<matrix.at(l).at(c)<<" ";
+                        }
+                        std::cout<<std::endl;
+                    }
                 }
-                
-              
-                
-                
-
-                
-                // create matrix from the schedule 
-                states.push_back(new_ast);
+                std::vector <  std::vector<int> >  matrix(2*depth+1);
+                    for(int l = 0; l<matrix.size(); l++){
+                        matrix.at(l)= std::vector<int>(2*depth+1);
+                        for(int c = 0; c<matrix.size(); c++){
+                            if (l!=c ){
+                                matrix.at(l).at(c) = 0;
+                            }else{
+                                matrix.at(l).at(c) = 1;
+                            }
+                        }
+                    }
+                std::cout<<"matrix size: "<<matrix.size()<<std::endl;
+                optimization_info optim_info_mat;
+                new_ast->fct->reset_schedules();
+                optim_info_mat.type = optimization_type::MATRIX;
+                optim_info_mat.matrix = matrix;
+                optim_info_mat.node =  new_node->find_node_by_depth(depth);
+                optim_info_mat.comps = {previous_node->computations[previous_node_computation.second].comp_ptr,current_node->computations[node_computation.second].comp_ptr};
+                new_ast_mat->new_optims.push_back(optim_info_mat);
+                states.push_back(new_ast_mat);
             }
             else
             {
