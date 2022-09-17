@@ -36,6 +36,12 @@ struct optimization_info
      * The list of computations that this optimization will be applied to.
      */
     std::vector<std::vector<int>> matrix;
+    /*
+      transformation matrix for each computation's static dimensions
+      necessary to include fusion
+    */
+    std::vector <std::vector <  std::vector<int> >>  static_dims_matrices;
+    
     /**
      * The list of computations that this optimization will be applied to.
      */

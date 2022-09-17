@@ -4727,11 +4727,7 @@ public:
       * tiramisu::var.
       */
 
-    std::vector <  std::vector<int> >  static_dims_matrix;
-    /*
-      transformation matrix for this computation's static dimensions
-      necessary to include fusion
-    */
+    
     const static int root_dimension = -1;
 
     /**

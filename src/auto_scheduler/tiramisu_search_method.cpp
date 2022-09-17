@@ -717,7 +717,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     // if this is the roor of the exploration tree 
     // needs to be optimized
     if (ast.search_depth==0){
-        
+        isl_map *schedule;
         std::vector<ast_node*> nodes;
         for(auto root: ast.roots){
             std::vector<ast_node*> nodes;
@@ -726,17 +726,52 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
                 if(node->computations.size()>0){
                     optimization_info optim_info;
                     optim_info.type = optimization_type::MATRIX;
+                    std::cout<<"start get_all_computations"<<std::endl;
                     node->get_all_computations(optim_info.comps);
-                    std::vector<tiramisu::computation *> comps;
-                    node->get_all_computations(comps);
-                    for(tiramisu::computation* comp: comps){
-                        comp->static_dims_matrix = get_identity((node->depth+1)*2+1);
-                    }
-                    // for the original schedule, the transformation matrix is the identity
-                    
+                    // std::cout<<"start get_all_computations get_all_computations"<<std::endl;
+                    // for(tiramisu::computation* current_comp: optim_info.comps){
+                    //     std::cout<<"start"<<std::endl;
+                    //     schedule = current_comp->get_schedule();
+                    //     std::cout<<"computation schedule before generate matrices: "<<isl_map_to_str(schedule)<<std::endl;
+                    //     int n_dims = isl_map_dim(schedule, isl_dim_out);
+
+                                
+                    //     std::vector<int> static_dim_vector;                 
+                    //     for (int i = 0; i < n_dims; i++)
+                    //     {
+                    //         if (i != 0)
+                    //         {
+                    //             if (i%2!=0){
+                    //                     static_dim_vector.push_back(isl_map_get_static_dim(schedule,i));
+                    //             }
+                    //         }
+                    //     }
+                    //     int matrix_size = static_dim_vector.size()*2 - 1;
+                    //     std::vector <  std::vector<int> >  matrix(matrix_size);
+                    //     for(int l = 0; l<matrix.size(); l++){
+                    //         matrix.at(l)= std::vector<int>(matrix_size);
+                    //         for(int c = 0; c<matrix.size(); c++){
+                    //             if (l!=c ){
+                    //                 matrix.at(l).at(c) = 0;
+                    //             }else{
+                    //                 matrix.at(l).at(c) = 1;
+                    //             }
+                    //         }
+                    //     }
+                    //     int i=0;
+                    //     std::cout<<"got here before static change"<<std::endl;
+                    //     for(int l = 0; l<matrix.size(); l+=2){
+                    //         matrix.at(l).at(l) = 0; 
+                    //         matrix.at(l).at(matrix.size()-1) =  static_dim_vector.at(i);i++;
+                    //     }
+                    //     optim_info.static_dims_matrices.push_back(matrix);
+                    // }
+                    // // for the original schedule, the transformation matrix is the identity
+                    // std::cout<<"got herr before identity"<<std::endl;
                     optim_info.matrix = get_identity(node->depth+1);
+                    std::cout<<"got herr after identity"<<std::endl;
                     ast.new_optims.push_back(optim_info);
-                    
+                    std::cout<<"got herr after push_back"<<std::endl;
                     
                 }
                 
@@ -744,7 +779,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         }    
         
     }
-    
+    std::cout<<"got herr"<<std::endl;
     hashes.push_back(hasher(ast.get_schedule_str()));
     
     while ((!ast.is_search_space_empty()))

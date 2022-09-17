@@ -1817,6 +1817,7 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
             syntax_tree *new_ast_mat = new syntax_tree();
             ast_node *new_node = ast.copy_and_return_node(*new_ast, previous_node);
             ast_node *new_node_mat = ast.copy_and_return_node(*new_ast_mat, previous_node);
+            
             // creating new sched graph
             ast.stage_local_sched_graph();
             new_ast->create_new_sched_graph();
@@ -1850,7 +1851,8 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                 seen_computations,
                 *current_node->computations[node_computation.second].comp_ptr,
                 loop_levels);
-
+            optimization_info optim_info_mat;
+            
             if (shifting_res.size() > 0)
             {
                 
@@ -1893,10 +1895,24 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                 new_ast->fct->set_use_low_level_scheduling_commands(false);
                 new_ast->fct->gen_time_space_domain();
                 new_ast->fct->set_use_low_level_scheduling_commands(true);
-
+                std::vector <  std::vector<int> >  matrix(2*depth+1);
+                for(int l = 0; l<matrix.size(); l++){
+                    matrix.at(l)= std::vector<int>(2*depth+1);
+                    for(int c = 0; c<matrix.size(); c++){
+                        if (l!=c ){
+                            matrix.at(l).at(c) = 0;
+                        }else{
+                            matrix.at(l).at(c) = 1;
+                        }
+                    }
+                }
                 isl_map *schedule;
                 int computation_index = 0;
-                for (tiramisu::computation* current_comp : new_ast->computations_list) // iterate over the ordered computations list
+                optim_info_mat.type = optimization_type::MATRIX;
+                optim_info_mat.matrix = matrix;
+                optim_info_mat.node =  new_node->find_node_by_depth(depth);
+                optim_info_mat.comps = {previous_node->computations[previous_node_computation.second].comp_ptr,current_node->computations[node_computation.second].comp_ptr};
+                for (tiramisu::computation* current_comp : optim_info_mat.comps) // iterate over the ordered computations list
                 {
                     schedule = current_comp->get_schedule();
                     std::cout<<"computation schedule before pushing to states: "<<isl_map_to_str(schedule)<<std::endl;
@@ -1929,9 +1945,8 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                     for(int l = 0; l<matrix.size(); l+=2){
                         matrix.at(l).at(l) = 0; 
                         matrix.at(l).at(matrix.size()-1) =  static_dim_vector.at(i);i++;
-                        
                     }
-                    new_ast_mat->computations_list.at(computation_index)->static_dims_matrix = matrix;
+                    optim_info_mat.static_dims_matrices.push_back(matrix);
                     computation_index+=1;
                     for(int l = 0; l<static_dim_vector.size(); l++){
                         std::cout<<" Static dim vector: "<<static_dim_vector.at(l)<<std::endl;
@@ -1944,25 +1959,10 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                         std::cout<<std::endl;
                     }
                 }
-                std::vector <  std::vector<int> >  matrix(2*depth+1);
-                    for(int l = 0; l<matrix.size(); l++){
-                        matrix.at(l)= std::vector<int>(2*depth+1);
-                        for(int c = 0; c<matrix.size(); c++){
-                            if (l!=c ){
-                                matrix.at(l).at(c) = 0;
-                            }else{
-                                matrix.at(l).at(c) = 1;
-                            }
-                        }
-                    }
-                std::cout<<"matrix size: "<<matrix.size()<<std::endl;
-                optimization_info optim_info_mat;
-                new_ast->fct->reset_schedules();
-                optim_info_mat.type = optimization_type::MATRIX;
-                optim_info_mat.matrix = matrix;
-                optim_info_mat.node =  new_node->find_node_by_depth(depth);
-                optim_info_mat.comps = {previous_node->computations[previous_node_computation.second].comp_ptr,current_node->computations[node_computation.second].comp_ptr};
+                
+                
                 new_ast_mat->new_optims.push_back(optim_info_mat);
+                new_ast->fct->reset_schedules();
                 states.push_back(new_ast_mat);
             }
             else
