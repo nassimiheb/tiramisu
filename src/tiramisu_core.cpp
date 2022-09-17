@@ -17,7 +17,7 @@
 struct UnrollingException : public std::exception {
     const char * what () const throw ()
         {
-            return "unrolling error";
+            return "unrolling error : unrolled loop level is a user node due to dimension error";
         }
 };
 namespace tiramisu
@@ -3091,13 +3091,14 @@ void computation::matrix_transform(std::vector<std::vector<int>> matrix)
     DEBUG_FCT_NAME(3);
     DEBUG_INDENT(4);
     // print transformtation matrix and original schedule
+    std::cout<<"in matrix transform"<<std::endl;
     for(int l = 0; l<matrix.size(); l++){
         for(int c = 0; c<matrix.size(); c++){
             std::cout<<matrix.at(l).at(c)<<" ";
         }
         std::cout<<std::endl;
     }
-    
+    std::cout<<"in matrix transform end"<<std::endl;
     isl_map *schedule = this->get_schedule();
     std::cout<<isl_map_to_str(schedule)<<std::endl;
     DEBUG(3, tiramisu::str_dump("Original schedule: ", isl_map_to_str(schedule)));
@@ -3148,7 +3149,7 @@ void computation::matrix_transform(std::vector<std::vector<int>> matrix)
     std::string vector_content;
     int t = 0;
     int last_t = -1;
-    for (int i = 0; i < matrix.size(); i++) {
+    for (int i = 0; i < matrix.size()-1; i++) {
     
         for (int j = 0; j < matrix[i].size(); j++){
             if(j != matrix[i].size()-1){
@@ -3156,10 +3157,10 @@ void computation::matrix_transform(std::vector<std::vector<int>> matrix)
                 t += 1;
             }
             else{
-                vector_content = vector_content + std::to_string(matrix[i][j])+dim_vector[t];
+                vector_content = vector_content + std::to_string(matrix[i][j]);
                 t += 1;
             }
-            if(i== matrix.size()-1 && j==matrix[i].size()-1) last_t = t;
+            if(i== matrix.size()-2 && j==matrix[i].size()-1) last_t = t;
         }
         t=0;
         

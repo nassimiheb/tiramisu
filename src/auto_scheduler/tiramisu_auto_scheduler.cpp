@@ -20,16 +20,31 @@ void auto_scheduler::sample_search_space(std::string filename, bool timeout_sche
     for (tiramisu::computation* current_comp : ast.computations_list) // iterate over the ordered computations list
     {
         isl_map *schedule = current_comp->get_schedule();
-        std::cout<<"in search fusion: "<<isl_map_to_str(schedule)<<std::endl;
+        std::cout<<"in search fusion 1: "<<isl_map_to_str(schedule)<<std::endl;
     }
-    ast.fct->set_use_low_level_scheduling_commands(false);
+    //ast.fct->set_use_low_level_scheduling_commands(false);
     ast.fct->gen_time_space_domain();
-    ast.fct->set_use_low_level_scheduling_commands(true);
+    ///ast.fct->set_use_low_level_scheduling_commands(true);
     for (tiramisu::computation* current_comp : ast.computations_list) // iterate over the ordered computations list
     {
         isl_map *schedule = current_comp->get_schedule();
-        std::cout<<"in search fusion AFTER: "<<isl_map_to_str(schedule)<<std::endl;
+        std::cout<<"in search fusion AFTER 2: "<<isl_map_to_str(schedule)<<std::endl;
     }
+    // ast.fct->reset_schedules();
+    // for (tiramisu::computation* current_comp : ast.computations_list) // iterate over the ordered computations list
+    // {
+    //     isl_map *schedule = current_comp->get_schedule();
+    //     std::cout<<"in search fusion 3: "<<isl_map_to_str(schedule)<<std::endl;
+    // }
+    // //ast.fct->set_use_low_level_scheduling_commands(false);
+    // apply_fusions(ast);
+    // ast.fct->gen_time_space_domain();
+    // //ast.fct->set_use_low_level_scheduling_commands(true);
+    // for (tiramisu::computation* current_comp : ast.computations_list) // iterate over the ordered computations list
+    // {
+    //     isl_map *schedule = current_comp->get_schedule();
+    //     std::cout<<"first time adding identity AFTERAFTER 4: "<<isl_map_to_str(schedule)<<std::endl;
+    // }
     std::chrono::steady_clock::time_point sampling_start = std::chrono::steady_clock::now();
     //fct->reset_all_static_dims_to_zero();
 
@@ -38,6 +53,11 @@ void auto_scheduler::sample_search_space(std::string filename, bool timeout_sche
 
     std::vector<float> initial_measurements = exec_evaluator->get_measurements(ast, true, initial_timeout);
     initial_exec_time = min_eval(initial_measurements);
+    for (tiramisu::computation* current_comp : ast.computations_list) // iterate over the ordered computations list
+    {
+        isl_map *schedule = current_comp->get_schedule();
+        std::cout<<"AFTER get measurements: "<<isl_map_to_str(schedule)<<std::endl;
+    }
     if (std::isinf(initial_exec_time)){
         std::cerr << "error: Evaluation of the non scheduled version of the program failed "<< std::endl;
         exit(1);
@@ -74,7 +94,7 @@ void auto_scheduler::sample_search_space(std::string filename, bool timeout_sche
 
     searcher->set_exec_eval(exec_evaluator);
     // start exploration with fusion and explore other transformations recursivly
-    searcher->explore_fusion(ast, &schedules_annotations, &exploration_trace_root, schedule_timeout);
+    searcher->search_save_matrix(ast, &schedules_annotations, &exploration_trace_root, schedule_timeout);
     std::string output_json;
 
 

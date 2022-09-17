@@ -1,5 +1,6 @@
 #include <sys/wait.h>
 #include <tiramisu/auto_scheduler/search_method.h>
+#include </home/afif/multi/tiramisu/src/tiramisu_core.cpp>
 #include <random>
 
 #include <random>
@@ -8,12 +9,7 @@
 
 #include <stdexcept>
 #define TIME_LIMIT 1000
-struct UnrollingException : public std::exception {
-    const char * what () const throw ()
-        {
-            return "unrolling error : unrolled loop level is a user node due to dimension error";
-        }
-};
+
 namespace tiramisu::auto_scheduler
 {
 
@@ -681,9 +677,9 @@ void beam_search::explore_parallelization(syntax_tree& ast, std::vector<std::str
 return identity matrix
 */
 std::vector <  std::vector<int> > get_identity(int depth){
-    std::vector <  std::vector<int> >  matrix(2*depth+1);
+    std::vector <  std::vector<int> >  matrix(depth);
         for(int l = 0; l<matrix.size(); l++){
-            matrix.at(l)= std::vector<int>(2*depth+1);
+            matrix.at(l)= std::vector<int>(depth);
             for(int c = 0; c<matrix.size(); c++){
                             if (l!=c ){
                                 matrix.at(l).at(c) = 0;
@@ -718,27 +714,82 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     // if this is the roor of the exploration tree 
     // needs to be optimized
     if (ast.search_depth==0){
+        for (tiramisu::computation* current_comp : ast.computations_list) // iterate over the ordered computations list
+        {
+            isl_map *schedule = current_comp->get_schedule();
+            std::cout<<"first time adding identity: "<<isl_map_to_str(schedule)<<std::endl;
+        }
+        apply_fusions(ast);
+        ast.fct->set_use_low_level_scheduling_commands(false);
+        ast.fct->gen_time_space_domain();
+        ast.fct->set_use_low_level_scheduling_commands(true);
+        for (tiramisu::computation* current_comp : ast.computations_list) // iterate over the ordered computations list
+        {
+            isl_map *schedule = current_comp->get_schedule();
+            std::cout<<"first time adding identity AFTER: "<<isl_map_to_str(schedule)<<std::endl;
+        }
         
-        std::vector<ast_node*> nodes;
-        for(auto root: ast.roots){
-            std::vector<ast_node*> nodes;
-            root->get_all_nodes(nodes);
-            for(auto node : nodes){
-                if(node->computations.size()>0){
-                    optimization_info optim_info;
-                    optim_info.type = optimization_type::MATRIX;
-                    node->get_all_computations(optim_info.comps);
-                    // for the original schedule, the transformation matrix is the identity
-                    
-                    optim_info.matrix = get_identity(node->depth+1);
-                    ast.new_optims.push_back(optim_info);
-                    
-                    
+        for (tiramisu::computation* current_comp : ast.computations_list) // iterate over the ordered computations list
+        {
+            optimization_info optim_info;
+            optim_info.type = optimization_type::MATRIX;
+            isl_map *schedule = current_comp->get_schedule();
+            int n_dims = isl_map_dim(schedule, isl_dim_out);
+
+                                
+            std::vector<int> static_dim_vector;                 
+            for (int i = 0; i < n_dims; i++)
+            {
+                if (i != 0)
+                {
+                    if (i%2!=0){
+                            static_dim_vector.push_back(isl_map_get_static_dim(schedule,i));
+                    }
                 }
-                
             }
-        }    
-        
+            int matrix_size = static_dim_vector.size()*2;
+            
+            std::vector <  std::vector<int> >  matrix(matrix_size);
+            for(int l = 0; l<matrix.size(); l++){
+                matrix.at(l)= std::vector<int>(matrix_size);
+                for(int c = 0; c<matrix.size(); c++){
+                    if (l!=c ){
+                        matrix.at(l).at(c) = 0;
+                    }else{
+                        matrix.at(l).at(c) = 1;
+                    }
+                }
+            }
+            int i=0;
+            
+            for(int l = 0; l<matrix.size(); l+=2){
+                matrix.at(l).at(l) = 0; 
+                matrix.at(l).at(matrix.size()-1) =  static_dim_vector.at(i);i++;
+            }
+            optim_info.comps.push_back(current_comp);
+            optim_info.matrix = matrix;
+            ast.new_optims.push_back(optim_info);
+        }
+        // std::vector<ast_node*> nodes;
+        // for(auto root: ast.roots){
+        //     std::vector<ast_node*> nodes;
+        //     root->get_all_nodes(nodes);
+        //     for(auto node : nodes){
+        //         if(node->computations.size()>0){
+        //             optimization_info optim_info;
+        //             optim_info.type = optimization_type::MATRIX;
+        //             node->get_all_computations(optim_info.comps);
+        //             // for the original schedule, the transformation matrix is the identity
+                    
+        //             optim_info.matrix = get_identity(node->depth+1);
+        //             ast.new_optims.push_back(optim_info);
+                    
+                    
+        //         }
+                
+        //     }
+        // }    
+        ast.fct->reset_schedules();
     }
     
     hashes.push_back(hasher(ast.get_schedule_str()));

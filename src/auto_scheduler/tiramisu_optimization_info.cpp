@@ -28,12 +28,13 @@ void apply_optimizations(syntax_tree const& ast)
 {
     // Check ast.h for the difference between ast.previous_optims and ast.new_optims
     for (optimization_info const& optim_info : ast.previous_optims){
+        std::cout<<"old optims: "<<optim_info.type<<std::endl;
         apply_optimizations(optim_info);
     }
         
         
     for (optimization_info const& optim_info : ast.new_optims){
-            //std::cout<<"new optims: "<<optim_info.type<<std::endl;
+            std::cout<<"new optims: "<<optim_info.type<<std::endl;
             apply_optimizations(optim_info);
     }
         
