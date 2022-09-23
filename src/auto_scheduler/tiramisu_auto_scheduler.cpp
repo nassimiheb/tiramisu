@@ -22,9 +22,9 @@ void auto_scheduler::sample_search_space(std::string filename, bool timeout_sche
         isl_map *schedule = current_comp->get_schedule();
         std::cout<<"in search fusion 1: "<<isl_map_to_str(schedule)<<std::endl;
     }
-    //ast.fct->set_use_low_level_scheduling_commands(false);
+    ast.fct->set_use_low_level_scheduling_commands(false);
     ast.fct->gen_time_space_domain();
-    ///ast.fct->set_use_low_level_scheduling_commands(true);
+    ast.fct->set_use_low_level_scheduling_commands(true);
     for (tiramisu::computation* current_comp : ast.computations_list) // iterate over the ordered computations list
     {
         isl_map *schedule = current_comp->get_schedule();

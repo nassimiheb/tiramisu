@@ -491,7 +491,19 @@ void update_node(std::vector<ast_node *> shared_nodes, std::vector<std::vector<i
 }
 void syntax_tree::transform_ast_by_matrix(const optimization_info &opt)
 {
+    for (tiramisu::computation* current_comp : computations_list) // iterate over the ordered computations list
+    {
+        isl_map *schedule;
+        schedule = current_comp->get_schedule();
+        std::cout<<"computation schedule before staging in transform_ast_by_matrix: "<<isl_map_to_str(schedule)<<std::endl;
+    }
     stage_isl_states();  
+    for (tiramisu::computation* current_comp : computations_list) // iterate over the ordered computations list
+    {
+        isl_map *schedule;
+        schedule = current_comp->get_schedule();
+        std::cout<<"computation schedule after staging in transform_ast_by_matrix: "<<isl_map_to_str(schedule)<<std::endl;
+    }
 /**
  * Applying to staging
 */  
@@ -530,7 +542,7 @@ void syntax_tree::transform_ast_by_matrix(const optimization_info &opt)
                 }
             }
             
-            info.comp_ptr->matrix_transform(matrix);
+            //info.comp_ptr->matrix_transform(matrix);
             if(temp_to_change.size()==0){
                 for(ast_node* node:to_change_nodes){
                     temp_to_change.push_back(node);
@@ -572,9 +584,19 @@ void syntax_tree::transform_ast_by_matrix(const optimization_info &opt)
     }
     // Update the AST with new loop bounds 
     update_node( temp_to_change , transformed_bounds_matrix);
- 
+    for (tiramisu::computation* current_comp : computations_list) // iterate over the ordered computations list
+    {
+        isl_map *schedule;
+        schedule = current_comp->get_schedule();
+        std::cout<<"computation schedule after recovering in transform_ast_by_matrix: "<<isl_map_to_str(schedule)<<std::endl;
+    }
     recover_isl_states();
-    
+    for (tiramisu::computation* current_comp : computations_list) // iterate over the ordered computations list
+    {
+        isl_map *schedule;
+        schedule = current_comp->get_schedule();
+        std::cout<<"computation schedule after recovering in transform_ast_by_matrix: "<<isl_map_to_str(schedule)<<std::endl;
+    }
 }
 
 void syntax_tree::transform_ast_by_tiling(optimization_info const& opt)

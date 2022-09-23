@@ -3091,14 +3091,14 @@ void computation::matrix_transform(std::vector<std::vector<int>> matrix)
     DEBUG_FCT_NAME(3);
     DEBUG_INDENT(4);
     // print transformtation matrix and original schedule
-    std::cout<<"in matrix transform"<<std::endl;
-    for(int l = 0; l<matrix.size(); l++){
-        for(int c = 0; c<matrix.size(); c++){
-            std::cout<<matrix.at(l).at(c)<<" ";
-        }
-        std::cout<<std::endl;
-    }
-    std::cout<<"in matrix transform end"<<std::endl;
+    // std::cout<<"in matrix transform"<<std::endl;
+    // for(int l = 0; l<matrix.size(); l++){
+    //     for(int c = 0; c<matrix.size(); c++){
+    //         std::cout<<matrix.at(l).at(c)<<" ";
+    //     }
+    //     std::cout<<std::endl;
+    // }
+    // std::cout<<"in matrix transform end"<<std::endl;
     isl_map *schedule = this->get_schedule();
     std::cout<<isl_map_to_str(schedule)<<std::endl;
     DEBUG(3, tiramisu::str_dump("Original schedule: ", isl_map_to_str(schedule)));
@@ -3160,7 +3160,7 @@ void computation::matrix_transform(std::vector<std::vector<int>> matrix)
                 vector_content = vector_content + std::to_string(matrix[i][j]);
                 t += 1;
             }
-            if(i== matrix.size()-2 && j==matrix[i].size()-1) last_t = t;
+            if(i== matrix.size()-2 && j==matrix[i].size()-2) last_t = t;
         }
         t=0;
         

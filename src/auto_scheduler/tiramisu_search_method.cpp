@@ -1,6 +1,5 @@
 #include <sys/wait.h>
 #include <tiramisu/auto_scheduler/search_method.h>
-#include </home/afif/multi/tiramisu/src/tiramisu_core.cpp>
 #include <random>
 
 #include <random>
@@ -9,7 +8,12 @@
 
 #include <stdexcept>
 #define TIME_LIMIT 1000
-
+struct UnrollingException : public std::exception {
+    const char * what () const throw ()
+        {
+            return "unrolling error : unrolled loop level is a user node due to dimension error";
+        }
+};
 namespace tiramisu::auto_scheduler
 {
 
@@ -173,7 +177,7 @@ void sig_usr(int signo){
 
 void beam_search::search_save(syntax_tree& ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout)
 {
-    
+    std::cout<<"started search save"<<std::endl;
     std::vector<syntax_tree*> children;
     if(generator_state::initialized == false)
     {
@@ -696,7 +700,7 @@ std::vector <  std::vector<int> > get_identity(int depth){
 std::vector<std::size_t> hashes;
 void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout)
 {
-       
+    
     std::default_random_engine rand_generator;
 
     
@@ -723,6 +727,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         ast.fct->set_use_low_level_scheduling_commands(false);
         ast.fct->gen_time_space_domain();
         ast.fct->set_use_low_level_scheduling_commands(true);
+        
         for (tiramisu::computation* current_comp : ast.computations_list) // iterate over the ordered computations list
         {
             isl_map *schedule = current_comp->get_schedule();
@@ -797,9 +802,9 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
     while ((!ast.is_search_space_empty()))
     {
         // schedule generation based on generator_state attribute in the AST.
-         
+        std::cout<<"before gen mat"<<std::endl;
         auto new_children = scheds_gen->generate_matrices(ast);
-        
+        std::cout<<"after before gen mat"<<std::endl;
         for(auto& child:new_children)
             child->move_to_next_head();
         
@@ -845,11 +850,13 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
 
     // evaluate children and sort them from smallest to highest evaluation
     // evaluate while removing illegal versions
+    std::cout<<children.size()<<"children"<<std::endl;
     while (iterator != children.end())
     {
          
         child = *iterator;
-        
+        std::cout << "\n-----------" << std::endl;
+        child->print_new_optims();
         child->transform_ast();
         
         if(child->ast_is_prunable()){
@@ -1080,13 +1087,14 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
             }
         }
     }
-    syntax_tree *ast_copy = ast.copy_ast();
+    std::cout<<"don't forget this"<<std::endl;
+    //syntax_tree *ast_copy = ast.copy_ast();
     //ast_copy->nb_explored_optims = nb_explored_optims;
                     
-    to_be_explored.push_back(ast_copy);
+    //to_be_explored.push_back(ast_copy);
     
                     
-    parent_trace->add_child_path(ast_copy, parent_trace->get_candidate_id());
+    //parent_trace->add_child_path(ast_copy, parent_trace->get_candidate_id());
     
 
 

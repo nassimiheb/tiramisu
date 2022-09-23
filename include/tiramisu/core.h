@@ -81,6 +81,7 @@ computation *get_computation_annotated_in_a_node(isl_ast_node *node);
 std::string generate_new_computation_name();
 
 isl_map *isl_map_add_free_var(const std::string &free_var_name, isl_map *map, isl_ctx *ctx);
+int isl_map_get_static_dim(isl_map *map, int dim_pos);
 void split_string(std::string str, std::string delimiter, std::vector<std::string> &vector);
 int loop_level_into_dynamic_dimension(int level);
 int loop_level_into_static_dimension(int level);

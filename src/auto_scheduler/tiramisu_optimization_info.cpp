@@ -39,9 +39,9 @@ void apply_optimizations(syntax_tree const& ast)
     }
         
 
-    // Fusion is a particular case, and we use apply_fusions() to apply it.
-    // apply_fusions() uses the structure of the AST to correctly order the computations.
-    apply_fusions(ast);
+    // // Fusion is a particular case, and we use apply_fusions() to apply it.
+    // // apply_fusions() uses the structure of the AST to correctly order the computations.
+    // apply_fusions(ast);
     // Parallelization needs to be applied after the other transformations in order to have the accurate loop depth of
     // the tagged ast_nodes
     apply_parallelization(ast);
