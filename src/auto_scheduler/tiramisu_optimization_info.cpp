@@ -120,7 +120,6 @@ void apply_optimizations(optimization_info const& optim_info)
         for (tiramisu::computation* current_comp : ast.computations_list) // iterate over the ordered computations list
         {
             isl_map *schedule = current_comp->get_schedule();
-            std::cout<<"computation schedule before: "<<isl_map_to_str(schedule)<<std::endl;
             if (previous_comp == nullptr) // if current comp is the first computation
             {
                 previous_comp = current_comp;
@@ -140,11 +139,6 @@ void apply_optimizations(optimization_info const& optim_info)
             current_comp->after(*previous_comp, fusion_level);
             previous_comp = current_comp;
 
-        }
-        for (tiramisu::computation* current_comp : ast.computations_list) // iterate over the ordered computations list
-        {
-            isl_map *schedule = current_comp->get_schedule();
-            std::cout<<"computation schedule after: "<<isl_map_to_str(schedule)<<std::endl;
         }
 
     }

@@ -3085,6 +3085,121 @@ void computation::interchange(tiramisu::var L0_var, tiramisu::var L1_var)
 
     DEBUG_INDENT(-4);
 }
+std::vector<std::vector<int>>  multiply_constraint_matrix(const std::vector<std::vector<int>> & m1, const std::vector<std::vector<int>> & m2)
+        {
+        std::vector<std::vector<int>> result(m1.size(), std::vector<int>(m2.at(0).size()));
+
+            for(std::size_t row = 0; row < result.size(); ++row) {
+                for(std::size_t col = 0; col < result.at(0).size(); ++col) {
+                    for(std::size_t inner = 0; inner < m2.size(); ++inner) {
+                        result.at(row).at(col) += m1.at(row).at(inner) * m2.at(inner).at(col);
+                    }
+                }
+            }
+            return result;
+        }
+int determinant( std::vector <  std::vector<int> >  matrix, int n) {
+   int det = 0;
+   int o;
+   if(n==1) return matrix.at(0).at(0);
+   std::vector <  std::vector<int> >  submatrix(n);
+   for(o = 0; o<n; o++){
+                submatrix.at(o)= std::vector<int> (n);}
+   if (n == 2)
+   return ((matrix.at(0).at(0) * matrix.at(1).at(1)) - (matrix.at(1).at(0) * matrix.at(0).at(1)));
+   else {
+      for (int x = 0; x < n; x++) {
+         int subi = 0;
+         for (int i = 1; i < n; i++) {
+            int subj = 0;
+            for (int j = 0; j < n; j++) {
+               if (j == x)
+               continue;
+               submatrix.at(subi).at(subj) = matrix.at(i).at(j);
+               subj++;
+            }
+            subi++;
+         }
+         det = det + (pow(-1, x) * matrix.at(0).at(x) * determinant( submatrix, n - 1 ));
+      }
+   }
+   return det;
+}
+std::vector<std::vector<int>> getTranspose(const std::vector<std::vector<int>> matrix1) {
+
+    //Transpose-matrix: height = width(matrix), width = height(matrix)
+    std::vector<std::vector<int>> solution(matrix1[0].size(), std::vector<int> (matrix1.size()));
+
+    //Filling solution-matrix
+    for(size_t i = 0; i < matrix1.size(); i++) {
+        for(size_t j = 0; j < matrix1[0].size(); j++) {
+            solution[j][i] = matrix1[i][j];
+        }
+    }
+    return solution;
+}
+
+std::vector<std::vector<int>> getCofactor(const std::vector<std::vector<int>> vect) {
+    if(vect.size() != vect[0].size()) {
+        throw std::runtime_error("Matrix is not quadratic");
+    } 
+
+    std::vector<std::vector<int>> solution(vect.size(), std::vector<int> (vect.size()));
+    std::vector<std::vector<int>> subVect(vect.size() - 1, std::vector<int> (vect.size() - 1));
+
+    for(std::size_t i = 0; i < vect.size(); i++) {
+        for(std::size_t j = 0; j < vect[0].size(); j++) {
+
+            int p = 0;
+            for(size_t x = 0; x < vect.size(); x++) {
+                if(x == i) {
+                    continue;
+                }
+                int q = 0;
+
+                for(size_t y = 0; y < vect.size(); y++) {
+                    if(y == j) {
+                        continue;
+                    }
+
+                    subVect[p][q] = vect[x][y];
+                    q++;
+                }
+                p++;
+            }
+            solution[i][j] = pow(-1, i + j) * determinant(subVect,subVect.size());
+        }
+    }
+    return solution;
+}
+
+std::vector<std::vector<int>> getInverse(const std::vector<std::vector<int>> A) {
+    int d = 1.0/determinant(A,A.size());
+    std::vector<std::vector<int>> solution(A.size(), std::vector<int> (A.size()));
+
+    if(A.size() == 1){
+        std::vector<int> ans = {0};
+        ans[0] = 1.0/determinant(A,A.size());
+        solution[0] = ans;
+        return solution;
+    }
+
+    for(size_t i = 0; i < A.size(); i++) {
+        for(size_t j = 0; j < A.size(); j++) {
+            solution[i][j] = A[i][j] * d; 
+        }
+    }
+    if(d==1){return getTranspose(getCofactor(solution));}
+    if(d==-1){   std::vector<std::vector<int>> res=getTranspose(getCofactor(solution));
+             for (int i = 0; i < res.size(); i++) {
+                for (int j = 0; j < res[i].size(); j++)
+                   res[i][j] =  -res[i][j];
+              
+              }
+              return res;
+    }
+
+}
 void computation::matrix_transform(std::vector<std::vector<int>> matrix)
 {
 
@@ -3211,10 +3326,83 @@ void computation::matrix_transform(std::vector<std::vector<int>> matrix)
             map = map + ",";
         }
     }
+     std::cout<<" matrix"<<std::endl;
+            
+            for (int i = 0; i < matrix.size(); i++)
+            {
+                for (int j = 0; j <matrix[i].size(); j++)
+                {
+                    std::cout << matrix[i][j]<<" ";
+                }
+                std::cout << std::endl;
+            }
 
-    map = map + "]}";
+    int matrix_size = matrix.size()/2 -1;
+    std::vector <  std::vector<int> >  small_matrix(matrix_size);
+    for(int i=0;i<small_matrix.size();i++){
+        small_matrix.at(i)= std::vector<int>(matrix_size);
+        for(int j=0;j<small_matrix.size();j++){
+            small_matrix.at(i).at(j) = matrix.at(2*i+1).at(2*j+1);
+        }
+    }
+    std::vector<std::vector<int>> inverse = getInverse(small_matrix);
     
-    std::cout<<"left side of map final: "<<map<<std::endl;
+    std::vector<std::vector<int> > iden_matrix = std::vector<std::vector<int> >(this->constraint_matrix.size()/2, std::vector<int>(this->constraint_matrix.size()/2,0));
+
+    // Set the diagonal to be 1s
+    for(int t = 0; t < this->constraint_matrix.size()/2; t++)
+        iden_matrix[t][t] = 1;
+ std::cout<<" iden after"<<std::endl;
+            
+            for (int i = 0; i < iden_matrix.size(); i++)
+            {
+                for (int j = 0; j <iden_matrix[i].size(); j++)
+                {
+                    std::cout << iden_matrix[i][j]<<" ";
+                }
+                std::cout << std::endl;
+            }
+    for (int i = 0; i < small_matrix.size(); i++)
+        {
+            for (int j = 0; j <small_matrix[i].size(); j++)
+            {
+                iden_matrix[i][j]=small_matrix[i][j];
+            }
+        }
+   
+    map = map + "]}";
+     std::cout<<" matrix after"<<std::endl;
+            
+            for (int i = 0; i < small_matrix.size(); i++)
+            {
+                for (int j = 0; j <small_matrix[i].size(); j++)
+                {
+                    std::cout << small_matrix[i][j]<<" ";
+                }
+                std::cout << std::endl;
+            }
+            std::cout<<" this->constraint_matrix"<<std::endl;
+            
+            for (int i = 0; i <  this->constraint_matrix.size(); i++)
+            {
+                for (int j = 0; j < this->constraint_matrix[i].size(); j++)
+                {
+                    std::cout <<  this->constraint_matrix[i][j]<<" ";
+                }
+                std::cout << std::endl;
+            }
+    this->constraint_matrix = multiply_constraint_matrix(this->constraint_matrix,getInverse(iden_matrix));
+      std::cout<<" this->constraint_matrix after "<<std::endl;
+            
+            for (int i = 0; i <  this->constraint_matrix.size(); i++)
+            {
+                for (int j = 0; j < this->constraint_matrix[i].size(); j++)
+                {
+                    std::cout <<  this->constraint_matrix[i][j]<<" ";
+                }
+                std::cout << std::endl;
+            }
+    //std::cout<<"left side of map final: "<<map<<std::endl;
 //map ="{ comp01[0,t28,i0,t29,i1,t30,i3,t31] ->comp01[0,t28,i0=0i0+1i1+0i3,t29,i1=1i0+0i1+0i3,t30,i2=0i0+0i1+1i3,t31]}";
     DEBUG(3, tiramisu::str_dump("A map that transforms the duplicate"));
     DEBUG(3, tiramisu::str_dump(map.c_str()));

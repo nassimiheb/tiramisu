@@ -698,6 +698,37 @@ std::vector <  std::vector<int> > get_identity(int depth){
 
 // list of hashes of matrices we explored before to avoid repeating schedules 
 std::vector<std::size_t> hashes;
+std::vector<int> format_bound( int id_rank, int size, bool is_lower){
+          std::vector<int> output;
+          
+          for(int i=0;i< size ;i++){
+              if(i==id_rank){
+                if(is_lower){ output.push_back(-1);}
+                else{output.push_back(1);}               
+              }else{
+                output.push_back(0);
+              }
+          }
+        
+        return output;
+    }
+std::vector<std::vector<int>> get_ast_isl_constraint_matrice(int matrix_size){
+
+        std::vector< std::vector<int>> constraint_mat;
+        
+       
+        for (int i = 0; i < matrix_size; i++) {
+        for (int j = 0; j < 2; j++)
+            {
+               if (j==0){  
+                    constraint_mat.push_back(format_bound(i,matrix_size,true));  
+                } else{
+                    constraint_mat.push_back(format_bound(i,matrix_size,false)); 
+                }       
+            }
+        }
+        return (constraint_mat);
+}
 void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> *schedules_annotations, candidate_trace *parent_trace, float schedule_timeout)
 {
     
@@ -721,7 +752,6 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         for (tiramisu::computation* current_comp : ast.computations_list) // iterate over the ordered computations list
         {
             isl_map *schedule = current_comp->get_schedule();
-            std::cout<<"first time adding identity: "<<isl_map_to_str(schedule)<<std::endl;
         }
         apply_fusions(ast);
         ast.fct->set_use_low_level_scheduling_commands(false);
@@ -731,7 +761,6 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
         for (tiramisu::computation* current_comp : ast.computations_list) // iterate over the ordered computations list
         {
             isl_map *schedule = current_comp->get_schedule();
-            std::cout<<"first time adding identity AFTER: "<<isl_map_to_str(schedule)<<std::endl;
         }
         
         for (tiramisu::computation* current_comp : ast.computations_list) // iterate over the ordered computations list
@@ -741,7 +770,7 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
             isl_map *schedule = current_comp->get_schedule();
             int n_dims = isl_map_dim(schedule, isl_dim_out);
 
-                                
+                          
             std::vector<int> static_dim_vector;                 
             for (int i = 0; i < n_dims; i++)
             {
@@ -770,6 +799,16 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
             for(int l = 0; l<matrix.size(); l+=2){
                 matrix.at(l).at(l) = 0; 
                 matrix.at(l).at(matrix.size()-1) =  static_dim_vector.at(i);i++;
+            }
+            std::cout<<"intial constraint matrix"<<std::endl;
+            current_comp->constraint_matrix = get_ast_isl_constraint_matrice(static_dim_vector.size()-1);
+            for (int i = 0; i < current_comp->constraint_matrix.size(); i++)
+            {
+                for (int j = 0; j < current_comp->constraint_matrix[i].size(); j++)
+                {
+                    std::cout << current_comp->constraint_matrix[i][j]<<" ";
+                }
+                std::cout << std::endl;
             }
             optim_info.comps.push_back(current_comp);
             optim_info.matrix = matrix;

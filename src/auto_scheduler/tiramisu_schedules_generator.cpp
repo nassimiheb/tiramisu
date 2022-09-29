@@ -1469,12 +1469,6 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
     bool explre_interchange = true;
     bool explre_solver_skew = true;
     std::vector<std::vector<std::vector<int>>> matrices;
-    for (tiramisu::computation* current_comp : ast.computations_list) // iterate over the ordered computations list
-    {
-        isl_map *schedule;
-        schedule = current_comp->get_schedule();
-        std::cout<<"computation schedule begnging the generation: "<<isl_map_to_str(schedule)<<std::endl;
-    }
     ast_node *node = std::get<0>(ast.get_current_optimization_target());
     
     std::vector<int> shared_levels_extents;
@@ -1768,12 +1762,7 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
         }
         ast.recover_isl_states();
     }
-    for (tiramisu::computation* current_comp : ast.computations_list) // iterate over the ordered computations list
-    {
-        isl_map *schedule;
-        schedule = current_comp->get_schedule();
-        std::cout<<"computation schedule bgenning fusion generation: "<<isl_map_to_str(schedule)<<std::endl;
-    }
+
     //explore fusion
     bool explore_fusion = true;
     // if(ast.search_depth==1){
@@ -1840,7 +1829,6 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                 {
                     isl_map *schedule;
                     schedule = current_comp->get_schedule();
-                    std::cout<<"computation schedule before stage_isl_states : "<<isl_map_to_str(schedule)<<std::endl;
                 }
                 new_ast->stage_isl_states();
                 // modify the schedule graph now using after
@@ -1848,7 +1836,6 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                 {
                     isl_map *schedule;
                     schedule = current_comp->get_schedule();
-                    std::cout<<"computation schedule after stage_isl_states : "<<isl_map_to_str(schedule)<<std::endl;
                 }
                 current_node->computations[node_computation.second].comp_ptr->after(
                     *previous_node->computations[previous_node_computation.second].comp_ptr,
@@ -1874,7 +1861,6 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                     {
                         isl_map *schedule;
                         schedule = current_comp->get_schedule();
-                        std::cout<<"computation schedule before correcting_loop_fusion_with_shifting "<<isl_map_to_str(schedule)<<std::endl;
                     }
                 auto shifting_res = ast.get_function()->correcting_loop_fusion_with_shifting(
                     seen_computations,
@@ -1884,9 +1870,7 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                     {
                         isl_map *schedule;
                         schedule = current_comp->get_schedule();
-                        std::cout<<"computation schedule after correcting_loop_fusion_with_shifting: "<<isl_map_to_str(schedule)<<std::endl;
                     }
-                std::cout<<"got here prepare_schedules_for_legality_checks"<<std::endl;
                 if (shifting_res.size() > 0)
                 {
                     
@@ -1942,7 +1926,6 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                             optim_info_mat.comps.push_back(current_comp);
                             
                             schedule = current_comp->get_schedule();
-                            std::cout<<"computation schedule before pushing to states: "<<isl_map_to_str(schedule)<<std::endl;
                             int n_dims = isl_map_dim(schedule, isl_dim_out);
                             
                                     
@@ -1975,19 +1958,9 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
                                 matrix.at(l).at(l) = 0; 
                                 matrix.at(l).at(matrix.size()-1) =  static_dim_vector.at(i);i++;
                             }
-                            std::cout<<"got here"<<std::endl;
                             optim_info_mat.matrix = matrix;
                             computation_index+=1;
-                            for(int l = 0; l<static_dim_vector.size(); l++){
-                                std::cout<<" Static dim vector: "<<static_dim_vector.at(l)<<std::endl;
-                            }
-                            std::cout<<"matrix in generation"<<std::endl; 
-                            for(int l = 0; l<matrix.size(); l++){
-                                for(int c = 0; c<matrix.size(); c++){
-                                    std::cout<<matrix.at(l).at(c)<<" ";
-                                }
-                                std::cout<<std::endl;
-                            }
+                            
                             new_ast_mat->new_optims.push_back(optim_info_mat);
                         }
                         
@@ -2009,12 +1982,7 @@ std::vector<syntax_tree *> ml_model_schedules_generator::generate_matrices(synta
         }
         ast.fct->set_use_low_level_scheduling_commands(true);
     }
-    for (tiramisu::computation* current_comp : ast.computations_list) // iterate over the ordered computations list
-    {
-        isl_map *schedule;
-        schedule = current_comp->get_schedule();
-        std::cout<<"computation schedule end the generation: "<<isl_map_to_str(schedule)<<std::endl;
-    }
+   
     /*
     // boolean for adding random skew patterns
     bool add_3d_skew=false;

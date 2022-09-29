@@ -1996,6 +1996,9 @@ private:
       * Returns the iteration_variables vector containing each of the
       * computation's iteration variables
       */
+
+    
+
     std::vector<tiramisu::var> get_iteration_variables();
 
     /**
@@ -2772,6 +2775,8 @@ protected:
       */
     isl_ast_expr *wait_index_expr;
 
+
+  
     /**
       * Dummy constructor for derived classes.
       */
@@ -2999,6 +3004,11 @@ protected:
 
 public:
 
+    std::vector<std::vector<int>> constraint_matrix;
+     /**
+     * The constraint matrix of the transformed loops
+     * **/
+    std::vector<std::vector<int>> transformed_constraint_matrix;
     /**
       * \brief Constructor for computations.
       *
@@ -3085,6 +3095,10 @@ public:
       *
       * Examples about bound inference are provided in test_22 to test_25.
       */
+    /**
+     * The constraint matrix of the original loops
+     * **/
+    
     computation(std::string iteration_domain, tiramisu::expr e,
                 bool schedule_this_computation, tiramisu::primitive_t t,
                 tiramisu::function *fct);
