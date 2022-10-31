@@ -42,6 +42,7 @@ def get_sched_rep(program_json, sched_json, max_depth):
     #     max_depth = 5
 
     comps_repr_templates_list = []
+    comps_expr_repr_templates_list = []
     comps_indices_dict = dict()
     comps_placeholders_indices_dict = dict()
 
@@ -50,9 +51,37 @@ def get_sched_rep(program_json, sched_json, max_depth):
         list(computations_dict.keys()),
         key=lambda x: computations_dict[x]["absolute_order"],
     )
+    def get_expr_repr(expr):
+        if(expr == "add"):
+            return [1, 0, 0, 0, 0]
+        elif(expr == "sub"):
+            return [0, 1, 0, 0, 0]
+        elif(expr == "mul"):
+            return [0, 0, 1, 0, 0]
+        elif(expr == "div"):
+            return [0, 0, 0, 1, 0]
+        # elif(expr == "value"):
+        #     return [0, 0, 0, 0, 1, 0, 0, 0]
+        # elif(expr == "access"):
+        #     return [0, 0, 0, 0, 0, 1, 0, 0]
+        # elif(expr == "buffer"):
+        #     return [0, 0, 0, 0, 0, 0, 1, 0]
+        else:
+            return [0, 0, 0, 0, 1]
+    def get_tree_expr_repr(node):
+        expr_tensor = []
+        if node["children"] != []:
+            for child_node in node["children"]:
+                expr_tensor.extend(get_tree_expr_repr(child_node))
+        expr_tensor.append(get_expr_repr(node["expr_type"]))
 
+        return expr_tensor
+    
     for comp_index, comp_name in enumerate(ordered_comp_list):
         comp_dict = computations_dict[comp_name]
+        # to get the expression representation
+        expr_dict = comp_dict["expression_representation"]
+        comps_expr_repr_templates_list.append(get_tree_expr_repr(expr_dict))
         if len(comp_dict["accesses"]) > max_accesses:
             raise NbAccessException
         if len(comp_dict["accesses"]) < min_accesses:
@@ -224,6 +253,7 @@ def get_sched_rep(program_json, sched_json, max_depth):
         loops_repr_templates_list,
         comps_placeholders_indices_dict,
         loops_placeholders_indices_dict,
+        torch.tensor(comps_expr_repr_templates_list),
     )
 
 

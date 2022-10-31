@@ -16,6 +16,7 @@ option(USE_CUDNN "Build with cuDNN for benchmark comparisons" FALSE)
 option(USE_MKL_WRAPPERS "Build with MKL wrappers provided by Tiramisu" TRUE)
 
 option(USE_AUTO_SCHEDULER "Build the Tiramisu auto-scheduler" TRUE)
+set(USE_AUTO_SCHEDULER TRUE)
 
 # Change with the cudnn library location
 set(CUDNN_LOCATION /data/scratch/akkas/cudnn7 CACHE PATH "CUDNN library location")

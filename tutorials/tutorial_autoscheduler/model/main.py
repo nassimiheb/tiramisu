@@ -23,9 +23,10 @@ warnings.filterwarnings("ignore", category=UserWarning)
 # model_path = '/data/scratch/mmerouani/tiramisu2/tiramisu/tutorials/tutorial_autoscheduler/model/best_model_bidirectional_new_data_fixed_inversed_matrices_98c0.pt'
 # model_path = '/data/scratch/mmerouani/tiramisu2/tiramisu/tutorials/tutorial_autoscheduler/model/MAPE_base_13+4+2.6_22.7.pkl'
 # model_path = '/data/scratch/hbenyamina/best_model_bidirectional_new_data_static_input_paper_4cb2.pt'
-model_path = (
-    "/data/scratch/hbenyamina/best_model_bidirectional_new_data_static_input_nn_a0b1.pt"
-)
+# model_path = (
+#     "/data/scratch/hbenyamina/best_model_bidirectional_new_data_static_input_nn_a0b1.pt"
+# )
+model_path = '/home/islem/pfe/tiramisu_work/tiramisu/tutorials/tutorial_autoscheduler/model/best_model_bidirectional_static_input_nn_f53e.pt'
 
 MAX_DEPTH = 5
 
@@ -36,7 +37,7 @@ with torch.no_grad():
     environ["layers"] = "600 350 200 180"
     environ["dropouts"] = "0.225 " * 4
 
-    input_size = 776
+    input_size = 912
     output_size = 1
 
     layers_sizes = list(map(int, environ.get("layers", "300 200 120 80 30").split()))
@@ -63,6 +64,7 @@ with torch.no_grad():
                     loops_repr_templates_list,
                     comps_placeholders_indices_dict,
                     loops_placeholders_indices_dict,
+                    comps_expr_tensor,
                 ) = get_sched_rep(program_json, sched_json, max_depth=MAX_DEPTH)
                 computations_tensor, loops_tensor = get_schedule_representation(
                     program_json,
@@ -73,7 +75,7 @@ with torch.no_grad():
                     loops_placeholders_indices_dict,
                     max_depth=MAX_DEPTH,
                 )
-                tree_tensor = (prog_tree, computations_tensor, loops_tensor)
+                tree_tensor = (prog_tree, computations_tensor, loops_tensor, comps_expr_tensor)
 
                 speedup = model.forward(tree_tensor)
                 print(float(speedup.item()))

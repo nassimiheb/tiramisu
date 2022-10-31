@@ -133,6 +133,11 @@ public:
     static void represent_computations_from_nodes(ast_node *node, std::string& computations_json, int& comp_absolute_order);
     
     /**
+     * A recursive subroutine that represents in JSON the computations expessions of a given tree.
+     */
+    static void represent_expressions_from_nodes(ast_node *node, std::string& computations_json);
+    
+    /**
      * Return a JSON representation of the schedule of the given AST.
      */
     static std::string get_schedule_json(syntax_tree & ast);
