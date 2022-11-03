@@ -4,8 +4,8 @@
 #include "function760903_wrapper.h"
 
 using namespace tiramisu;
-const std::string py_cmd_path = "/usr/lib/python2.7";
-const std::string py_interface_path = "~/pfe/tiramisu_work/tiramisu/tutorials/tutorial_autoscheduler/model/main.py";
+const std::string py_cmd_path = "/data/mk8958/anaconda3/envs/model_training/lib/python3.10";
+const std::string py_interface_path = "/data/mk8958/tiramisu/tutorials/tutorial_autoscheduler/model/main.py";
 int main(int argc, char **argv){                
 	tiramisu::init("function760903");
 	var i0("i0", 0, 64), i1("i1", 0, 64), i2("i2", 0, 320), i3("i3", 0, 320);

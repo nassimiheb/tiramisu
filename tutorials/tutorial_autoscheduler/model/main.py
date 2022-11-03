@@ -26,7 +26,9 @@ warnings.filterwarnings("ignore", category=UserWarning)
 # model_path = (
 #     "/data/scratch/hbenyamina/best_model_bidirectional_new_data_static_input_nn_a0b1.pt"
 # )
-model_path = '/home/islem/pfe/tiramisu_work/tiramisu/tutorials/tutorial_autoscheduler/model/best_model_bidirectional_static_input_nn_f53e.pt'
+model_path = '/data/mk8958/new_model/weights/best_model_bidirectional_static_input_nn_3326.pt'
+with open("/data/mk8958/tiramisu/tutorials/tutorial_autoscheduler/model/logs.txt", "w") as f:
+    f.write("Hello Wod")
 
 MAX_DEPTH = 5
 
@@ -47,17 +49,15 @@ with torch.no_grad():
     model.load_state_dict(torch.load(model_path, map_location="cpu"))
     model.to(device)
     model.eval()
-
+    
     with torch.no_grad():
         try:
             while True:
-
                 prog_json = input()
                 sched_json = input()
 
                 program_json = json.loads(prog_json)
                 sched_json = json.loads(sched_json)
-
                 (
                     prog_tree,
                     comps_repr_templates_list,
