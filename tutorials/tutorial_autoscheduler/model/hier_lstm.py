@@ -45,7 +45,7 @@ class Model_Recursive_LSTM_v2(nn.Module):
         drops=[0.225, 0.225, 0.225, 0.225],
         output_size=1,
         lstm_embedding_size=100,
-        expr_embed_size=50,
+        expr_embed_size=100,
         transformation_matrix_dimension=6,
         loops_tensor_size=20,
         train_device="cpu",
@@ -196,7 +196,7 @@ class Model_Recursive_LSTM_v2(nn.Module):
         return x
 
     def forward(self, tree_tensors):
-        tree, comps_tensor, vectors, loops_tensor, functions_comps_expr_tree, exprs_lengths = tree_tensors
+        tree, comps_tensor, vectors, loops_tensor, functions_comps_expr_tree, functions_comps_expr_lengths = tree_tensors
         # expressions embedding layer
         x = functions_comps_expr_tree.to(self.train_device)
         batch_size, num_comps, num_expr, expr_len = x.shape
@@ -205,7 +205,7 @@ class Model_Recursive_LSTM_v2(nn.Module):
         x = x.float()
         x = torch.cat((x,torch.zeros(batch_size * num_comps, 255 - num_expr * expr_len).to(self.train_device)), dim=1)
         # x = nn.utils.rnn.pack_padded_sequence(
-        #     x, lengths=list(exprs_lengths), batch_first=True, enforce_sorted=False)
+        #     x, lengths=list(functions_comps_expr_lengths), batch_first=True, enforce_sorted=False)
         # _, (expr_embedding, _) = self.exprs_embed(x)
         # expr_embedding = expr_embedding.permute(1, 0, 2).reshape(
         #     batch_size * num_comps, -1

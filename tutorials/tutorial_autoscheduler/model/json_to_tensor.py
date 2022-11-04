@@ -80,6 +80,7 @@ def get_representation_template(program_json, no_sched_json, max_depth, train_de
     
     for comp_index, comp_name in enumerate(ordered_comp_list):
         comp_dict = computations_dict[comp_name]
+        # to get the expression representation
         expr_dict = comp_dict["expression_representation"]
         comps_expr_repr_templates_list.append(get_tree_expr_repr(expr_dict))
         if len(comp_dict["accesses"]) > max_accesses:
@@ -247,7 +248,17 @@ def get_representation_template(program_json, no_sched_json, max_depth, train_de
     orig_tree_structure = no_sched_json["tree_structure"]
     tree_annotation = copy.deepcopy(orig_tree_structure)
     prog_tree = update_tree_atributes(tree_annotation, train_device=train_device)
-
+    
+    # adding padding to the expressions to get same size expressions
+    max_exprs = 0
+    max_exprs = max([len(comp) for comp in comps_expr_repr_templates_list])
+    lengths = []
+    for j in range(len(comps_expr_repr_templates_list)):
+        lengths.append(len(comps_expr_repr_templates_list[j]))
+        comps_expr_repr_templates_list[j].extend(
+            [[0, 0, 0, 0, 0]] * (max_exprs - len(comps_expr_repr_templates_list[j])))
+    comps_expr_lengths = torch.tensor(lengths)
+    comps_expr_repr_templates_list = torch.tensor([comps_expr_repr_templates_list])
     return (
         prog_tree,
         comps_repr_templates_list,
@@ -255,6 +266,7 @@ def get_representation_template(program_json, no_sched_json, max_depth, train_de
         comps_placeholders_indices_dict,
         loops_placeholders_indices_dict,
         comps_expr_repr_templates_list,
+        comps_expr_lengths,
     )
 
 

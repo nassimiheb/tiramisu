@@ -4,7 +4,8 @@
 #include "function760903_wrapper.h"
 
 using namespace tiramisu;
-
+const std::string py_cmd_path = "/data/mk8958/anaconda3/envs/model_training/lib/python3.10";
+const std::string py_interface_path = "/data/mk8958/tiramisu/tutorials/tutorial_autoscheduler/model/main.py";
 int main(int argc, char **argv){                
 	tiramisu::init("function760903");
 	var i0("i0", 0, 64), i1("i1", 0, 64), i2("i2", 0, 320), i3("i3", 0, 320);
@@ -33,13 +34,15 @@ int main(int argc, char **argv){
 	declare_memory_usage();
 
 	auto_scheduler::schedules_generator *scheds_gen = new auto_scheduler::ml_model_schedules_generator();
+	auto_scheduler::evaluation_function *model_eval = new auto_scheduler::evaluate_by_learning_model(py_cmd_path, {py_interface_path});
 	auto_scheduler::evaluate_by_execution *exec_eval = new auto_scheduler::evaluate_by_execution({&buf00,&buf01,&buf02,&buf03}, "function760903.o", "./function760903_wrapper");
-	auto_scheduler::search_method *bs = new auto_scheduler::beam_search(beam_size, max_depth, exec_eval, scheds_gen);
-	auto_scheduler::auto_scheduler as(bs, exec_eval);
+	auto_scheduler::search_method *bs = new auto_scheduler::beam_search(beam_size, max_depth, model_eval, scheds_gen);
+	auto_scheduler::auto_scheduler as(bs, model_eval);
 	as.set_exec_evaluator(exec_eval);
 	as.sample_search_space("./function760903_explored_schedules.json", true);
 	delete scheds_gen;
 	delete exec_eval;
+	delete model_eval;
 	delete bs;
 	return 0;
 }
