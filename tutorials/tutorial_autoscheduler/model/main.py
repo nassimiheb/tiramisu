@@ -13,7 +13,10 @@ import time
 import os
 
 environ["MKL_THREADING_LAYER"] = "GNU"
-logging.basicConfig(filename="log_new_model.txt")
+logging.basicConfig(filename="log_new_model.txt", filemode='a',
+                    format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
+                    datefmt='%H:%M:%S',
+                    level=logging.DEBUG)
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=UserWarning)
 
@@ -53,7 +56,7 @@ with torch.no_grad():
 
     environ["layers"] = "600 350 200 180"
     environ["dropouts"] = "0.05 " * 4
-
+    logging.info("got here")
     input_size = 1056
     output_size = 1
 
@@ -71,21 +74,24 @@ with torch.no_grad():
         bidirectional=True,
     )
     model.load_state_dict(torch.load(model_path, map_location="cpu"))
+    
     model.to(device)
     model.eval()
 
     with torch.no_grad():
         try:
             while True:
-
+                
+                
                 prog_json = input()
-                sched_json = input()
                 no_sched_json = input()
+                sched_json = input()
+                
 
                 program_json = json.loads(prog_json)
                 sched_json = json.loads(sched_json)
-                # no_sched_json = json.loads(no_sched_json)
-
+                no_sched_json = json.loads(no_sched_json)
+                
                 (
                     prog_tree,
                     comps_repr_templates_list,

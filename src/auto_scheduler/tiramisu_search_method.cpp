@@ -529,6 +529,7 @@ void beam_search::explore_fusion(syntax_tree& ast, std::vector<std::string> *sch
             std::vector<float> measurements;
             std::string no_sched_json = schedules_annotations->at(0);
             measurements.push_back(eval_func->evaluate(*(*iterator), no_sched_json));
+            // std::cout<<"got here"<<std::endl;
             (*iterator)->evaluation = min_eval(measurements);
 
             parent_trace->add_child_path((*iterator), schedules_annotations->size());

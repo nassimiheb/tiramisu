@@ -198,16 +198,20 @@ float evaluate_by_learning_model::evaluate(syntax_tree& ast, std::string no_sche
     // Get JSON representations for the program, and for the schedule
     std::string prog_json = get_program_json(ast);
     std::string sched_json = get_schedule_json(ast);
-    
+    // std::cout<<prog_json<<std::endl;
+    // std::cout<<sched_json<<std::endl;
+    // std::cout<<no_sched_json<<std::endl;
     // Write the program JSON and the schedule JSON to model_write
     fputs(prog_json.c_str(), model_write);
-    fputs(sched_json.c_str(), model_write);
     fputs(no_sched_json.c_str(), model_write);
+    fputs(sched_json.c_str(), model_write);
+    
     fflush(model_write);
     
     // Read the evaluation from model_read.
     float speedup = 0.f;
     fscanf(model_read, "%f", &speedup);
+    
     
     return -speedup;
 }

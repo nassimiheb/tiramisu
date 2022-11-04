@@ -951,8 +951,8 @@ def get_padded_transformation_matrix(
                 final_mat_factors.append(transformation_matrix.reshape(1, -1))
             if len(final_mat_factors) > MAX_MATRICES:
                 # print("length exceeded = ", len(final_mat_factors))
-                raise NbMatricesException
-                # final_mat_factors = final_mat_factors[:MAX_MATRICES]
+                # raise NbMatricesException
+                final_mat_factors = final_mat_factors[:MAX_MATRICES]
             final_mat = (
                 np.concatenate(final_mat_factors, axis=0)
                 if final_mat_factors
