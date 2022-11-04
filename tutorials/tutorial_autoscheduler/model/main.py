@@ -29,6 +29,24 @@ model_path = (
 
 MAX_DEPTH = 5
 
+def seperate_vector(
+    X: torch.Tensor, num_matrices: int = 4, pad: bool = True, pad_amount: int = 5
+) -> torch.Tensor:
+    batch_size, _ = X.shape
+    first_part = X[:, :33]
+    second_part = X[:, 33 : 33 + 169 * num_matrices]
+    third_part = X[:, 33 + 169 * num_matrices :]
+    vectors = []
+    for i in range(num_matrices):
+        vector = second_part[:, 169 * i : 169 * (i + 1)].reshape(batch_size, 1, -1)
+        vectors.append(vector)
+
+    if pad:
+        for i in range(pad_amount):
+            vector = torch.zeros_like(vector)
+            vectors.append(vector)
+    return (first_part, vectors[0], torch.cat(vectors[1:], dim=1), third_part)
+
 with torch.no_grad():
     device = "cpu"
     torch.device("cpu")
@@ -74,7 +92,8 @@ with torch.no_grad():
                     loops_repr_templates_list,
                     comps_placeholders_indices_dict,
                     loops_placeholders_indices_dict,
-                    comps_expr_repr_templates_list
+                    comps_expr_tensor,
+                    comps_expr_lengths,
                 ) = get_representation_template(program_json, no_sched_json, MAX_DEPTH)
                 comps_tensor, loops_tensor = get_schedule_representation(
                     program_json,
@@ -85,7 +104,23 @@ with torch.no_grad():
                     loops_placeholders_indices_dict,
                     max_depth=5,
                 )
-                tree_tensor = (prog_tree, comps_tensor, loops_tensor)
+                
+                x = comps_tensor
+                batch_size, num_comps, __dict__ = x.shape
+                x = x.view(batch_size * num_comps, -1)
+                (first_part, final_matrix, vectors, third_part) = seperate_vector(
+                        x, num_matrices=5, pad=False
+                    )
+                x = torch.cat(
+                    (
+                        first_part,
+                        third_part,
+                        final_matrix.reshape(batch_size * num_comps, -1),
+                    ),
+                    dim=1,
+                ).view(batch_size, num_comps, -1)
+                
+                tree_tensor = (prog_tree, x, vectors, loops_tensor, comps_expr_tensor, comps_expr_lengths)
 
                 speedup = model.forward(tree_tensor)
                 print(float(speedup.item()))

@@ -321,7 +321,10 @@ void evaluate_by_learning_model::represent_computations_from_nodes(ast_node *nod
                 comp_json += ",";
         }
         
-        comp_json += "]";
+        comp_json += "],";
+        
+        tiramisu::expr comp_info_expr = comp_info.comp_ptr->get_expr();
+        comp_json += "\"expression_representation\" : " +  comp_info_expr.to_json();
     
         computations_json += "\"" + comp_info.comp_ptr->get_name() + "\" : {" + comp_json + "},";
     }
@@ -329,6 +332,21 @@ void evaluate_by_learning_model::represent_computations_from_nodes(ast_node *nod
     // Recursively get JSON for the rest of computations
     for (ast_node *child : node->children)
         represent_computations_from_nodes(child, computations_json, comp_absolute_order);
+}
+
+void evaluate_by_learning_model::represent_expressions_from_nodes(ast_node *node, std::string& computations_json)
+{
+    // Build the JSON for the computations stored in "node".
+    for (computation_info const& comp_info : node->computations)
+    {
+        tiramisu::computation *comp_info_ptr = comp_info.comp_ptr;
+        tiramisu::expr comp_info_expr = comp_info_ptr->get_expr();
+        computations_json += "\"" + comp_info.comp_ptr->get_name() + "\":" + comp_info_expr.to_json() + ",";
+    }
+
+    // Recursively get JSON for the rest of computations
+    for (ast_node *child : node->children)
+        represent_expressions_from_nodes(child, computations_json);
 }
 /*
 multiply two matrices AxB
