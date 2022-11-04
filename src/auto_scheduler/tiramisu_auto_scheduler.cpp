@@ -59,10 +59,10 @@ void auto_scheduler::sample_search_space(std::string filename, bool timeout_sche
 //        if (std::atoi(read_env_var("AS_VERBOSE")) == 1)
         std::cout << "Schedule measurements timeout set to " << schedule_timeout << "*" << read_env_var("MAX_RUNS") << "(MAX_RUNS) s" << std::endl;
     }
-
     searcher->set_exec_eval(exec_evaluator);
     searcher->explore_fusion(ast, &schedules_annotations, &exploration_trace_root, schedule_timeout);
 
+    
     std::string output_json;
 
 //    std::string nb_exec = "\"default\"";
@@ -104,12 +104,17 @@ void auto_scheduler::sample_search_space(std::string filename, bool timeout_sche
     std::cout << "Best execution time : " << - searcher->get_best_evaluation() << std::endl;
     syntax_tree* best = searcher->get_best_ast();
     
-
-
-    std::vector<float> measurements = exec_evaluator->get_measurements(*best, false, schedule_timeout);
-    float real_measurement = *std::min_element(measurements.begin(), measurements.end());
-    if (std::atoi(read_env_var("AS_VERBOSE"))==1){
+    bool calculate_transformed_execution_time= false;
+    std::vector<float> measurements;
+    if(calculate_transformed_execution_time){
+        measurements = exec_evaluator->get_measurements(*best, false, schedule_timeout);
+        float real_measurement = *std::min_element(measurements.begin(), measurements.end());
+        if (std::atoi(read_env_var("AS_VERBOSE"))==1){
                 std::cout << "Tranformed execution time : " << real_measurement << std::endl;
+        }
+    }
+    
+    if (std::atoi(read_env_var("AS_VERBOSE"))==1){
                 std::cout << "Predicted speedup "<< - searcher->get_best_evaluation() << std::endl;
                 std::cout << "===================================" << std::endl << std::endl;
             }
@@ -117,7 +122,7 @@ void auto_scheduler::sample_search_space(std::string filename, bool timeout_sche
     ///
     myfile.open ("data/scratch/mmerouani/benchmark_multi_tests_mixed_dataset_model.txt",std::ios_base::app);
     myfile<<"\""<<filename.substr(2,filename.size()-26)<<"\",";
-    myfile << "\"" << real_measurement <<"\"," ;
+    if(calculate_transformed_execution_time) myfile << "\"" << *std::min_element(measurements.begin(), measurements.end()) <<"\"," ;
     myfile << "\""<< -searcher->get_best_evaluation()<<"\",";
     myfile << "\"" << best->get_schedule_str() <<"\""<< std::endl;
     myfile.close();
