@@ -247,13 +247,26 @@ def get_sched_rep(program_json, sched_json, max_depth):
 
     #     loops_tensor = torch.unsqueeze(torch.FloatTensor(loops_repr_templates_list),0)#.to(device)
     #     computations_tensor = torch.unsqueeze(torch.FloatTensor(comps_repr_templates_list),0)#.to(device)
+    print("jkjkj",comps_expr_repr_templates_list)
+    max_exprs = 0
+    max_exprs = max([len(comp) for comp in comps_expr_repr_templates_list])
+        
+
+    lengths = []
+    for j in range(len(comps_expr_repr_templates_list)):
+        lengths.append(len(comps_expr_repr_templates_list[j]))
+        comps_expr_repr_templates_list[j].extend(
+            [[0, 0, 0, 0, 0]] * (max_exprs - len(comps_expr_repr_templates_list[j])))
+    comps_expr_lengths = torch.tensor(lengths)
+    comps_expr_repr_templates_list = torch.tensor([comps_expr_repr_templates_list])
     return (
         prog_tree,
         comps_repr_templates_list,
         loops_repr_templates_list,
         comps_placeholders_indices_dict,
         loops_placeholders_indices_dict,
-        torch.tensor(comps_expr_repr_templates_list),
+        comps_expr_repr_templates_list,
+        comps_expr_lengths,
     )
 
 

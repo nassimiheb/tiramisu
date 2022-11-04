@@ -26,9 +26,7 @@ warnings.filterwarnings("ignore", category=UserWarning)
 # model_path = (
 #     "/data/scratch/hbenyamina/best_model_bidirectional_new_data_static_input_nn_a0b1.pt"
 # )
-model_path = '/data/mk8958/new_model/weights/best_model_bidirectional_static_input_nn_3326.pt'
-with open("/data/mk8958/tiramisu/tutorials/tutorial_autoscheduler/model/logs.txt", "w") as f:
-    f.write("Hello Wod")
+model_path = './best_model_bidirectional_static_input_nn_3326.pt'
 
 MAX_DEPTH = 5
 
@@ -65,6 +63,7 @@ with torch.no_grad():
                     comps_placeholders_indices_dict,
                     loops_placeholders_indices_dict,
                     comps_expr_tensor,
+                    comps_expr_lengths,
                 ) = get_sched_rep(program_json, sched_json, max_depth=MAX_DEPTH)
                 computations_tensor, loops_tensor = get_schedule_representation(
                     program_json,
@@ -75,7 +74,7 @@ with torch.no_grad():
                     loops_placeholders_indices_dict,
                     max_depth=MAX_DEPTH,
                 )
-                tree_tensor = (prog_tree, computations_tensor, loops_tensor, comps_expr_tensor)
+                tree_tensor = (prog_tree, computations_tensor, loops_tensor, comps_expr_tensor, comps_expr_lengths)
 
                 speedup = model.forward(tree_tensor)
                 print(float(speedup.item()))
