@@ -14,8 +14,8 @@ namespace tiramisu::auto_scheduler
 {
 
 //const std::vector<optimization_type> DEFAULT_OPTIMIZATIONS_ORDER = {UNFUSE, INTERCHANGE, SKEWING, PARALLELIZE, TILING};
-// const std::vector<optimization_type> DEFAULT_OPTIMIZATIONS_ORDER = { PARALLELIZE, TILING, UNROLLING};
-const std::vector<optimization_type> DEFAULT_OPTIMIZATIONS_ORDER = { TILING};
+const std::vector<optimization_type> DEFAULT_OPTIMIZATIONS_ORDER = { PARALLELIZE, TILING, UNROLLING};
+// const std::vector<optimization_type> DEFAULT_OPTIMIZATIONS_ORDER = { TILING};
 
 //const std::vector<optimization_type> DEFAULT_OPTIMIZATIONS_ORDER = {UNFUSE, INTERCHANGE, SKEWING, PARALLELIZE, TILING, UNROLLING, VECTORIZATION};
 const int NB_OPTIMIZATIONS = DEFAULT_OPTIMIZATIONS_ORDER.size();
