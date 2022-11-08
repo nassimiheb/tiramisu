@@ -1,7 +1,7 @@
 #include <Halide.h>
 #include <tiramisu/tiramisu.h>
 #include <iostream>
-#include "generated_lu.o.h"
+#include "build/generated_lu.o.h"
 #include "polybench-tiramisu.h"
 #include "lu.h"
 #include <tiramisu/utils.h>

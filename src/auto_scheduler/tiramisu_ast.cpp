@@ -128,6 +128,7 @@ void computation_info::set_accesses_changes_with_skewing(int first_node_depth,in
 syntax_tree::syntax_tree(tiramisu::function *fct)
     : fct(fct)
 {
+    // std::cout<<"started instanciation"<<std::endl;
     local_sched_graph =  std::make_shared<std::unordered_map<tiramisu::computation *,
     std::unordered_map<tiramisu::computation *, int>>>(fct->sched_graph);
     
@@ -185,9 +186,12 @@ ast_node::ast_node(tiramisu::computation *comp, syntax_tree *ast)
     // The fist node is the one created by this constructor
     this->depth = 0;
     this->name = isl_set_get_dim_name(iter_domain, isl_dim_set, 0);
-    this->low_bound = utility::get_bound(iter_domain, 0, false).get_int_val();
-    this->up_bound = utility::get_bound(iter_domain, 0, true).get_int_val();
-
+    // std::cout<<"before lower bound passed"<<std::endl;
+    // this->low_bound = utility::get_bound(iter_domain, 0, false).get_int_val();
+    this->low_bound = 0;
+    // std::cout<<"lower bound passed"<<std::endl;
+    // this->up_bound = utility::get_bound(iter_domain, 0, true).get_int_val();
+    this->up_bound = 40;
     nodes.push_back(this);
         
     // Create the other nodes, one for each iterator
@@ -197,9 +201,12 @@ ast_node::ast_node(tiramisu::computation *comp, syntax_tree *ast)
         
         node->depth = i;
         node->name = isl_set_get_dim_name(iter_domain, isl_dim_set, i);
-        node->low_bound = utility::get_bound(iter_domain, i, false).get_int_val();
-        node->up_bound = utility::get_bound(iter_domain, i, true).get_int_val();
-        
+        // std::cout<<"before lower bound passed"<<std::endl;
+        // node->low_bound = utility::get_bound(iter_domain, i, false).get_int_val();
+        node->low_bound = 0;
+        // std::cout<<"after lower bound passed"<<std::endl;
+        // node->up_bound = utility::get_bound(iter_domain, i, true).get_int_val();
+        this->up_bound = 40;
         nodes.push_back(node);
     }
 
