@@ -83,10 +83,11 @@ def get_representation_template(program_json, no_sched_json, max_depth, train_de
         # to get the expression representation
         expr_dict = comp_dict["expression_representation"]
         comps_expr_repr_templates_list.append(get_tree_expr_repr(expr_dict))
+        
         if len(comp_dict["accesses"]) > max_accesses:
             raise NbAccessException
-        if len(comp_dict["accesses"]) < min_accesses:
-            raise NbAccessException
+        # if len(comp_dict["accesses"]) < min_accesses:
+        #     raise NbAccessException
         if len(comp_dict["iterators"]) > max_depth:
             raise LoopsDepthException
 
@@ -439,7 +440,7 @@ def get_involved_comps(node):
 def add_static_dims(matrix, static_dims):
     size = len(matrix)*2 + 2
     gen_matrix = np.zeros((size, size), int)
-    
+    print(size)
     np.fill_diagonal(gen_matrix, 1)
     for i in range(len(matrix)):
         for j in range(len(matrix)):
@@ -765,6 +766,7 @@ def get_schedule_representation(
 
     for comp_index, comp_name in enumerate(ordered_comp_list):
         comp_schedule_dict = schedule_json[comp_name]
+        print(schedule_json)
         comp_iterators_from_tree_struct = get_comp_iterators_from_tree_struct(schedule_json, comp_name)
         if comp_schedule_dict["tiling"]:
             for tiled_loop_index, tiled_loop in enumerate(
@@ -799,7 +801,9 @@ def get_schedule_representation(
             (max_depth + 1),
             (max_depth + 1),
         )
+        print(comp_iterators_from_tree_struct)
         for iter_i, loop_name in enumerate(comp_iterators_from_tree_struct):
+            print(loop_name)
             if len(loop_schedules_dict[loop_name]["TransformationMatrixCol"]) > 0:
                 assert (
                     loop_schedules_dict[loop_name]["TransformationMatrixCol"]
@@ -854,6 +858,10 @@ def get_schedule_representation(
         row_start = loops_placeholders_indices_dict[l_code + "TransfMatRowStart"]
         row_end = loops_placeholders_indices_dict[l_code + "TransfMatRowEnd"]
         nb_row_elements = row_end[1] - row_start[1] + 1
+        print(loops_placeholders_indices_dict[l_code + "TransfMatRowStart"],
+              loops_placeholders_indices_dict[l_code + "TransfMatRowEnd"],
+              nb_row_elements,loop_name)
+        print(loop_schedules_dict[loop_name])
         assert (
             len(loop_schedules_dict[loop_name]["TransformationMatrixRow"])
             == nb_row_elements

@@ -6,8 +6,8 @@
 
 using namespace tiramisu;
 
-const std::string py_cmd_path = "/usr/bin/python";
-const std::string py_interface_path = "/home/afif/multi/tiramisu/tutorials/tutorial_autoscheduler/model/main.py";
+const std::string py_cmd_path = "/usr/bin/python3";
+const std::string py_interface_path = "/home/islem/pfe/tiramisu_work/tiramisu/tutorials/tutorial_autoscheduler/model/main.py";
 
 int main(int argc, char **argv)
 

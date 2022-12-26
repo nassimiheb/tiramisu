@@ -11,6 +11,7 @@ import random
 import time
 
 import os
+from random import randint
 
 environ["MKL_THREADING_LAYER"] = "GNU"
 logging.basicConfig(filename="log_new_model.txt", filemode='a',
@@ -27,7 +28,7 @@ warnings.filterwarnings("ignore", category=UserWarning)
 # model_path = '/data/scratch/mmerouani/tiramisu2/tiramisu/tutorials/tutorial_autoscheduler/model/MAPE_base_13+4+2.6_22.7.pkl'
 # model_path = '/data/scratch/hbenyamina/best_model_bidirectional_new_data_static_input_paper_4cb2.pt'
 model_path = (
-    "/home/afif/multi/tiramisu/tutorials/tutorial_autoscheduler/model/best_model_bidirectional_static_input_nn_bd67.pt"
+    "/home/islem/pfe/tiramisu_work/tiramisu/tutorials/tutorial_autoscheduler/model/best_model_bidirectional_static_input_nn_bd67.pt"
 )
 
 MAX_DEPTH = 5
@@ -92,43 +93,44 @@ with torch.no_grad():
                 sched_json = json.loads(sched_json)
                 no_sched_json = json.loads(no_sched_json)
                 
-                (
-                    prog_tree,
-                    comps_repr_templates_list,
-                    loops_repr_templates_list,
-                    comps_placeholders_indices_dict,
-                    loops_placeholders_indices_dict,
-                    comps_expr_tensor,
-                    comps_expr_lengths,
-                ) = get_representation_template(program_json, no_sched_json, MAX_DEPTH)
-                comps_tensor, loops_tensor = get_schedule_representation(
-                    program_json,
-                    sched_json,
-                    comps_repr_templates_list,
-                    loops_repr_templates_list,
-                    comps_placeholders_indices_dict,
-                    loops_placeholders_indices_dict,
-                    max_depth=5,
-                )
+                # (
+                #     prog_tree,
+                #     comps_repr_templates_list,
+                #     loops_repr_templates_list,
+                #     comps_placeholders_indices_dict,
+                #     loops_placeholders_indices_dict,
+                #     comps_expr_tensor,
+                #     comps_expr_lengths,
+                # ) = get_representation_template(program_json, no_sched_json, MAX_DEPTH)
+                # comps_tensor, loops_tensor = get_schedule_representation(
+                #     program_json,
+                #     sched_json,
+                #     comps_repr_templates_list,
+                #     loops_repr_templates_list,
+                #     comps_placeholders_indices_dict,
+                #     loops_placeholders_indices_dict,
+                #     max_depth=5,
+                # )
                 
-                x = comps_tensor
-                batch_size, num_comps, __dict__ = x.shape
-                x = x.view(batch_size * num_comps, -1)
-                (first_part, final_matrix, vectors, third_part) = seperate_vector(
-                        x, num_matrices=5, pad=False
-                    )
-                x = torch.cat(
-                    (
-                        first_part,
-                        third_part,
-                        final_matrix.reshape(batch_size * num_comps, -1),
-                    ),
-                    dim=1,
-                ).view(batch_size, num_comps, -1)
+                # x = comps_tensor
+                # batch_size, num_comps, __dict__ = x.shape
+                # x = x.view(batch_size * num_comps, -1)
+                # (first_part, final_matrix, vectors, third_part) = seperate_vector(
+                #         x, num_matrices=5, pad=False
+                #     )
+                # x = torch.cat(
+                #     (
+                #         first_part,
+                #         third_part,
+                #         final_matrix.reshape(batch_size * num_comps, -1),
+                #     ),
+                #     dim=1,
+                # ).view(batch_size, num_comps, -1)
                 
-                tree_tensor = (prog_tree, x, vectors, loops_tensor, comps_expr_tensor, comps_expr_lengths)
+                # tree_tensor = (prog_tree, x, vectors, loops_tensor, comps_expr_tensor, comps_expr_lengths)
 
-                speedup = model.forward(tree_tensor)
-                print(float(speedup.item()))
+                # speedup = model.forward(tree_tensor)
+                # print(float(speedup.item()))
+                print(randint(0, 3))
         except EOFError:
             exit()

@@ -199,8 +199,8 @@ float evaluate_by_learning_model::evaluate(syntax_tree& ast, std::string no_sche
     std::string prog_json = get_program_json(ast);
     std::string sched_json = get_schedule_json(ast);
     // std::cout<<prog_json<<std::endl;
-    // std::cout<<sched_json<<std::endl;
     // std::cout<<no_sched_json<<std::endl;
+    // std::cout<<sched_json<<std::endl;
     // Write the program JSON and the schedule JSON to model_write
     fputs(prog_json.c_str(), model_write);
     fputs(no_sched_json.c_str(), model_write);
@@ -807,9 +807,16 @@ void evaluate_by_learning_model::represent_iterators_from_nodes(ast_node *node, 
 
 std::string evaluate_by_learning_model::get_tree_structure_json(syntax_tree const& ast)
 {
-    // For the moment, this only supports ASTs with one root node.
-    ast_node *node = ast.roots[0];
-    return get_tree_structure_json(node);
+    std::string roots_jsons = "\"roots\" : [";
+
+    for (ast_node *node : ast.roots)
+    {
+        roots_jsons += "{" + get_tree_structure_json(node) + "},";
+    }
+    roots_jsons.pop_back();
+    roots_jsons += "]";
+    
+    return roots_jsons;
 }
 
 std::string evaluate_by_learning_model::get_tree_structure_json(ast_node *node)
