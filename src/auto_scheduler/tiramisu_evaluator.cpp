@@ -250,7 +250,7 @@ void evaluate_by_learning_model::represent_computations_from_nodes(ast_node *nod
         
         for (int i = 0; i < comp_info.iters.size(); ++i)
         {
-            comp_json += "\"" + comp_info.iters[i].name + "\"";
+            comp_json += "\"" + comp_info.iters[i].name + comp_info.comp_ptr->get_name() + std::to_string(i) + "\"";
             if (i != comp_info.iters.size() - 1)
                 comp_json += ",";
         }

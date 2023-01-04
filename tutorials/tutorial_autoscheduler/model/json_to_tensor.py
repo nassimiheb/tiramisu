@@ -228,6 +228,11 @@ def get_representation_template(program_json, no_sched_json, max_depth, train_de
                 loops_placeholders_indices_dict[element] = (loop_index, j)
 
     def update_tree_atributes(node, train_device="cpu"):
+        if "roots" in node :
+            for root in node["roots"]:
+                update_tree_atributes(root, train_device=train_device)
+            return node
+        
         node["loop_index"] = torch.tensor(loops_indices_dict[node["loop_name"]]).to(
             train_device
         )
@@ -344,7 +349,7 @@ def get_original_static_dims(program_json):
     
     level = iterators
     to_explore = []
-    to_explore.append(list(iterators.keys())[0])
+    to_explore.append(list(iterators.keys())[0]) # why 0 ? 
     while(to_explore):
         it_name = to_explore.pop(0)
         iterator = iterators[it_name]
@@ -384,8 +389,8 @@ def get_static_dims(schedule_json, program_json):
         result.append([])
     
     level = tree_structure
-    to_explore = []
-    to_explore.append(tree_structure)
+    to_explore = [root for root in tree_structure["roots"]]
+    # to_explore.append(tree_structure)
     while(to_explore):
         level = to_explore.pop(0)
         if (len(level["child_list"])>1):
@@ -440,7 +445,6 @@ def get_involved_comps(node):
 def add_static_dims(matrix, static_dims):
     size = len(matrix)*2 + 2
     gen_matrix = np.zeros((size, size), int)
-    print(size)
     np.fill_diagonal(gen_matrix, 1)
     for i in range(len(matrix)):
         for j in range(len(matrix)):
@@ -453,8 +457,8 @@ def get_comp_iterators_from_tree_struct(schedule_json, comp_name):
     tree = schedule_json["tree_structure"]
     level = tree
     iterators = []
-    to_explore = []
-    to_explore.append(tree)
+    to_explore = [root for root in tree["roots"]]
+    # to_explore.append(tree)
     while(to_explore):
         level = to_explore.pop(0)
         if(comp_name in get_involved_comps(level)):
@@ -614,6 +618,7 @@ def get_transformation_matrix(
     return padded_mat
 def get_schedule_representation(
     program_json,
+    no_sched_json,
     schedule_json,
     comps_repr_templates_list,
     loops_repr_templates_list,
@@ -766,8 +771,7 @@ def get_schedule_representation(
 
     for comp_index, comp_name in enumerate(ordered_comp_list):
         comp_schedule_dict = schedule_json[comp_name]
-        print(schedule_json)
-        comp_iterators_from_tree_struct = get_comp_iterators_from_tree_struct(schedule_json, comp_name)
+        comp_iterators_from_tree_struct = get_comp_iterators_from_tree_struct(no_sched_json, comp_name)
         if comp_schedule_dict["tiling"]:
             for tiled_loop_index, tiled_loop in enumerate(
                 comp_schedule_dict["tiling"]["tiling_dims"]
@@ -801,9 +805,9 @@ def get_schedule_representation(
             (max_depth + 1),
             (max_depth + 1),
         )
-        print(comp_iterators_from_tree_struct)
+        # print(comp_iterators_from_tree_struct)
         for iter_i, loop_name in enumerate(comp_iterators_from_tree_struct):
-            print(loop_name)
+            
             if len(loop_schedules_dict[loop_name]["TransformationMatrixCol"]) > 0:
                 assert (
                     loop_schedules_dict[loop_name]["TransformationMatrixCol"]
@@ -858,10 +862,7 @@ def get_schedule_representation(
         row_start = loops_placeholders_indices_dict[l_code + "TransfMatRowStart"]
         row_end = loops_placeholders_indices_dict[l_code + "TransfMatRowEnd"]
         nb_row_elements = row_end[1] - row_start[1] + 1
-        print(loops_placeholders_indices_dict[l_code + "TransfMatRowStart"],
-              loops_placeholders_indices_dict[l_code + "TransfMatRowEnd"],
-              nb_row_elements,loop_name)
-        print(loop_schedules_dict[loop_name])
+        
         assert (
             len(loop_schedules_dict[loop_name]["TransformationMatrixRow"])
             == nb_row_elements

@@ -144,56 +144,74 @@ class Model_Recursive_LSTM_v2(nn.Module):
 
     def get_hidden_state(self, node, comps_embeddings, loops_tensor):
         nodes_list = []
-        for n in node["child_list"]:
-            nodes_list.append(self.get_hidden_state(
-                n, comps_embeddings, loops_tensor))
-        if nodes_list != []:
+        if "roots" in node:
+            root_iterator = nn.Parameter(
+                nn.init.xavier_uniform_(torch.zeros(1, 33))
+            )
+            for root in node["roots"]:
+                nodes_list.append(self.get_hidden_state(
+                    root, comps_embeddings, loops_tensor))
             nodes_tensor = torch.cat(nodes_list, 1)
             lstm_out, (nodes_h_n, nodes_c_n) = self.nodes_lstm(nodes_tensor)
             nodes_h_n = nodes_h_n.permute(1, 0, 2)
-        else:
-            nodes_h_n = torch.unsqueeze(self.no_nodes_tensor, 0).expand(
-                comps_embeddings.shape[0], -1, -1
-            )
-        if node["has_comps"]:
-            selected_comps_tensor = torch.index_select(
-                comps_embeddings, 1, node["computations_indices"].to(
-                    self.train_device)
-            )
-            lstm_out, (comps_h_n, comps_c_n) = self.comps_lstm(
-                selected_comps_tensor)
-            comps_h_n = comps_h_n.permute(1, 0, 2)
-        else:
+            
             comps_h_n = torch.unsqueeze(self.no_comps_tensor, 0).expand(
-                comps_embeddings.shape[0], -1, -1
-            )
-        selected_loop_tensor = torch.index_select(
-            loops_tensor, 1, node["loop_index"].to(self.train_device)
-        )
+                    comps_embeddings.shape[0], -1, -1
+                )
+            selected_loop_tensor = torch.unsqueeze(root_iterator, 0).expand(
+                    1, -1, -1
+                )
+        else:
+            for n in node["child_list"]:
+                nodes_list.append(self.get_hidden_state(
+                    n, comps_embeddings, loops_tensor))
+            if nodes_list != []:
+                nodes_tensor = torch.cat(nodes_list, 1)
+                lstm_out, (nodes_h_n, nodes_c_n) = self.nodes_lstm(nodes_tensor)
+                nodes_h_n = nodes_h_n.permute(1, 0, 2)
+            else:
+                nodes_h_n = torch.unsqueeze(self.no_nodes_tensor, 0).expand(
+                    comps_embeddings.shape[0], -1, -1
+                )
+            if node["has_comps"]:
+                selected_comps_tensor = torch.index_select(
+                    comps_embeddings, 1, node["computations_indices"].to(
+                        self.train_device)
+                )
+                lstm_out, (comps_h_n, comps_c_n) = self.comps_lstm(
+                    selected_comps_tensor)
+                comps_h_n = comps_h_n.permute(1, 0, 2)
+            else:
+                comps_h_n = torch.unsqueeze(self.no_comps_tensor, 0).expand(
+                    comps_embeddings.shape[0], -1, -1
+                )
+            selected_loop_tensor = torch.index_select(
+                loops_tensor, 1, node["loop_index"].to(self.train_device)
+            ) # root loop tensor
         x = torch.cat((nodes_h_n, comps_h_n, selected_loop_tensor), 2)
         for i in range(len(self.concat_layers)):
             x = self.concat_layers[i](x)
             x = self.concat_dropouts[i](self.ELU(x))
         return x
 
-    def get_expr_embedding(self, expr):
-        expr_repr = torch.tensor(
-            [[list(expr["expr_type"])]]).to(self.train_device)
-        children_exprs_list = []
-        for n in expr["children"]:
-            children_exprs_list.append(self.get_expr_embedding(
-                n))
-        if children_exprs_list != []:
-            exprs_tensor = torch.cat(children_exprs_list, 0)
-            lstm_out, (exprs_h_n, exprs_c_n) = self.exprs_embed(exprs_tensor)
-            exprs_h_n = exprs_h_n.permute(1, 0, 2)
-        else:
-            exprs_h_n = torch.unsqueeze(self.no_exprs_tensor, 0)
-        x = torch.cat((exprs_h_n, expr_repr), 2)
-        for i in range(len(self.expr_concat_layers)):
-            x = self.expr_concat_layers[i](x)
-            x = self.expr_concat_dropouts[i](self.ELU(x))
-        return x
+    # def get_expr_embedding(self, expr):
+    #     expr_repr = torch.tensor(
+    #         [[list(expr["expr_type"])]]).to(self.train_device)
+    #     children_exprs_list = []
+    #     for n in expr["children"]:
+    #         children_exprs_list.append(self.get_expr_embedding(
+    #             n))
+    #     if children_exprs_list != []:
+    #         exprs_tensor = torch.cat(children_exprs_list, 0)
+    #         lstm_out, (exprs_h_n, exprs_c_n) = self.exprs_embed(exprs_tensor)
+    #         exprs_h_n = exprs_h_n.permute(1, 0, 2)
+    #     else:
+    #         exprs_h_n = torch.unsqueeze(self.no_exprs_tensor, 0)
+    #     x = torch.cat((exprs_h_n, expr_repr), 2)
+    #     for i in range(len(self.expr_concat_layers)):
+    #         x = self.expr_concat_layers[i](x)
+    #         x = self.expr_concat_dropouts[i](self.ELU(x))
+    #     return x
 
     def forward(self, tree_tensors):
         tree, comps_tensor, vectors, loops_tensor, functions_comps_expr_tree, functions_comps_expr_lengths = tree_tensors

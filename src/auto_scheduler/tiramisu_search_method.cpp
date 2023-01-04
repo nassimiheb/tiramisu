@@ -483,8 +483,8 @@ void beam_search::explore_fusion(syntax_tree& ast, std::vector<std::string> *sch
         // schedule generation based on generator_state attribute in the AST.
         auto new_children = scheds_gen->generate_schedules(ast);
 
-        for(auto& child:new_children)
-            child->move_to_next_head();
+        // for(auto& child:new_children)
+        //     child->move_to_next_head();
 
         children.insert(children.end(), new_children.begin(), new_children.end()); // concatenate
 
@@ -590,7 +590,7 @@ void beam_search::explore_fusion(syntax_tree& ast, std::vector<std::string> *sch
     // Search recursively on the best children
     for (syntax_tree *child : children)
     {
-
+        child->search_state.current_index = 0;
         search_save_matrix(*child, schedules_annotations, parent_trace->child_mappings[child], schedule_timeout);
     }
 
@@ -1106,6 +1106,8 @@ void beam_search::search_save_matrix(syntax_tree& ast, std::vector<std::string> 
             child->initialize_search_space_optimizations(DEFAULT_OPTIMIZATIONS_ORDER);
             // if we surpassed the MAX_MAT_DEPTH amount of matrices to explore OR we detected the parent of this level through
             // the child->search_depth<=child->nb_explored_matrices condition which means that the search level is greater than the number of applied matrices
+            // reinitialize current index to zero for the next level of exploration
+            child->search_state.current_index = 0;
             search_save(*child, schedules_annotations, parent_trace->child_mappings[child], schedule_timeout);  
         }
     }

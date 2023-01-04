@@ -104,7 +104,7 @@ void auto_scheduler::sample_search_space(std::string filename, bool timeout_sche
     std::cout << "Best execution time : " << - searcher->get_best_evaluation() << std::endl;
     syntax_tree* best = searcher->get_best_ast();
     
-    bool calculate_transformed_execution_time= false;
+    bool calculate_transformed_execution_time= true;
     std::vector<float> measurements;
     if(calculate_transformed_execution_time){
         measurements = exec_evaluator->get_measurements(*best, false, schedule_timeout);
